@@ -1,0 +1,66 @@
+.sidebar {
+  position: fixed; /* Giữ Sidebar cố định bên trái */
+  top: 60px; /* Đảm bảo Sidebar bắt đầu từ dưới TopBar */
+  left: 0;
+  width: 64px; /* Chiều rộng của Sidebar */
+  height: calc(100vh - 60px); /* Chiều cao Sidebar tính từ dưới TopBar */
+  background-color: #D9D9D9;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1000; /* Đảm bảo Sidebar nằm dưới TopBar */
+  transition: width 0.3s ease, background-color 0.3s ease; /* Hiệu ứng chuyển động mượt mà khi thay đổi kích thước */
+
+  &__icons {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 0 1rem; /* Thêm padding để các icon không chạm vào viền */
+  }
+
+  &__icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #01050b;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease; /* Thêm hiệu ứng chuyển màu và phóng to khi hover */
+    
+    &:hover {
+      color: #2563eb;
+      transform: scale(1.1); /* Phóng to icon khi hover */
+    }
+  }
+
+  &__bottom {
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    padding: 1rem; /* Thêm khoảng cách cho phần dưới */
+  }
+
+  /* Media query cho màn hình nhỏ */
+  @media (max-width: 768px) {
+    width: 50px;
+    &__icon {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+
+  /* Media query cho màn hình rất nhỏ (như trên mobile) */
+  @media (max-width: 480px) {
+    width: 40px;
+
+    &__icon {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  /* Đảm bảo Sidebar không che nội dung trong màn hình nhỏ */
+  @media (max-width: 360px) {
+    top: 50px; /* Dịch chuyển Sidebar lên trên nếu cần */
+  }
+}

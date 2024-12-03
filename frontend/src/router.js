@@ -1,36 +1,35 @@
 import { Routes , Route } from "react-router-dom";
 import { ROUTERS } from "./utils/router";
-import HomePage from "./pages/user/homePage"
-import MasterLayout from "./pages/user/theme/masterLayout";
+import HomePage from "./pages/user/HomePage"
 import ProfilePage from "./pages/user/profilePage";
 
 const renderUserRouter = () => {
     const userRouter = [
-        {
-            path : ROUTERS.USER.HOME,
-            component : <HomePage />
-        },
-        {
-            path : ROUTERS.USER.PROFILE,
-            component : <ProfilePage />
-        }
-    ]
+      {
+        path: ROUTERS.USER.HOME,
+        component: <HomePage />,
+      },
+      {
+        path: ROUTERS.USER.PROFILE,
+        component: <ProfilePage />,
+      },
+    ];
+  
+    // Trả về các Route từ mảng userRouter
+    return userRouter.map((route, index) => (
+      <Route key={index} path={route.path} element={route.component} />
+    ));
+  };
+
+
+  const RouterCustom = () => {
     return (
-        <MasterLayout>
-            <Routes>
-                {
-                    userRouter.map((item, key) => (
-                        <Route key={key} path={item.path} element={item.component} />      
-                    ))
-                }
-            </Routes>
-        </MasterLayout>
+      <Routes>
+        <Route path={ROUTERS.USER.HOME} element={<HomePage />} />
+        <Route path={ROUTERS.USER.PROFILE} element={<ProfilePage />} />
+        
+      </Routes>
     );
-};
-
-
-const RouterCustom = () => { 
-    return renderUserRouter() ;
-};
+  };
 
 export default RouterCustom;

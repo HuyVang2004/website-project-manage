@@ -1,6 +1,8 @@
 import { memo } from "react";
-import { Home, FileText, Target, BarChart2, Users, Plus, HelpCircle } from 'lucide-react';
-import './styles.scss';
+import Sidebar from '../../components/SlideBar'; 
+import TopBar from '../../components/topBar'; 
+import Footer from '../../components/Footer'; 
+import '../../styles/pages/HomePage.scss';
 
 const HomePage = () => {
   const stats = [
@@ -12,26 +14,17 @@ const HomePage = () => {
 
   return (
     <div className="dashboard">
-      {/* Sidebar */}
-      <div className="sidebar">
-        <div className="sidebar__icons">
-          <Home className="sidebar__icon" />
-          <FileText className="sidebar__icon" />
-          <Target className="sidebar__icon" />
-          <BarChart2 className="sidebar__icon" />
-          <Users className="sidebar__icon" />
-          <Plus className="sidebar__icon" />
-        </div>
-        <div className="sidebar__bottom">
-          <HelpCircle className="sidebar__icon" />
-        </div>
-      </div>
+      {/* Sidebar Component */}
+      <Sidebar />
 
       {/* Main Content */}
       <div className="main-content">
+        {/* TopBar Component */}
+        <TopBar />
+
         <div className="header">
           <h1 className="header__title">Xin chào,</h1>
-          
+
           {/* Stats Grid */}
           <div className="stats-grid">
             {stats.map((stat, index) => (
@@ -51,6 +44,7 @@ const HomePage = () => {
               <h2 className="card__title">Thông báo mới nhất</h2>
             </div>
             <div className="card__content">
+              {/* Add content for announcements here */}
             </div>
           </div>
 
@@ -75,6 +69,9 @@ const HomePage = () => {
           </div>
         </div>
       </div>
+
+      {/* Footer Component */}
+      <Footer />
     </div>
   );
 };
