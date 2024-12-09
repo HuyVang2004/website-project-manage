@@ -3,8 +3,23 @@ import "../styles/TopBar.scss";
 import { HiBars3 } from "react-icons/hi2";
 import { BsBell } from "react-icons/bs";
 import { FaSearch, FaRegUserCircle } from "react-icons/fa";
+import { CiSearch } from "react-icons/ci";
+import { Home, FileText, Target, BarChart2, Users, Plus, HelpCircle } from 'lucide-react';
 
 const TopBar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+  const[isNotification,  setNotification] = useState(false);
+  const thongbao = () => {
+    setNotification(!isNotification);
+  }
+  const [isSetting, setIsSetting] = useState(false);
+  const caidat = () => {
+    setIsSetting(!isSetting);
+  }
+  
   // State để theo dõi cuộn trang
   const [scrolled, setScrolled] = useState(false);
 
@@ -25,40 +40,96 @@ const TopBar = () => {
       <div className="container">
         <div className="row">
           {/* Left Section */}
-          <div className="header-top-left">
+          <div className="col-left header-top-left">
             <div className="menu-icon" aria-label="Menu" role="button" tabIndex={0}>
+              <div className={`menu-icon ${isMenuOpen ? 'open' : ''}`} onClick={toggleMenu}>
               <HiBars3 />
+                {isMenuOpen && (
+                  <ul className="menu-list">
+                    <li>
+                      <div className="icon"><Home /> </div>
+                      <a href="http://localhost:3000/">
+                      <div className="text">Tổng Quan</div>
+                      </a>
+                    </li>
+                    <li>
+                       <div className="icon"> <FileText /> </div>
+                       <a href="http://localhost:3000/danhsach">
+                       <div className="text">  Dự Án</div>
+                       </a>
+                    </li> 
+                    <li>
+                      <div className="icon"> <Target /> </div>  
+                      <a href="/">
+                      <div className="text">  Nhiệm Vụ</div>
+                      </a>
+                      
+                    </li>
+                    <li> 
+                      <div className="icon"> <BarChart2 /> </div>
+                      <div className="text">  Báo Cáo</div>
+                    </li>
+                    <li> 
+                      <div className="icon"> <Users /> </div>
+                      <div className="text">  Mọi Người</div>
+                    </li>
+                    <li> 
+                      <div className="icon"> <Plus /> </div>  
+                      <div className="text">  Tạo Mới</div>
+                    </li>
+                    <li> 
+                      <div className="icon"> <HelpCircle /> </div>
+                      <div className="text">  Trợ Giúp</div>
+                    </li>
+                  </ul>
+                )}
+              </div>  
             </div>
-            <div className="logo">LOGO</div>
+            <div className="logo">
+              <a href="http://localhost:3000/">
+                LOGO
+              </a>
+            </div>
           </div>
 
           {/* Middle Section */}
-          <div className="header-top-mid">
+          <div className="col-mid header-top-mid">
             <form>
               <input
                 type="text"
                 placeholder="Tìm kiếm..."
-                className="search-input"
-                aria-label="Search"
               />
-              <button
-                type="submit"
-                className="search-icon-btn"
-                aria-label="Search Button"
-                role="button"
-              >
-                <FaSearch />
+              <button type="submit">
+              <CiSearch />
               </button>
             </form>
           </div>
 
           {/* Right Section */}
-          <div className="header-top-right">
+          <div className="col-right header-top-right">
             <div className="icon" aria-label="Notifications" role="button" tabIndex={0}>
-              <BsBell />
+              <div className={ `chuong-icon ${isNotification ? 'open':''}`} onClick={thongbao}>
+              <BsBell /> 
+              {isNotification && (
+                <div className="chuong">
+                  <div className="thongbao">THÔNG BÁO</div>
+                  <div className="duongke" /> 
+                  <div className="danhsachthongbao">Danh sách thông báo</div>
+                </div>
+              )}
+              </div>
             </div>
             <div className="icon" aria-label="User Profile" role="button" tabIndex={0}>
+              <div className={`caidat-icon ${isSetting ? 'open' :''}`} onClick={caidat}>
               <FaRegUserCircle />
+              {isSetting && (
+                <div className="setting">
+                  <div className="profile">Thong tin tai khoan</div>
+                  <div className="duongke" /> 
+                  <div className="logout">Log out</div>
+                </div>
+              )}
+              </div>
             </div>
           </div>
         </div>

@@ -1,37 +1,57 @@
 import { memo } from "react";
 import './styles.scss'
-import { Home, FileText, Target, BarChart2, Users, Plus, HelpCircle } from 'lucide-react';
+import Sidebar from "../../../components/SlideBar";
+import TopBar from "../../../components/topBar";
+import Footer from "../../../components/Footer";
+import { useState, useEffect } from "react";
+
 
 
 const ProfilePage = () => {
+    
+    const [isProject, setIsProject] = useState(false);
+    const project = () => {
+        setIsProject(!isProject)
+    };
+    useEffect(() => {
+        const handleScroll = () => {
+          setScrolled(window.scrollY > 50); // Khi cuộn xuống hơn 50px, thay đổi trạng thái
+        };
+    
+        window.addEventListener("scroll", handleScroll); // Lắng nghe sự kiện cuộn trang
+        return () => {
+          window.removeEventListener("scroll", handleScroll); // Dọn dẹp sự kiện khi component unmount
+        };
+      }, []);
     return (
-        <div className="dashboard">
-            <div className="sidebar">
-                <div className="sidebar__icons">
-                    <Home className="sidebar__icon" />
-                    <FileText className="sidebar__icon" />
-                    <Target className="sidebar__icon" />
-                    <BarChart2 className="sidebar__icon" />
-                    <Users className="sidebar__icon" />
-                    <Plus className="sidebar__icon" />
-                </div>
-                <div className="sidebar__bottom">
-                <HelpCircle className="sidebar__icon" />
-                </div>
-            </div>
-            <div className="main-content">
-                <div className="header">
-                    <div className="col-6 header-left ">
-                        <h1 className="header-title">Danh sách dự án</h1>
+            <div className="dashboard">
+                {/* sdsadsads*/ }
+                <Sidebar />
+                <div className="main-content">
+                    <TopBar />
+                    <div className="header">
+                        <div className="row">
+                            <div className=" header-left ">
+                                <div className="title"> Danh sách dự án</div>
+                                <div className="project-list">
+                                    <div className="project-item">Dự án thứ nhất </div>
+                                </div>
+                            </div>
+                            <div className="header-right" a role="button" tabIndex={0}>
+                                <div className={`project ${isProject ? 'open' :''}`} onClick={project}>
+                                    <div className="newproject">Tạo dự án mới </div>
+                                    {isProject && (
+                                        
+                                        <div className="new_project">Tạo Dự Án Mới</div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
-                    <div className="col-6 header-right">
-                        <h1>
-                            Tạo dự án mới 
-                        </h1>
-                    </div>
                 </div>
+                <Footer />  
             </div>
-        </div>
     )
 };
 export default memo(ProfilePage);

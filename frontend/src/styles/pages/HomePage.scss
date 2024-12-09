@@ -13,6 +13,17 @@
   flex-direction: column;
   padding: 1.5rem; /* Thêm padding cho các phần tử bên trong */
 }
+.header {
+  margin-bottom: 2rem;
+  text-align: center; // Căn giữa toàn bộ header
+
+  &__title {
+    font-size: 50px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+}
 
 .footer {
   margin-top: auto; /* Đưa Footer xuống dưới cùng */
@@ -36,12 +47,14 @@
   &__title {
     color: #4b5563;
     font-size: 0.875rem;
+    text-align: center;
   }
 
   &__count {
     font-size: 1.5rem;
     font-weight: 600;
     margin-top: 0.5rem;
+    text-align: center;
   }
 
   &:hover {
@@ -74,6 +87,7 @@
   &__title {
     font-size: 1.25rem;
     font-weight: 600;
+    
   }
 
   &__content {

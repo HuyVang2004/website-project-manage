@@ -14,7 +14,7 @@
     align-items: center; /* Căn giữa các cột theo chiều dọc */
 }
 
-.footer_left, .footer_right {
+.footer_left {
     display: flex; /* Kích hoạt Flexbox cho từng cột */
     flex-direction: column; /* Sắp xếp nội dung theo chiều dọc */
     justify-content: center; /* Căn giữa nội dung theo chiều dọc */
@@ -25,12 +25,17 @@
     flex: 0 0 70%; /* Cột bên trái chiếm 70% */
     max-width: 70%; /* Giới hạn chiều rộng tối đa */
     /* background: #1dbd1d; */
+    
 }
 
 .footer_right {
-    align-items: flex-start; /* Căn phải nội dung bên trong */
-    text-align: right; /* Căn chỉnh văn bản sang phải */
-    padding-left: 20px; /* Đã giảm padding để đảm bảo tính phản hồi tốt */
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    //align-items: flex-start; /* Căn phải nội dung bên trong */
+    //text-align: right; /* Căn chỉnh văn bản sang phải */
+    //padding-left: 200px; /* Đã giảm padding để đảm bảo tính phản hồi tốt */
 }
 
 .footer h3 {
@@ -53,10 +58,18 @@
 
 .social_links a {
     font-size: 34px; /* Kích thước biểu tượng */
-    color: #2619dd; /* Màu sắc biểu tượng */
+    color: #c6c6cc; /* Màu sắc biểu tượng */
     text-decoration: none; /* Xóa gạch chân */
 } 
 
 .social_links a:hover {
-    color: #dae1da; /* Màu sắc khi hover */
+    color: #6e2aeb; /* Màu sắc khi hover */
 }
+// @media (max-width: 768px) {
+//     .footer_right{
+        
+//         justify-content: start;
+//         padding-left: 1px;
+        
+//     }
+// }
