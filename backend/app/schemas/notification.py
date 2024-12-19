@@ -1,9 +1,8 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
-
+import uuid
 class NotificationCreate(BaseModel):
-    notification_id: str
     user_id: str
     message: str
     is_read: Optional[bool] = False

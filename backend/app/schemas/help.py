@@ -1,9 +1,8 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
-
+import uuid
 class HelpCreate(BaseModel):
-    help_id: str
     user_id: str
     content: str
     help_type: str

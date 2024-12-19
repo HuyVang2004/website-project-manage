@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = 'mysql+pymysql://root:truong@localhost:3306/project_manager_database'
+    DATABASE_URL: str = 'mysql+pymysql://root:truong@localhost:3306/project_manager_database_2'
 
     class Config:
         env_file = ".env"

@@ -1,37 +1,72 @@
-# services/project_team_service.py
-
 from sqlalchemy.orm import Session
 from app.models.project_team import ProjectTeam
 from app.schemas.project_team import ProjectTeamCreate, ProjectTeamUpdate
-from app.db.session import get_db
+from typing import List, Optional
+from uuid import uuid4
+from app.models.project import Project
+from app.models.user import User
 
-def create_project_team(project_team: ProjectTeamCreate, db: Session = next(get_db())):
-    new_project_team = ProjectTeam(**project_team.dict())
-    db.add(new_project_team)
-    db.commit()
-    db.refresh(new_project_team)
-    return new_project_team
+class ProjectTeamService:
+    @staticmethod
+    def create_project_team(db: Session, project_team_data: ProjectTeamCreate) -> ProjectTeam:
+        project_team = ProjectTeam(
+            project_team_id=str(uuid4()),
+            user_id=project_team_data.user_id,
+            project_id=project_team_data.project_id,
+            role=project_team_data.role
+        )
+        db.add(project_team)
+        db.commit()
+        db.refresh(project_team)
+        return project_team
 
-def get_project_team_by_id(project_team_id: str, db: Session = next(get_db())):
-    return db.query(ProjectTeam).filter(ProjectTeam.project_team_id == project_team_id).first()
+    @staticmethod
+    def get_project_team_by_id(db: Session, project_team_id: str) -> Optional[ProjectTeam]:
+        return db.query(ProjectTeam).filter(ProjectTeam.project_team_id == project_team_id).first()
 
-def get_project_teams_by_project(project_id: str, db: Session = next(get_db())):
-    return db.query(ProjectTeam).filter(ProjectTeam.project_id == project_id).all()
+    @staticmethod
+    def get_all_project_teams(db: Session) -> List[ProjectTeam]:
+        return db.query(ProjectTeam).all()
 
-def update_project_team(project_team_id: str, project_team_update: ProjectTeamUpdate, db: Session = next(get_db())):
-    project_team = db.query(ProjectTeam).filter(ProjectTeam.project_team_id == project_team_id).first()
-    if not project_team:
-        return None
-    for field, value in project_team_update.dict(exclude_unset=True).items():
-        setattr(project_team, field, value)
-    db.commit()
-    db.refresh(project_team)
-    return project_team
+    @staticmethod
+    def update_project_team(db: Session, project_team_id: str, project_team_data: ProjectTeamUpdate) -> Optional[ProjectTeam]:
+        project_team = db.query(ProjectTeam).filter(ProjectTeam.project_team_id == project_team_id).first()
+        if not project_team:
+            return None
 
-def delete_project_team(project_team_id: str, db: Session = next(get_db())):
-    project_team = db.query(ProjectTeam).filter(ProjectTeam.project_team_id == project_team_id).first()
-    if not project_team:
-        return None
-    db.delete(project_team)
-    db.commit()
-    return project_team
+        for key, value in project_team_data.dict(exclude_unset=True).items():
+            setattr(project_team, key, value)
+
+        db.commit()
+        db.refresh(project_team)
+        return project_team
+
+    @staticmethod
+    def delete_project_team(db: Session, project_team_id: str) -> bool:
+        project_team = db.query(ProjectTeam).filter(ProjectTeam.project_team_id == project_team_id).first()
+        if not project_team:
+            return False
+
+        db.delete(project_team)
+        db.commit()
+        return True
+
+    @staticmethod
+    def get_user_and_project_ids(db: Session, username: str, project_name: str) -> Optional[dict]:
+        user = db.query(User).filter(User.username == username).first()
+        project = db.query(Project).filter(Project.project_name == project_name).first()
+
+        if not user or not project:
+            return None
+
+        return {"user_id": user.user_id, "project_id": project.project_id}
+    
+    @staticmethod
+    def get_projects_by_user(db: Session, user_id: str) -> List[Project]:
+        project_teams = (
+            db.query(Project)
+            .join(ProjectTeam, Project.project_id == ProjectTeam.project_id)
+            .filter(ProjectTeam.user_id == user_id)
+            .all()
+        )
+        return project_teams

@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
-
+import uuid
 class TaskRoleCreate(BaseModel):
-    task_role_id: str
     task_id: str
     user_id: str
     can_read: bool = True

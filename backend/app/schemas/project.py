@@ -1,9 +1,8 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
-
+import uuid
 class ProjectCreate(BaseModel):
-    project_id: str
     project_name: str
     description: str | None = None
     start_date: datetime

@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
+import uuid
 
 class TaskCreate(BaseModel):
-    task_id: str
     project_id: str
     task_name: str
     assigned_to: Optional[str]

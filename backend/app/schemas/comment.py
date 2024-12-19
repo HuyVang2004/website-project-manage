@@ -1,9 +1,8 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
-
+import uuid
 class CommentCreate(BaseModel):
-    comment_id: str
     task_id: str
     created_by: str
     content: str

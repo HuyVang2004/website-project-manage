@@ -1,45 +1,44 @@
-from fastapi import APIRouter, HTTPException, Depends
+# api/projects.py
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from datetime import datetime
-
+from typing import List
 from app.schemas.project import ProjectCreate, ProjectResponse, ProjectUpdate
-from app.models.project import Project
+from app.services.project_service import (
+    create_project,
+    get_project_by_id,
+    update_project,
+    delete_project,
+    list_projects,
+)
 from app.db.session import get_db
-from app.services.project_service import create_project, get_project_by_id
 
 router = APIRouter()
 
-@router.post("/", response_model=ProjectResponse)
-def create_project_endpoint(project: ProjectCreate, db: Session = Depends(get_db)):
-    return create_project(project, db)
+@router.post("/projects/by-username", response_model=ProjectResponse)
+def create_project_with_user(
+    project: ProjectCreate, username: str, db: Session = Depends(get_db)
+):
+    return create_project_with_username(db, project, username)
 
-@router.get("/{project_id}", response_model=ProjectResponse)
+
+@router.post("/projects", response_model=ProjectResponse)
+def create_new_project(project: ProjectCreate, db: Session = Depends(get_db)):
+    return create_project(db, project)
+
+@router.get("/projects/{project_id}", response_model=ProjectResponse)
 def get_project(project_id: str, db: Session = Depends(get_db)):
-    project = get_project_by_id(project_id, db)
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
-    return project
+    return get_project_by_id(db, project_id)
 
-@router.put("/{project_id}", response_model=ProjectResponse)
-def update_project(project_id: str, project_update: ProjectUpdate, db: Session = Depends(get_db)):
-    project = db.query(Project).filter(Project.project_id == project_id).first()
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
+@router.put("/projects/{project_id}", response_model=ProjectResponse)
+def update_existing_project(
+    project_id: str, project_update: ProjectUpdate, db: Session = Depends(get_db)
+):
+    return update_project(db, project_id, project_update)
 
-    for field, value in project_update.dict(exclude_unset=True).items():
-        setattr(project, field, value)
+@router.delete("/projects/{project_id}")
+def delete_existing_project(project_id: str, db: Session = Depends(get_db)):
+    return delete_project(db, project_id)
 
-    project.update_time = datetime.now()
-
-    db.commit()
-    db.refresh(project)
-    return project
-
-@router.delete("/{project_id}", response_model=dict)
-def delete_project(project_id: str, db: Session = Depends(get_db)):
-    project = db.query(Project).filter(Project.project_id == project_id).first()
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
-    db.delete(project)
-    db.commit()
-    return {"message": f"Project with ID {project_id} has been deleted successfully"}
+@router.get("/projects", response_model=List[ProjectResponse])
+def get_all_projects(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    return list_projects(db, skip=skip, limit=limit)

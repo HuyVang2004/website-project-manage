@@ -2,11 +2,11 @@ from sqlalchemy import Column, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.db.base import Base
-
+import uuid
 class ProjectDocument(Base):
     __tablename__ = "project_documents"
 
-    document_id = Column(String(36), primary_key=True, index=True)
+    document_id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True)
     project_id = Column(String(36), ForeignKey("projects.project_id"), nullable=False)
     file_name = Column(String(255), nullable=False)
     file_path = Column(String(255), nullable=False)

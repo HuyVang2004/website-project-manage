@@ -1,9 +1,8 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
-
+import uuid
 class ProjectDocumentCreate(BaseModel):
-    document_id: str
     project_id: str
     file_name: str
     file_path: str
