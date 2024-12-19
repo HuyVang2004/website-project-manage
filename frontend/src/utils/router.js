@@ -1,6 +1,9 @@
 export const ROUTERS = {
-    USER : {
+    USER: {
         HOME: "/",
-        PROFILE: "danhsach",
-    }
-} 
+        PROFILE: {
+            BASE: "/duan",
+            PROJECTDETAILS: "/duan/chitiet",
+        },
+    },
+};

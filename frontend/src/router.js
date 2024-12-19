@@ -2,6 +2,7 @@ import { Routes , Route } from "react-router-dom";
 import { ROUTERS } from "./utils/router";
 import HomePage from "./pages/user/HomePage"
 import ProfilePage from "./pages/user/profilePage";
+import ProjectDetails from "./pages/user/profilePage/projectDetails";
 
 const renderUserRouter = () => {
     const userRouter = [
@@ -10,8 +11,12 @@ const renderUserRouter = () => {
         component: <HomePage />,
       },
       {
-        path: ROUTERS.USER.PROFILE,
+        path: ROUTERS.USER.PROFILE.BASE,
         component: <ProfilePage />,
+      },
+      {
+        path: ROUTERS.USER.PROFILE.PROJECTDEETAILS,
+        component: <ProjectDetails />,
       },
     ];
   
@@ -26,8 +31,8 @@ const renderUserRouter = () => {
     return (
       <Routes>
         <Route path={ROUTERS.USER.HOME} element={<HomePage />} />
-        <Route path={ROUTERS.USER.PROFILE} element={<ProfilePage />} />
-        
+        <Route path={ROUTERS.USER.PROFILE.BASE} element={<ProfilePage />} />
+        <Route path={ROUTERS.USER.PROFILE.PROJECTDETAILS} element={<ProjectDetails />} />
       </Routes>
     );
   };
