@@ -54,7 +54,7 @@ const TopBar = () => {
                     </li>
                     <li>
                        <div className="icon"> <FileText /> </div>
-                       <a href="http://localhost:3000/danhsach">
+                       <a href="http://localhost:3000/duan">
                        <div className="text">  Dự Án</div>
                        </a>
                     </li> 
@@ -99,7 +99,7 @@ const TopBar = () => {
                 type="text"
                 placeholder="Tìm kiếm..."
               />
-              <button type="submit">
+              <button type="submit" className="submit">
               <CiSearch />
               </button>
             </form>
