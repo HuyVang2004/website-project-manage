@@ -1,12 +1,15 @@
 export const ROUTERS = {
-    USER : {
+    USER: {
         HOME: "/",
         PROFILE: "/profile",
         REGISTER: "/dangki",
         LOGIN: "/dangnhap",
         CHANGEPASSWORD: '/changepassword',
         SETTINGUSER: "/setting_user",
-        PROJECT: "/projects",
-    }
-
-} 
+        PROJECT: {
+            BASE: "/duan",
+            PROJECTDETAILS: "/duan/chitiet",
+        },
+    },
+};
+      

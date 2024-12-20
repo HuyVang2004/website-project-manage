@@ -1,7 +1,12 @@
 import { Routes , Route } from "react-router-dom";
 import { ROUTERS } from "./utils/router";
 import HomePage from "./pages/user/HomePage"
+<<<<<<< HEAD
 import ProfilePage from "./pages/user/profilePage/ProfilePage";
+=======
+import ProfilePage from "./pages/user/profilePage";
+import ProjectDetails from "./pages/user/profilePage/projectDetails";
+>>>>>>> 3a3018aac63e823be9654dc1f10dd8b507fcf92f
 import RegisterPage from "./pages/admin/register";
 import LoginPage from "./pages/admin/login"; 
 import ChangePasswordPage from "./pages/user/ChangePassword/ChangePasswordPage";
@@ -16,8 +21,12 @@ const renderUserRouter = () => {
         component: <HomePage />,
       },
       {
-        path: ROUTERS.USER.PROFILE,
+        path: ROUTERS.USER.PROFILE.BASE,
         component: <ProfilePage />,
+      },
+      {
+        path: ROUTERS.USER.PROFILE.PROJECTDEETAILS,
+        component: <ProjectDetails />,
       },
     ];
   
@@ -32,6 +41,8 @@ const renderUserRouter = () => {
     return (
       <Routes>
         <Route path={ROUTERS.USER.HOME} element={<HomePage />} />
+        <Route path={ROUTERS.USER.PROFILE.BASE} element={<ProfilePage />} />
+        <Route path={ROUTERS.USER.PROFILE.PROJECTDETAILS} element={<ProjectDetails />} />
         <Route path={ROUTERS.USER.PROFILE} element={<ProfilePage />} />
         <Route path={ROUTERS.USER.REGISTER} element={<RegisterPage />} />
         <Route path={ROUTERS.USER.LOGIN} element={<LoginPage />} />
