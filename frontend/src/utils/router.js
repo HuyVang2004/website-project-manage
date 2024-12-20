@@ -7,3 +7,9 @@ export const ROUTERS = {
         },
     },
 };
+        PROFILE: "danhsach",
+        REGISTER: "dangki",
+        LOGIN: "dangnhap"
+    }
+
+} 
