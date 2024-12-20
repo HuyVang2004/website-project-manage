@@ -1,6 +1,6 @@
 import { Home, FileText, Target, BarChart2, Users, Plus, HelpCircle } from 'lucide-react';
 import '../styles/SlideBar.scss'; 
-const Sidebar = () => {
+const Slidebar = () => {
   return (
     <div className="sidebar">
       {/* Sidebar Icons */}
@@ -21,4 +21,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default Slidebar;

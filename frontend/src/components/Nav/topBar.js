@@ -1,10 +1,12 @@
 import { memo, useState, useEffect } from "react";
-import "../styles/TopBar.scss";
+import "../../styles/TopBar.scss";
 import { HiBars3 } from "react-icons/hi2";
 import { BsBell } from "react-icons/bs";
 import { FaSearch, FaRegUserCircle } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
 import { Home, FileText, Target, BarChart2, Users, Plus, HelpCircle } from 'lucide-react';
+import Notifications from "./Notification";
+import User from "./User";
 
 const TopBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -112,23 +114,38 @@ const TopBar = () => {
               <BsBell /> 
               {isNotification && (
                 <div className="chuong">
-                  <div className="thongbao">THÔNG BÁO</div>
-                  <div className="duongke" /> 
-                  <div className="danhsachthongbao">Danh sách thông báo</div>
-                </div>
+                <Notifications
+                  notifications={[
+                    {
+                      text: "Complete the UI design of Landing Page for FoodVentures.",
+                      time: "2h",
+                      priority: "High",
+                      image: "https://via.placeholder.com/52",
+                    },
+                    {
+                      text: "Complete the Mobile app design for Pet Warden.",
+                      time: "2h",
+                      priority: "Extremely High",
+                      image: "https://via.placeholder.com/52",
+                    },
+                  ]}
+                />
+              </div>
               )}
               </div>
             </div>
             <div className="icon" aria-label="User Profile" role="button" tabIndex={0}>
-              <div className={`caidat-icon ${isSetting ? 'open' :''}`} onClick={caidat}>
-              <FaRegUserCircle />
-              {isSetting && (
-                <div className="setting">
-                  <div className="profile">Thong tin tai khoan</div>
-                  <div className="duongke" /> 
-                  <div className="logout">Log out</div>
-                </div>
-              )}
+              <div className={`caidat-icon ${isSetting ? "open" : ""}`} onClick={caidat}>
+                <FaRegUserCircle />
+                {isSetting && (
+                  <div className="setting">
+                    <User
+                      name="Phạm Hữu Vang"
+                      email="vpham0838@gmail.com"
+                      image="C:\Users\User\website-project-manage\frontend\public\images\logohus.jpg"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>

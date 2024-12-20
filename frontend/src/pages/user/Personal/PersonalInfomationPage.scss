@@ -1,0 +1,26 @@
+.persional-container {
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f1f5f9;
+  margin-left: 60px; /* Đảm bảo có khoảng cách cho Sidebar */
+  margin-top: 50px;
+  flex-direction: column;
+}
+
+.main-content {
+  flex-grow: 1; /* Giúp nội dung chiếm không gian còn lại */
+  display: flex;
+  flex-direction: column;
+  background-color: #eaf8ff;
+  align-items: center;
+  padding: 1.5rem; /* Thêm padding cho các phần tử bên trong */
+}
