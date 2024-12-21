@@ -33,6 +33,9 @@ export default function LoginPage() {
               placeholder="Mật khẩu"
             />
           </div>
+          <div className="forgot-password">
+            <Link to="./quenmatkhau">Quên mật khẩu?</Link>
+          </div>
 
           <button type="submit" className="submit btn">
             Đăng Nhập

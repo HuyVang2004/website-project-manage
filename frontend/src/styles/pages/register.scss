@@ -42,7 +42,7 @@
           width: 105%;
           padding: 10px;
           background-color: #00BFFF;
-          color: 00BFFF;
+          color: #ffffff;
           border: none;
           font-size: 20px;
           border-radius: 4px;
@@ -60,8 +60,16 @@
   
       .login-link {
         text-align: center;
-        margin-top: 20px;
-        font-size: 14px;
+        margin-top: 15px;
+        
+        a {
+          color: #00BFFF;
+          text-decoration: none;
+          
+          &:hover {
+            text-decoration: underline;
+          }
+        }
       }
     }
   }
