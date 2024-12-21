@@ -3,7 +3,12 @@ export const ROUTERS = {
         HOME: "/",
         PROFILE: "danhsach",
         REGISTER: "dangki",
-        LOGIN: "dangnhap"
+        LOGIN: "dangnhap",
+        FORGOTPASSWORD: "dangnhap/quenmatkhau"
+    },
+    ADMIN: {
+        DASHBOARD: "admin",
+        MANAGEMENT:"admin/users",
+        LANDINGPAGE: "landing"
     }
-
-} 
+}
