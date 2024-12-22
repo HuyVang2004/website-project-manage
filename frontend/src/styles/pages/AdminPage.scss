@@ -1,0 +1,143 @@
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f1f5f9;
+    margin-left: 60px; /* Đảm bảo có khoảng cách cho Sidebar */
+    margin-top: 50px;
+    flex-direction: column;
+  }
+  
+  .main-content {
+    flex-grow: 1; /* Giúp nội dung chiếm không gian còn lại */
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem; /* Thêm padding cho các phần tử bên trong */
+  }
+  .header {
+    margin-bottom: 2rem;
+    text-align: center; // Căn giữa toàn bộ header
+  
+    &__title {
+      font-size: 50px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+  }
+  
+  .footer {
+    margin-top: auto; /* Đưa Footer xuống dưới cùng */
+  }
+  
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .stat-card {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    &__title {
+      color: #4b5563;
+      font-size: 0.875rem;
+      text-align: center;
+    }
+  
+    &__count {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+  
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    }
+  }
+  
+  /* Info Grid */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Card Styles */
+  .card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+    &__header {
+      padding: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+  
+    &__title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      
+    }
+  
+    &__content {
+      padding: 1rem;
+      min-height: 200px;
+  
+      p {
+        color: #4b5563;
+      }
+    }
+  
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    }
+  }
+  
+  /* Projects Section */
+  .projects {
+    margin-top: 1.5rem;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 1024px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr); /* Đổi thành 2 cột trên màn hình nhỏ */
+    }
+  
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .main-content {
+      padding: 1rem; /* Giảm padding khi trên màn hình nhỏ */
+    }
+  }
+  
+  .header-left {
+    background: #2563eb;
+    text-align: start;
+  }
+  
+  .header-right {
+    background: #4b5563;
+    text-align: end;
+  }
+  
