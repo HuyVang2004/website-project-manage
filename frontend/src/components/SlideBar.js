@@ -1,21 +1,60 @@
-import { Home, FileText, Target, BarChart2, Users, Plus, HelpCircle } from 'lucide-react';
-import '../styles/SlideBar.scss'; 
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { 
+  Home, 
+  FileText, 
+  Target, 
+  BarChart2, 
+  Users, 
+  Plus, 
+  HelpCircle, 
+  ListTodo, 
+  ChartNoAxesCombined, 
+  MonitorCog, 
+  MessageCircleMore 
+} from 'lucide-react';
+import '../styles/SlideBar.scss';
+
 const Sidebar = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const defaultIcons = [
+    { id: 1, Icon: Home, label: 'Trang chủ' },
+    { id: 2, Icon: FileText, label: 'Công việc' },
+    { id: 3, Icon: Target, label: 'Mục tiêu' },
+    { id: 4, Icon: BarChart2, label: 'Báo cáo' },
+    { id: 5, Icon: Users, label: 'Người dùng' },
+    { id: 6, Icon: Plus, label: 'Thêm mới' },
+  ];
+
+  const adminIcons = [
+    { id: 1, Icon: Home, label: 'Trang chủ', onClick: () => navigate('/admin') },
+    { id: 2, Icon: ListTodo, label: 'Dự án', onClick: () => navigate('/admin/projects') },
+    { id: 3, Icon: Users, label: 'Quản lý người dùng', onClick: () => navigate('/admin/users')},
+    { id: 4, Icon: ChartNoAxesCombined, label: 'Thống kê', onClick: () => navigate('/admin/statistics') },
+    { id: 5, Icon: MonitorCog, label: 'Cài đặt hệ thống', onClick: () => navigate('/admin/system') },
+    { id: 6, Icon: MessageCircleMore, label: 'Hỗ trợ', onClick: () => navigate('/admin/support') },
+  ];
+
+  const icons = location.pathname.startsWith('/admin') ? adminIcons : defaultIcons;
+
   return (
     <div className="sidebar">
-      {/* Sidebar Icons */}
       <div className="sidebar__icons">
-        <Home className="sidebar__icon" />
-        <FileText className="sidebar__icon" />
-        <Target className="sidebar__icon" />
-        <BarChart2 className="sidebar__icon" />
-        <Users className="sidebar__icon" />
-        <Plus className="sidebar__icon" />
+        {icons.map(({ id, Icon, label,onClick }) => (
+          <div key={id} className="sidebar__item"  onClick={onClick}>
+            <Icon className="sidebar__icon" />
+            <span className="sidebar__label">{label}</span>
+          </div>
+        ))}
       </div>
 
-      {/* Sidebar Bottom Icons */}
+
       <div className="sidebar__bottom">
-        <HelpCircle className="sidebar__icon" />
+        <div className="sidebar__item">
+          <HelpCircle className="sidebar__icon" />
+          <span className="sidebar__label">Trợ giúp</span>
+        </div>
       </div>
     </div>
   );

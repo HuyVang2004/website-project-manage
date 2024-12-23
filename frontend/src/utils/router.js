@@ -9,6 +9,7 @@ export const ROUTERS = {
     ADMIN: {
         DASHBOARD: "admin",
         MANAGEMENT:"admin/users",
+        USERDETAILS: "admin/users/details/:id",
         LANDINGPAGE: "landing"
     }
 }

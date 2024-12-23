@@ -18,18 +18,47 @@
     flex-direction: column;
     gap: 2rem;
     padding: 0 1rem; /* Thêm padding để các icon không chạm vào viền */
-  }
 
-  &__icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    color: #01050b;
-    cursor: pointer;
-    transition: color 0.2s ease, transform 0.2s ease; /* Thêm hiệu ứng chuyển màu và phóng to khi hover */
-    
-    &:hover {
-      color: #2563eb;
-      transform: scale(1.1); /* Phóng to icon khi hover */
+    .sidebar__item {
+      position: relative; /* Đặt icon và label liên quan nhau */
+      display: flex;
+      align-items: center;
+
+      .sidebar__icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        color: #01050b;
+        cursor: pointer;
+        transition: color 0.2s ease, transform 0.2s ease; /* Thêm hiệu ứng chuyển màu và phóng to khi hover */
+
+        &:hover {
+          color: #2563eb;
+          transform: scale(1.1); /* Phóng to icon khi hover */
+        }
+      }
+
+      /* Label hiển thị khi hover */
+      .sidebar__label {
+        position: absolute;
+        top: 50%; /* Canh giữa theo chiều dọc */
+        left: calc(100% + 10px); /* Đặt label bên phải icon */
+        transform: translateY(-50%); /* Đảm bảo label canh giữa icon */
+        background-color: #34495e; /* Màu nền của label */
+        color: white; /* Màu chữ */
+        padding: 5px 10px; /* Thêm padding cho label */
+        border-radius: 4px; /* Bo tròn góc */
+        white-space: nowrap; /* Không cho label xuống dòng */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Đổ bóng nhẹ */
+        opacity: 0; /* Mặc định ẩn label */
+        z-index: 100; /* Đảm bảo label nằm trên các thành phần khác */
+        pointer-events: none; /* Không cho phép người dùng tương tác với label */
+        transition: opacity 0.3s ease-in-out, left 0.3s ease-in-out;
+      }
+
+      &:hover .sidebar__label {
+        opacity: 1; /* Hiện label khi hover */
+        left: calc(100% + 15px); /* Dịch chuyển label sang phải khi hiện */
+      }
     }
   }
 
@@ -38,6 +67,47 @@
     display: flex;
     justify-content: center;
     padding: 1rem; /* Thêm khoảng cách cho phần dưới */
+    position: relative; /* Để sử dụng 'top' */
+    top: -20px; /* Đẩy phần HelpCircle lên 20px */
+
+    .sidebar__item {
+      position: relative;
+
+      .sidebar__icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        color: #01050b;
+        cursor: pointer;
+        transition: color 0.2s ease, transform 0.2s ease;
+
+        &:hover {
+          color: #2563eb;
+          transform: scale(1.1);
+        }
+      }
+
+      .sidebar__label {
+        position: absolute;
+        top: 50%;
+        left: calc(100% + 10px);
+        transform: translateY(-50%);
+        background-color: #34495e;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        white-space: nowrap;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        z-index: 100;
+        pointer-events: none;
+        transition: opacity 0.3s ease-in-out, left 0.3s ease-in-out;
+      }
+
+      &:hover .sidebar__label {
+        opacity: 1;
+        left: calc(100% + 15px);
+      }
+    }
   }
 
   /* Media query cho màn hình nhỏ */
