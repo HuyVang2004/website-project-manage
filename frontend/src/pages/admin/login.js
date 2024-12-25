@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
-import '../../styles/pages/login.scss';
+import './style/Login.scss';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);

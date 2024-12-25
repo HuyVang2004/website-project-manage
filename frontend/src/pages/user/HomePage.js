@@ -2,7 +2,7 @@ import { memo } from "react";
 import Sidebar from '../../components/SlideBar'; 
 import TopBar from '../../components/topBar'; 
 import Footer from '../../components/Footer'; 
-import '../../styles/pages/AdminPage.scss';
+import '../../styles/pages/HomePage.scss';
 
 const HomePage = () => {
   const stats = [

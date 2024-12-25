@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
-import '../../styles/pages/register.scss';
+import './style/Register.scss';
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);

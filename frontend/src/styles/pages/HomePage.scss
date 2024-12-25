@@ -13,6 +13,18 @@
   flex-direction: column;
   padding: 1.5rem; /* Thêm padding cho các phần tử bên trong */
 }
+  .header {
+    margin-bottom: 2rem;
+    text-align: center; // Căn giữa toàn bộ header
+  
+    &__title {
+      font-size: 50px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+  }
+  
 
 .footer {
   margin-top: auto; /* Đưa Footer xuống dưới cùng */

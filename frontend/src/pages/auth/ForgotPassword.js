@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
-import '../../styles/pages/ForgotPassword.scss';
+import '../admin/style/ForgotPassword.scss';
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();

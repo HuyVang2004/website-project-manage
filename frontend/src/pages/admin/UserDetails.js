@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { ROUTERS } from '../../utils/router';
 import Sidebar from '../../components/SlideBar';
 import TopBar from '../../components/topBar';
 import Footer from '../../components/Footer';
@@ -71,6 +72,10 @@ const UserDetail = () => {
                   <span>{user.name}</span>
                 </div>
                 <div>
+                  <span className="label">Giới tính: </span>
+                  <span>{user.gender}</span>
+                </div>
+                <div>
                   <span className="label">Mail: </span>
                   <span>{user.email}</span>
                 </div>
@@ -78,17 +83,17 @@ const UserDetail = () => {
                   <span className="label">Số điện thoại: </span>
                   <span>{user.phone}</span>
                 </div>
-                <div>
-                  <span className="label">Trạng thái: </span>
-                  <span>{user.status}</span>
-                </div>
+              
               </div>
 
               <div className="info-card">
-                <span className="label">Hoạt động gần nhất:</span>
-                <div className="activities">
-                  <div>+ ABC 10 giờ trước</div>
-                  <div>+ CDE 11 giờ trước</div>
+              <div>
+                  <span className="label">Trạng thái: </span>
+                  <span>{user.status}</span>
+                </div>
+                <div>
+                  <span className="label">Các dự án: </span>
+                  <span>{" "+user.project}</span>
                 </div>
               </div>
             </div>
@@ -97,7 +102,7 @@ const UserDetail = () => {
               <div className="stats-grid">
                 <div>
                   <span className="label">Số dự án tham gia:</span>
-                  <span>10</span>
+                  <span>{user.project.length}</span>
                 </div>
                 <div>
                   <span className="label">Lần truy cập gần nhất:</span>
@@ -113,10 +118,10 @@ const UserDetail = () => {
             <div className="projects-section">
               <h3>Các dự án tham gia</h3>
               <div className="projects-list">
-                {['Dự án A', 'Dự án B', 'Dự án C'].map((project, index) => (
-                  <div key={index} className="project-item">
-                    <span>{project}</span>
-                    <button className="view-details">
+              {user.project.map((project, index) => (
+                  <div key={index} className="project-item"> 
+                    <span>Dự án {project}</span>
+                    <button onClick={() => navigate(`/${ROUTERS.ADMIN.PROJECT}/${project}`)} className="view-details">
                       Xem chi tiết
                     </button>
                   </div>
