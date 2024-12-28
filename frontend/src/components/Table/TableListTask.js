@@ -5,7 +5,12 @@ import taskAPI from '../../api/tasksApi';
 
 const TableListTask = () => {
   const userData = JSON.parse(localStorage.getItem('user_profile'));
-  const userID = userData.user_id;
+  let userId = ""
+  try {
+    userId = userData.user_id;
+  } catch (err) {
+    console.log(err);
+  }
   const [filters, setFilters] = useState({
     priority: '',
     status: '',
@@ -58,8 +63,8 @@ const TableListTask = () => {
       }
     };
 
-    fetchTaskRoles(userID); // Pass userID from props to fetch task roles
-  }, [userID]); // Dependency array to re-fetch tasks when userID changes
+    fetchTaskRoles(userId); // Pass userID from props to fetch task roles
+  }, [userId]); // Dependency array to re-fetch tasks when userID changes
 
   if (loading) {
     return <div>Loading tasks...</div>;
