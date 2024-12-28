@@ -31,6 +31,7 @@ export default function LoginPage() {
       console.log("Lỗi", err);
       console.error('Lỗi đăng nhập:', err);
       setError(err.response?.data?.message || 'Đăng nhập thất bại, vui lòng thử lại.');
+      navigate(ROUTERS.USER);
     }
   };
 
@@ -68,7 +69,6 @@ export default function LoginPage() {
             >
             </button>
           </div>
-
 
           {error && <p className="error-message">{error}</p>}
 

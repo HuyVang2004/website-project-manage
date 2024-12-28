@@ -1,6 +1,6 @@
 import { memo } from "react";
 import Sidebar from '../../../components/SlideBar'; 
-import TopBar from '../../../components/Nav/TopBar'; 
+import TopBar from "../../../components/Nav/TopBar";
 import Footer from '../../../components/Footer'; 
 import ChangePassword from "../../../components/Profile/ChangePassword";
 import './ChangePasswordPage.scss';
