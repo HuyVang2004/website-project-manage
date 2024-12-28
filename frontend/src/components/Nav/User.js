@@ -6,15 +6,18 @@ import "./User.scss";
 import {useNavigate} from 'react-router-dom';
 import {ROUTERS} from '../../utils/router';
 
-const User = ({ email, name, image }) => {
+const User = () => {
     const navigate = useNavigate();
-
+    const userData = JSON.parse(localStorage.getItem('user_profile'))
+    const name = userData.full_name
+    const image = userData.profile_picture
+    const email = userData.email
     const handleEditProfile = () => {
         navigate(ROUTERS.USER.PROFILE);
     };
     
     const handleLogout = () => {
-        localStorage.removeItem("user"); // Hoặc sessionStorage.removeItem("user");
+        localStorage.removeItem("user_profile"); // Hoặc sessionStorage.removeItem("user");
         navigate("/dangnhap");
 
         alert(`${name} đã đăng xuất.`);

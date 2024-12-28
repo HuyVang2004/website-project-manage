@@ -28,5 +28,4 @@ const GanttChart = () => {
     </div>
   );
 };
-
 export default GanttChart;

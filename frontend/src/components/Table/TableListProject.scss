@@ -193,12 +193,12 @@ $table-cell-padding: 12px;
   font-family: 'Public Sans';
   font-weight: 500;
   line-height: 20px;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.07em;  
   word-wrap: break-word;
   // color: #1D1F2C; /* Màu mặc định cho trạng thái */
   // padding: 5px 10px; /* Khoảng cách giữa chữ và khung */
   // border-radius: 5px; /* Bo tròn góc của khung */
-  // border: 1px solid #1D1F2C; /* Màu của viền mặc định */
+  // border: 1px solid #1D1F2C; /* Màu của viền  mặc định */
   
   &.in-progress {
     color: #F86624;

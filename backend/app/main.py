@@ -2,9 +2,18 @@ from fastapi import FastAPI
 from app.api import users, projects, tasks, project_teams, comments, notifications, activity_logs, project_documents, task_role, help, admins
 from app.db.session import engine
 from app.db.base import Base
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Chỉ cho phép localhost:3000
+    allow_credentials=True,
+    allow_methods=["*"],  # Cho phép tất cả các phương thức HTTP
+    allow_headers=["*"],  # Cho phép tất cả các headers
+)
 
 Base.metadata.create_all(bind=engine)
 

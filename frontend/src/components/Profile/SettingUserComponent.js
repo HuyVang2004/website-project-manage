@@ -10,9 +10,10 @@ import {
   Typography,
   Button,
 } from "@mui/material";
-import "./SettingUserComponent.scss"; // Import file SCSS
+import userApi from "../../api/userApi"; 
+import "./SettingUserComponent.scss"; 
 
-const PersonalInformation = () => {
+const PersonalInformation = ({ userId }) => {
   const [formData, setFormData] = useState({
     name: "",
     firstName: "",
@@ -24,7 +25,11 @@ const PersonalInformation = () => {
     introduction: "Normal text",
     bio: "",
   });
+  const [loading, setLoading] = useState(false); // Trạng thái tải
+  const [error, setError] = useState(""); // Trạng thái lỗi
+  const [success, setSuccess] = useState(""); // Trạng thái thành công
 
+  // Xử lý thay đổi input
   const handleChange = (event) => {
     const { id, value } = event.target;
     setFormData({
@@ -33,25 +38,23 @@ const PersonalInformation = () => {
     });
   };
 
+  // Xử lý gửi thông tin cập nhật
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
+    setError(""); // Reset lỗi
+    setSuccess(""); // Reset thông báo thành công
+
     try {
-      const response = await fetch("http://your-api-endpoint.com/user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error("There was an error submitting the data");
-      }
-
-      const data = await response.json();
-      console.log("Data submitted successfully", data);
+      // Gọi API để cập nhật thông tin người dùng
+      const response = await userApi.updateUserInfo(userId, formData);
+      setSuccess("Cập nhật thông tin thành công!");
+      console.log("Updated successfully:", response);
     } catch (error) {
+      setError("Có lỗi xảy ra khi cập nhật thông tin. Vui lòng thử lại.");
       console.error("Error:", error);
+    } finally {
+      setLoading(false); // Đặt trạng thái tải là false
     }
   };
 
@@ -93,7 +96,7 @@ const PersonalInformation = () => {
                   id="first-name"
                   placeholder="Nhập tên"
                   variant="outlined"
-                  value={formData.firstName}
+                   value={formData.firstName}
                   onChange={handleChange}
                   fullWidth
                   className="textfield"
@@ -197,7 +200,7 @@ const PersonalInformation = () => {
                 placeholder="Viết giới thiệu về bản thân"
                 variant="outlined"
                 fullWidth
-                multiline
+                multiline  
                 rows={4}
                 value={formData.bio}
                 onChange={handleChange}
@@ -205,10 +208,20 @@ const PersonalInformation = () => {
               />
             </Grid>
           </Grid>
-          <Button type="submit" variant="contained" color="primary" className="button-submit">
-            Lưu thông tin
+
+          <Button 
+            type="submit" 
+            variant="contained" 
+            color="primary" 
+            className="button-submit"
+            disabled={loading}
+          >
+            {loading ? "Đang cập nhật..." : "Lưu thông tin"}
           </Button>
         </form>
+
+        {error && <Typography variant="body2" color="error">{error}</Typography>}
+        {success && <Typography variant="body2" color="primary">{success}</Typography>}
       </Box>
     </Box>
   );

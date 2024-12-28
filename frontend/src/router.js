@@ -1,12 +1,8 @@
 import { Routes , Route } from "react-router-dom";
 import { ROUTERS } from "./utils/router";
 import HomePage from "./pages/user/HomePage"
-<<<<<<< HEAD
 import ProfilePage from "./pages/user/profilePage/ProfilePage";
-=======
-import ProfilePage from "./pages/user/profilePage";
 import ProjectDetails from "./pages/user/profilePage/projectDetails";
->>>>>>> 3a3018aac63e823be9654dc1f10dd8b507fcf92f
 import RegisterPage from "./pages/admin/register";
 import LoginPage from "./pages/admin/login"; 
 import ChangePasswordPage from "./pages/user/ChangePassword/ChangePasswordPage";
@@ -18,7 +14,7 @@ const renderUserRouter = () => {
     const userRouter = [
       {
         path: ROUTERS.USER.HOME,
-        component: <HomePage />,
+        component: <HomePage />,   
       },
       {
         path: ROUTERS.USER.PROFILE.BASE,
@@ -41,14 +37,13 @@ const renderUserRouter = () => {
     return (
       <Routes>
         <Route path={ROUTERS.USER.HOME} element={<HomePage />} />
-        <Route path={ROUTERS.USER.PROFILE.BASE} element={<ProfilePage />} />
-        <Route path={ROUTERS.USER.PROFILE.PROJECTDETAILS} element={<ProjectDetails />} />
+        {/* <Route path={ROUTERS.USER.PROJECT.BASE} element={<ProfilePage />} /> */}
+        <Route path={ROUTERS.USER.PROJECT.PROJECTDETAILS} element={<ProjectDetails />} />
         <Route path={ROUTERS.USER.PROFILE} element={<ProfilePage />} />
         <Route path={ROUTERS.USER.REGISTER} element={<RegisterPage />} />
         <Route path={ROUTERS.USER.LOGIN} element={<LoginPage />} />
         <Route path={ROUTERS.USER.CHANGEPASSWORD} element={<ChangePasswordPage/>}/>
         <Route path={ROUTERS.USER.SETTINGUSER} element={<SettingUserPage/>}/>
-        <Route path={ROUTERS.USER.PROJECT} element={<ProjectPage/>}/>
       </Routes>
     );
   };

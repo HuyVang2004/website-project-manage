@@ -15,7 +15,7 @@ const PieChart = ({ data, labels, colors}) => {
   const chartData = {
     labels: labels,
     datasets: [
-      {
+      { 
         data: data,
         backgroundColor: colors,
         hoverBackgroundColor: colors.map(color => color + '80'),

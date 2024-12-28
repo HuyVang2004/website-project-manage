@@ -17,3 +17,4 @@ const DHTMLXGantt = () => {
 };
 
 export default DHTMLXGantt;
+ 

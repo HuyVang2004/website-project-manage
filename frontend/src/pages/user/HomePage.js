@@ -1,6 +1,6 @@
 import { memo } from "react";
 import Slidebar from '../../components/SlideBar'; 
-import TopBar from '../../components/Nav/topBar'; 
+import TopBar from '../../components/Nav/TopBar'; 
 import Footer from '../../components/Footer'; 
 import '../../styles/pages/HomePage.scss';
 import TableListProject from "../../components/Table/TableListProject";
@@ -9,7 +9,7 @@ import MyCalendar from "../../components/Calendar/Calendar";
 const HomePage = () => {
   const stats = [
     { title: 'Số dự án đang làm', count: 0 },
-    { title: 'Số công việc đang làm', count: 0 },
+    { title: 'Số công việc đang làm', count: 0 },  
     { title: 'Số dự án đã làm', count: 0 },
     { title: 'Số công việc đã làm', count: 0 }
   ];

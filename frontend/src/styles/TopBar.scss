@@ -228,19 +228,23 @@ body {
   }
   .chuong-icon{
     position: relative;
+    background-color: #ffffff;
+    align-items: center;
     .chuong{
       position: absolute;
       width: 400px;
       height: 400px;
-      background-color: #ccc;
+      background-color: #ffffff;
       padding-left: 10px;
       left: -380px;
       top: 28px;
       border-radius: 20px;
     }
+
     .thongbao {
       padding-top: 10px;
       font-size: 16px;
+      background-color: #ffffff;
       margin: center;
       
     }
@@ -259,6 +263,7 @@ body {
 
   .caidat-icon{
     position: relative;
+    background-color: #ffffff;
     .setting{
       position: absolute;
       width: 400px;
@@ -285,8 +290,3 @@ body {
       }
     }
   }
-<<<<<<< HEAD
-=======
-
-  
->>>>>>> 3a3018aac63e823be9654dc1f10dd8b507fcf92f

@@ -1,6 +1,6 @@
 import { memo } from "react";
 import Sidebar from '../../../components/SlideBar'; 
-import TopBar from '../../../components/Nav/topBar'; 
+import TopBar from '../../../components/Nav/TopBar'; 
 import Footer from '../../../components/Footer'; 
 import Profile from "../../../components/Profile/Profile";
 
@@ -14,7 +14,7 @@ const ProfilePage = () => {
     job: "Giáo viên",
     address: "Đà Nẵng",
     description: "Một người yêu công nghệ và sáng tạo."
-  };
+  };   
 
   return (
     <div className="dashboard">
@@ -26,7 +26,7 @@ const ProfilePage = () => {
         {/* TopBar Component */}
         <TopBar />
         <div className="profile-container">
-            <Profile user={user}/> 
+            <Profile userId={"07e4797a-9cab-463b-8938-75a00bc2fde9"}/> 
         </div>
         {/* Footer Component */}
         </div>

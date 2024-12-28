@@ -1,9 +1,9 @@
 import { memo } from "react";
 import Sidebar from '../../../components/SlideBar'; 
-import TopBar from '../../../components/Nav/topBar'; 
+import TopBar from '../../../components/Nav/TopBar'; 
 import Footer from '../../../components/Footer'; 
 import PersonalInformation from "../../../components/Profile/SettingUserComponent";
-import './PersonalInfomationPage.scss';
+import './SettingUserPage.scss';
 const PersonalInfomationPage = () => {
     return (
         <div className="dashboard">
@@ -17,7 +17,7 @@ const PersonalInfomationPage = () => {
                 <PersonalInformation></PersonalInformation>
             </div>
             </div>
-            {/* Footer Component */}
+            {/* Footer Component */} 
             <Footer />
         </div>
       );

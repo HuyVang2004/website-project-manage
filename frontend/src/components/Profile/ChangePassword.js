@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import "./ChangePassword.scss";
+import userApi from "../../api/userApi";
 
-const ChangePassword= ({ user }) => {
+const ChangePassword = ({ user }) => {
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -10,13 +11,14 @@ const ChangePassword= ({ user }) => {
 
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("error"); // "success" or "error"
+  const [loading, setLoading] = useState(false); // Để xử lý trạng thái đang tải
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (formData.newPassword !== formData.confirmPassword) {
@@ -25,15 +27,34 @@ const ChangePassword= ({ user }) => {
       return;
     }
 
-    setMessageType("success");
-    setMessage("Thay đổi mật khẩu thành công!");
-    setFormData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    setLoading(true);
+    setMessage(""); // Reset message
+
+    try {
+      const data = {
+        oldPassword: formData.currentPassword,
+        newPassword: formData.newPassword,
+      };
+
+      await userApi.changePassword(user.id, data); 
+      setMessageType("success");
+      setMessage("Thay đổi mật khẩu thành công!");
+
+      // Reset form
+      setFormData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    } catch (err) {
+      console.log(err);
+      setMessageType("error");
+      setMessage("Đã xảy ra lỗi khi thay đổi mật khẩu. Vui lòng thử lại!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="change-password-container">
       <h2>🔒 Thay đổi mật khẩu</h2>
-      
+
       {/* Header - User Info */}
       <div className="user-info">
         <img src={user.avatar} alt="User Avatar" className="user-avatar" />
@@ -90,8 +111,8 @@ const ChangePassword= ({ user }) => {
           </p>
         )}
 
-        <button type="submit" className="submit-button">
-          Lưu thay đổi
+        <button type="submit" className="submit-button" disabled={loading}>
+          {loading ? "Đang thay đổi..." : "Lưu thay đổi"}
         </button>
       </form>
     </div>

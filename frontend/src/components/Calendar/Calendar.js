@@ -17,7 +17,7 @@ const MyCalendar = ({ tasks }) => {
   const taskMap = tasks.reduce((acc, task) => {
     const key = formatDateKey(task.dueDate);
     if (key) {
-      acc[key] = task.task;
+      acc[key] = task.task; 
     }
     return acc;
   }, {});

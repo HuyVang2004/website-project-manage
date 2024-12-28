@@ -21,6 +21,7 @@
     "@fullcalendar/timegrid": "^6.1.15",
     "@mui/icons-material": "^6.2.0",
     "@mui/material": "^6.2.0",
+    "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.7",
     "chartjs-plugin-datalabels": "^2.2.0",

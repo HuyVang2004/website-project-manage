@@ -15,7 +15,7 @@ export default function RegisterPage() {
             <input
               id="name"
               className="form-control"
-              type="text"
+              type="text"  
               name="Name"
               placeholder="Tên đăng nhập"
             />

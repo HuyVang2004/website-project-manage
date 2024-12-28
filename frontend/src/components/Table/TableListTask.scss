@@ -28,7 +28,7 @@ $table-cell-padding: 12px;
   border-bottom: 1px solid #f0f1f3;
   padding: $table-cell-padding;
   align-items: center;
-}
+}  
 
 .row-container:hover {
   background-color: #f0f1f3; /* Màu nền khi hover */
@@ -86,8 +86,14 @@ $table-cell-padding: 12px;
   font-size: 14px;
   color: #667085;
   display: flex;
+  padding: 8px;
   align-items: center; /* Căn giữa theo chiều dọc */
 }
+
+.cell.project {
+  flex: 0 0 30%; /* Chiếm 30% */
+}
+
 
 .project {
   display: flex;
@@ -193,6 +199,12 @@ $table-cell-padding: 12px;
     color: #EB3D4D;
     font-weight: 600;
     border-color: #EB3D4D; /* Màu viền khi trạng thái 'unfinished' */
+  }
+
+  &.begin{
+    color: #42dde2;
+    font-weight: 600;
+    border-color: #3fbbf5;
   }
 }
 

@@ -1,7 +1,7 @@
 import { memo, useState, useEffect } from "react";
 import "./style.scss";
 import Sidebar from "../../../../components/SlideBar";
-import TopBar from "../../../../components/topBar";
+import TopBar from "../../../../components/Nav/TopBar";
 import Footer from "../../../../components/Footer";
 import { FaListUl } from "react-icons/fa";
 import { IoCalendarNumberSharp } from "react-icons/io5";
@@ -17,7 +17,7 @@ import './calendar-styles.scss';
 const ProjectDetails = () => {
   const [scrolled, setScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState("cong-viec"); // Tab mặc định là Công việc
-
+   
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);

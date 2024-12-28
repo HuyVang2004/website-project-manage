@@ -1,27 +1,62 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Box, Grid, IconButton, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import LockIcon from "@mui/icons-material/Lock";
 import { useNavigate } from "react-router-dom";
+import userAPI from "../../api/userApi";
 import "./Profile.scss";
 import { ROUTERS } from "../../utils/router";
 
-const Profile = ({ user }) => {
-  // Khai báo useNavigate trong thân component
+const Profile = ({ userId }) => {
+  const [user, setUser] = useState(null); // State để lưu thông tin người dùng
+  const [loading, setLoading] = useState(true); // State để quản lý trạng thái tải dữ liệu
+  const [error, setError] = useState(null); // State để lưu lỗi nếu có
   const navigate = useNavigate();
 
-  // Sử dụng navigate trong các hàm xử lý sự kiện
+  // Lấy thông tin người dùng khi component được mount
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      setLoading(true);
+      try {
+        const userData = JSON.parse(localStorage.getItem('user_profile')); // Lấy data từ API
+        setUser(userData); // Lưu thông tin
+      } catch (err) {
+        setError("Không thể tải thông tin người dùng. Vui lòng thử lại sau."); // Xử lý lỗi nếu có
+      } finally {
+        setLoading(false); 
+      }
+    };
+
+    fetchUserProfile();
+  }, [userId]);
+
+
+  if (loading) {
+    return <Typography variant="h6">Đang tải thông tin...</Typography>;
+  }
+
+  // Nếu có lỗi, hiển thị thông báo lỗi
+  if (error) {
+    return <Typography variant="h6" color="error">{error}</Typography>;
+  }
+
+  // Nếu không tìm thấy dữ liệu người dùng, hiển thị thông báo
+  if (!user) {
+    return <Typography variant="h6">Không tìm thấy thông tin người dùng.</Typography>;
+  }
+
+  // Các hàm xử lý sự kiện
   const handleEditClick = () => {
-    navigate(ROUTERS.USER.SETTINGUSER); // Dùng navigate thay vì gọi useNavigate trực tiếp
+    navigate(ROUTERS.USER.SETTINGUSER); // Điều hướng đến trang chỉnh sửa thông tin người dùng
   };
 
   const handlePasswordClick = () => {
-    navigate(ROUTERS.USER.CHANGEPASSWORD);
+    navigate(ROUTERS.USER.CHANGEPASSWORD); // Điều hướng đến trang thay đổi mật khẩu
   };
 
   const handleClose = () => {
-    navigate(ROUTERS.USER.HOME);
+    navigate(ROUTERS.USER.HOME); // Điều hướng về trang chủ
   };
 
   return (
@@ -32,12 +67,12 @@ const Profile = ({ user }) => {
 
       <Box className="profile-avatar-container">
         <Avatar
-          src={user.avatar || "https://via.placeholder.com/150"}
+          src={user.profile_picture || "https://via.placeholder.com/150"} // Hiển thị avatar nếu có, nếu không sẽ dùng avatar mặc định
           alt="Avatar"
           className="profile-avatar"
         />
         <Typography variant="h5" className="profile-name">
-          {user.name || "Phạm Hữu Vang"}
+          {user.full_name || "Phạm Hữu Vang"} {/* Hiển thị tên người dùng nếu có */}
         </Typography>
       </Box>
 
