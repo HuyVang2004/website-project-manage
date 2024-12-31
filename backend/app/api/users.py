@@ -7,7 +7,7 @@ from app.models.user import User
 from app.db.session import get_db
 from app.services.user_service import reset_password
 from fastapi_mail import FastMail, MessageSchema
-from app.core.config import Settings
+from app.core.config import Settings 
 
 router = APIRouter()
 
@@ -71,3 +71,40 @@ def change_password(user_id: str, old_password: str, new_password: str, db: Sess
     return {"message": "Password updated successfully"}
 
 
+# Gửi yêu cầu quên mật khẩu
+@router.post("/forgot-password")
+async def forgot_password(email: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    reset_token = create_reset_token({"email": user.email})
+    email_content = f"Click the link to reset your password: http://example.com/reset-password?token={reset_token}"
+
+    message = MessageSchema(
+        subject="Reset your password",
+        recipients=[user.email],
+        body=email_content,
+        subtype="html",
+    )
+
+    fm = FastMail(Settings().mail_config)
+    await fm.send_message(message)  # Đảm bảo rằng await được sử dụng trong hàm async
+    
+    return {"message": "Reset password email sent successfully"}
+
+
+
+# đặt lại mật khẩu
+@router.post("/reset-password")
+def reset_password_endpoint(token: str, new_password: str, db: Session = Depends(get_db)):
+    payload = verify_reset_token(token)
+    if not payload:
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
+
+    email = payload.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="Invalid token payload")
+
+    reset_password(email, new_password, db)
+    return {"message": "Password reset successfully"}
