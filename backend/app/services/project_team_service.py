@@ -70,3 +70,17 @@ class ProjectTeamService:
             .all()
         )
         return project_teams
+
+    @staticmethod
+    def get_active_projects_count_by_user(db: Session, user_id: str) -> int:
+        return db.query(Project).join(ProjectTeam).filter(
+            Project.status == 'đang tiến hành',
+            ProjectTeam.user_id == user_id
+        ).count()
+
+    @staticmethod
+    def get_completed_projects_count_by_user(db: Session, user_id: str) -> int:
+        return db.query(Project).join(ProjectTeam).filter(
+            Project.status == 'hoàn thành',
+            ProjectTeam.user_id == user_id
+        ).count()
