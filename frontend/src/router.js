@@ -1,4 +1,4 @@
-import { Routes , Route } from "react-router-dom";
+import { Routes , Route, Navigate } from "react-router-dom";
 import { ROUTERS } from "./utils/router";
 import HomePage from "./pages/user/HomePage"
 import ProfilePage from "./pages/user/profilePage/ProfilePage";
@@ -8,7 +8,7 @@ import LoginPage from "./pages/admin/login";
 import ChangePasswordPage from "./pages/user/ChangePassword/ChangePasswordPage";
 import SettingUserPage from "./pages/user/Personal/SettingUserPage";
 import ProjectPage from "./pages/user/Projects/ProjectPage";
-
+import ForgotPasswordPage from "./pages/admin/forgotPasswordPage";
 
 const renderUserRouter = () => {
     const userRouter = [
@@ -36,6 +36,7 @@ const renderUserRouter = () => {
   const RouterCustom = () => {
     return (
       <Routes>
+        <Route path={ROUTERS.USER.DEFAULT} element={<Navigate to={ROUTERS.USER.LOGIN}/>}/>
         <Route path={ROUTERS.USER.HOME} element={<HomePage />} />
         {/* <Route path={ROUTERS.USER.PROJECT.BASE} element={<ProfilePage />} /> */}
         <Route path={ROUTERS.USER.PROJECT.PROJECTDETAILS} element={<ProjectDetails />} />
@@ -44,6 +45,7 @@ const renderUserRouter = () => {
         <Route path={ROUTERS.USER.LOGIN} element={<LoginPage />} />
         <Route path={ROUTERS.USER.CHANGEPASSWORD} element={<ChangePasswordPage/>}/>
         <Route path={ROUTERS.USER.SETTINGUSER} element={<SettingUserPage/>}/>
+        <Route path={ROUTERS.USER.FORGOTPASSWORD} element={<ForgotPasswordPage/>}/>
       </Routes>
     );
   };
