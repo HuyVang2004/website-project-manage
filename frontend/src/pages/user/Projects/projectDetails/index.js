@@ -2,7 +2,7 @@ import { memo, useState, useEffect } from "react";
 import "./style.scss";
 import Sidebar from "../../../../components/SlideBar";
 import TopBar from "../../../../components/Nav/TopBar";
-import Footer from "../../../../components/Footer";
+// import Footer from "../../../../components/Footer";
 import { FaListUl } from "react-icons/fa";
 import { IoCalendarNumberSharp } from "react-icons/io5";
 import { HiChartBar } from "react-icons/hi";
@@ -13,6 +13,11 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction'; // Cho phép tương tác (kéo thả, chọn)
 import timeGridPlugin from '@fullcalendar/timegrid';
 import './calendar-styles.scss';
+import TableListProject from "../../../../components/Table/TableListProject";
+import ChatBox from "../boxChatPage/BoxChatPage";
+import Gantt from "../ganttChart/Gantt";
+
+
 
 const ProjectDetails = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -92,31 +97,7 @@ const ProjectDetails = () => {
       case "cong-viec":
         return (
           <div className="tab-content">
-            <h2>Công việc</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Tên công việc</th>
-                  <th>Trạng thái</th>
-                  <th>Người phụ trách</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Phân tích yêu cầu</td>
-                  <td>Hoàn thành</td>
-                  <td>Nguyễn Văn A</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Thiết kế hệ thống</td>
-                  <td>Đang thực hiện</td>
-                  <td>Trần Thị B</td>
-                </tr>
-              </tbody>
-            </table>
+          <TableListProject />
           </div>
         );
       case "lich":
@@ -135,7 +116,7 @@ const ProjectDetails = () => {
                   center: 'title',
                   right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 }}
-                height={"1000px"}
+                height={"800px"}
                 editable={true}
                 eventDrop={(info) => {
                   const droppedEventId = info.event.id;
@@ -158,10 +139,7 @@ const ProjectDetails = () => {
         );
       case "gantt":
         return (
-          <div className="tab-content">
-            <h2>Gantt</h2>
-            <p>Hiển thị biểu đồ Gantt.</p>
-          </div>
+          <Gantt />
         );
       case "tai-lieu":
         return (
@@ -172,10 +150,7 @@ const ProjectDetails = () => {
         );
       case "thao-luan":
         return (
-          <div className="tab-content">
-            <h2>Thảo luận</h2>
-            <p>Hiển thị nội dung thảo luận.</p>
-          </div>
+            <ChatBox />
         );
       default:
         return <div className="tab-content">Chọn tab hợp lệ để xem nội dung</div>;
@@ -228,7 +203,7 @@ const ProjectDetails = () => {
         {/* Phần nội dung bên dưới */}
         <div className="content">{renderContent()}</div>
       </div>
-      <Footer />
+      {/*<Footer /> */}
     </div>
   );
 };

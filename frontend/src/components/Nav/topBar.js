@@ -1,4 +1,4 @@
-import { memo, useState, useEffect, useCallback } from "react";
+import { memo, useState, useEffect, useCallback, useRef } from "react";
 import "../../styles/TopBar.scss";
 import { HiBars3 } from "react-icons/hi2";
 import { BsBell } from "react-icons/bs";
@@ -28,6 +28,12 @@ const TopBar = () => {
   const [isNotification, setNotification] = useState(false);
   const [isSetting, setIsSetting] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  
+  // Refs for click outside detection
+  const notificationRef = useRef(null);
+  const settingRef = useRef(null);
+  const notificationButtonRef = useRef(null);
+  const settingButtonRef = useRef(null);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);
@@ -35,13 +41,20 @@ const TopBar = () => {
 
   const thongbao = useCallback(() => {
     setNotification(prev => !prev);
-  }, []);
+    // Close settings panel when opening notifications
+    if (!isNotification) {
+      setIsSetting(false);
+    }
+  }, [isNotification]);
 
   const caidat = useCallback(() => {
     setIsSetting(prev => !prev);
-  }, []);
+    // Close notifications panel when opening settings
+    if (!isSetting) {
+      setNotification(false);
+    }
+  }, [isSetting]);
 
-  // useEffect để theo dõi khi người dùng cuộn trang
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -50,6 +63,32 @@ const TopBar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Check if click is outside notification panel
+      if (isNotification && 
+          notificationRef.current && 
+          !notificationRef.current.contains(event.target) &&
+          !notificationButtonRef.current.contains(event.target)) {
+        setNotification(false);
+      }
+
+      // Check if click is outside settings panel
+      if (isSetting && 
+          settingRef.current && 
+          !settingRef.current.contains(event.target) &&
+          !settingButtonRef.current.contains(event.target)) {
+        setIsSetting(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isNotification, isSetting]);
 
   const menuItems = [
     { icon: <Home />, text: "Tổng Quan", href: "http://localhost:3000/" },
@@ -102,20 +141,28 @@ const TopBar = () => {
           {/* Right Section */}
           <div className="col-right header-top-right">
             <div className="icon" aria-label="Notifications" role="button" tabIndex={0}>
-              <div className={`chuong-icon ${isNotification ? 'open' : ''}`} onClick={thongbao}>
+              <div 
+                ref={notificationButtonRef}
+                className={`chuong-icon ${isNotification ? 'open' : ''}`} 
+                onClick={thongbao}
+              >
                 <BsBell />
                 {isNotification && (
-                  <div className="chuong">
+                  <div ref={notificationRef} className="chuong">
                     <Notifications notifications={notificationsData} />
                   </div>
                 )}
               </div>
             </div>
             <div className="icon" aria-label="User Profile" role="button" tabIndex={0}>
-              <div className={`caidat-icon ${isSetting ? 'open' : ''}`} onClick={caidat}>
+              <div 
+                ref={settingButtonRef}
+                className={`caidat-icon ${isSetting ? 'open' : ''}`} 
+                onClick={caidat}
+              >
                 <FaRegUserCircle />
                 {isSetting && (
-                  <div className="setting">
+                  <div ref={settingRef} className="setting">
                     <User />
                   </div>
                 )}
