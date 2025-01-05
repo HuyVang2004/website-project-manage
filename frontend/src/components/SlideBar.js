@@ -13,13 +13,13 @@ const Sidebar = () => {
         <a href="http://localhost:3000/duan" className="sidebar__link">
           <FileText className="sidebar__icon" />
         </a>
-        <a href="/target" className="sidebar__link">
+        <a href="http://localhost:3000/mytask" className="sidebar__link">
           <Target className="sidebar__icon" />
         </a>
         <a href="/stats" className="sidebar__link">
           <BarChart2 className="sidebar__icon" />
         </a>
-        <a href="/users" className="sidebar__link">
+        <a href="http://localhost:3000/nguoidung" className="sidebar__link">
           <Users className="sidebar__icon" />
         </a>
         <a href="/add" className="sidebar__link">

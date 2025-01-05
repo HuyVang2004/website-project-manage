@@ -8,6 +8,24 @@ const projectBasePage = () => {
     const [isProject, setIsProject] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     
+    // Thêm state cho danh sách dự án và phân trang
+    const [projects, setProjects] = useState([
+        { id: 1, title: "Dự án A", status: "Completed", description: "Mô tả....", deadline: "05 APRIL 2023" },
+        { id: 2, title: "Dự án B", status: "Completed", description: "Mô tả....", deadline: "05 APRIL 2023" },
+        { id: 3, title: "Dự án C", status: "Completed", description: "Mô tả....", deadline: "05 APRIL 2023" },
+        { id: 4, title: "Dự án D", status: "Completed", description: "Mô tả....", deadline: "05 APRIL 2023" },
+        { id: 5, title: "Dự án E", status: "Completed", description: "Mô tả....", deadline: "05 APRIL 2023" },
+        { id: 6, title: "Dự án F", status: "Completed", description: "Mô tả....", deadline: "05 APRIL 2023" },
+    ]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const projectsPerPage = 4;
+
+    // Tính toán phân trang
+    const indexOfLastProject = currentPage * projectsPerPage;
+    const indexOfFirstProject = indexOfLastProject - projectsPerPage;
+    const currentProjects = projects.slice(indexOfFirstProject, indexOfLastProject);
+    const totalPages = Math.ceil(projects.length / projectsPerPage);
+    
     const toggleProject = () => {
         console.log("Current state:");   
         setIsProject(prev => !prev);
@@ -23,9 +41,31 @@ const projectBasePage = () => {
     }, []);
 
     const handleModalClose = (e) => {
-        // Ngăn chặn sự kiện lan rộng (event propagation)
         e.stopPropagation();
         toggleProject();
+    }
+
+    // Thêm các handlers cho phân trang
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const handlePrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(prev => prev - 1);
+        }
+    };
+
+    const handleNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(prev => prev + 1);
+        }
+    };
+
+    // Tạo mảng số trang
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
     }
 
     return (
@@ -50,11 +90,21 @@ const projectBasePage = () => {
                                         <div className="modal-overlay" onClick={handleModalClose}>
                                             <div className="new_project" onClick={(e) => e.stopPropagation()}>
                                                 {/* ... (modal-header) */}
+                                                <div className="modal-header">
+                                                    <h3>Tạo dự án mới</h3>
+                                                    <button 
+                                                        className="close-btn"
+                                                        onClick={handleModalClose}
+                                                        aria-label="Close"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
                                                 <div className="input_project"> 
-                                                    <div className="form-group">
-                                                        <label htmlFor="projectName">Tên dự án:</label>
-                                                        <input type="text" id="projectName" className="name_project" placeholder="Nhập tên dự án" />
-                                                    </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="projectName">Tên dự án:</label>
+                                                    <input type="text" id="projectName" className="name_project" placeholder="Nhập tên dự án" />
+                                                </div>
                                                     <div className="form-group date-group"> {/* Thêm class date-group */}
                                                         <div className="date-item">
                                                             <label htmlFor="startDate">Thời gian bắt đầu:</label>
@@ -97,85 +147,54 @@ const projectBasePage = () => {
                         
                     </div>
                     <div className="project-list">
-                        <a href="http://localhost:3000/duan/chitiet" className="project-link">
-                            <div className="project-card">
-                                <div className="card-header">
-                                <h3 className="project-title">Dự án A</h3>
-                                <div className="status">Completed</div>
+                        {currentProjects.map(project => (
+                            <a key={project.id} href="http://localhost:3000/duan/chitiet" className="project-link">
+                                <div className="project-card">
+                                    <div className="card-header">
+                                        <h3 className="project-title">{project.title}</h3>
+                                        <div className="status">{project.status}</div>
+                                    </div>
+                                    <p className="project-description">{project.description}</p>
+                                    <div className="card-footer">
+                                        <span className="deadline">Deadline: <span className="date">{project.deadline}</span></span>
+                                        <div className="team">
+                                            <img src="avatar1.jpg" alt="avatar" />
+                                            <img src="avatar2.jpg" alt="avatar" />
+                                            <img src="avatar3.jpg" alt="avatar" />
+                                            <span className="more-members">+2</span>
+                                        </div>
+                                        <span className="issues">14 Issues</span>
+                                    </div>
                                 </div>
-                                <p className="project-description">Mô tả ....</p>
-                                <div className="card-footer">
-                                <span className="deadline">Deadline: <span className="date">05 APRIL 2023</span></span>
-                                <div className="team">
-                                    <img src="avatar1.jpg" alt="avatar" />
-                                    <img src="avatar2.jpg" alt="avatar" />
-                                    <img src="avatar3.jpg" alt="avatar" />
-                                    <span className="more-members">+2</span>
-                                </div>
-                                <span className="issues">14 Issues</span>
-                                </div>
-                            </div>
-                        </a>
-                        {/* Thêm các card khác tương tự */}
-                        <div className="project-card"> 
-                        <div className="card-header">
-                            <h3 className="project-title">Dự án B</h3>
-                            <div className="status">Completed</div>
-                            </div>
-                            <p className="project-description">Mô tả ....</p>
-                            <div className="card-footer">
-                            <span className="deadline">Deadline: <span className="date">05 APRIL 2023</span></span>
-                            <div className="team">
-                                <img src="avatar1.jpg" alt="avatar" />
-                                <img src="avatar2.jpg" alt="avatar" />
-                                <img src="avatar3.jpg" alt="avatar" />
-                                <span className="more-members">+2</span>
-                            </div>
-                            <span className="issues">14 Issues</span>
-                            </div>
-                        </div>
-                        <div className="project-card">
-                        <div className="card-header">
-                            <h3 className="project-title">Dự án C</h3>
-                            <div className="status">Completed</div>
-                            </div>
-                            <p className="project-description">Mô tả ....</p>
-                            <div className="card-footer">
-                            <span className="deadline">Deadline: <span className="date">05 APRIL 2023</span></span>
-                            <div className="team">
-                                <img src="avatar1.jpg" alt="avatar" />
-                                <img src="avatar2.jpg" alt="avatar" />
-                                <img src="avatar3.jpg" alt="avatar" />
-                                <span className="more-members">+2</span>
-                            </div>
-                            <span className="issues">14 Issues</span>
-                            </div>
-                        </div>
-                        <div className="project-card">
-                        <div className="card-header">
-                            <h3 className="project-title">Dự án D</h3>
-                            <div className="status">Completed</div>
-                            </div>
-                            <p className="project-description">Mô tả ....</p>
-                            <div className="card-footer">
-                            <span className="deadline">Deadline: <span className="date">05 APRIL 2023</span></span>
-                            <div className="team">
-                                <img src="avatar1.jpg" alt="avatar" />
-                                <img src="avatar2.jpg" alt="avatar" />
-                                <img src="avatar3.jpg" alt="avatar" />
-                                <span className="more-members">+2</span>
-                            </div>
-                            <span className="issues">14 Issues</span>
-                            </div>
-                        </div>
-                        </div>
+                            </a>
+                        ))}
+                    </div>
 
-                        <div className="pagination">
-                        <button className="page-btn">Previous</button>
-                        <button className="page-btn active">1</button>
-                        <button className="page-btn">2</button>
-                        <button className="page-btn">3</button>
-                        <button className="page-btn">Next</button>
+                    {/* Cập nhật phần phân trang */}
+                    <div className="pagination">
+                        <button 
+                            className="page-btn" 
+                            onClick={handlePrevious}
+                            disabled={currentPage === 1}
+                        >
+                            Previous
+                        </button>
+                        {pageNumbers.map(number => (
+                            <button
+                                key={number}
+                                className={`page-btn ${currentPage === number ? 'active' : ''}`}
+                                onClick={() => handlePageChange(number)}
+                            >
+                                {number}
+                            </button>
+                        ))}
+                        <button 
+                            className="page-btn" 
+                            onClick={handleNext}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next
+                        </button>
                     </div>
                 </div>
             </div>

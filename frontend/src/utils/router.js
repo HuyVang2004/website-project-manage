@@ -10,6 +10,8 @@ export const ROUTERS = {
             BASE: "/duan",
             PROJECTDETAILS: "/duan/chitiet",
         },
+        MYTASK : "/mytask",
+        PEOPLELIST : "/nguoidung"
     },
 };
       

@@ -1,13 +1,12 @@
 import mysql.connector
-from passlib.context import CryptContext
-
+import bcrypt
 
 # Kết nối đến cơ sở dữ liệu trực tiếp từ DATABASE_URL
 db = mysql.connector.connect(
     host='localhost',
     user='root',
-    password='truong',
-    database='project_manager_database'
+    password='Thach2003',
+    database='project_database'
 )
 
 cursor = db.cursor()
@@ -18,12 +17,20 @@ users = cursor.fetchall()
 
 # Duyệt qua từng người dùng và băm mật khẩu
 for user_id, plain_password in users:
-    hashed_password = bcrypt.hash(plain_password)  # Băm mật khẩu
+    # Chuyển mật khẩu từ string sang bytes
+    plain_password_bytes = plain_password.encode('utf-8')
+    
+    # Tạo salt và băm mật khẩu
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(plain_password_bytes, salt)
+    
+    # Chuyển hashed_password từ bytes sang string để lưu vào cơ sở dữ liệu
+    hashed_password_str = hashed_password.decode('utf-8')
 
     # Cập nhật lại cơ sở dữ liệu
     cursor.execute(
         "UPDATE users SET password = %s WHERE user_id = %s",
-        (hashed_password, user_id)
+        (hashed_password_str, user_id)
     )
     print(f"Updated password for user_id: {user_id}")
 
