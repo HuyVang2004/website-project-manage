@@ -1,10 +1,10 @@
 import { memo, useState, useEffect } from "react";
-import './styles.scss'
-import Sidebar from "../../../components/SlideBar";
-import TopBar from "../../../components/topBar"; 
-import Footer from "../../../components/Footer";
+import './projectBasePage.scss'
+import Sidebar from "../../../../components/SlideBar";
+import TopBar from "../../../../components/Nav/TopBar";
+import Footer from "../../../../components/Footer";
 
-const ProfilePage = () => {
+const projectBasePage = () => {
     const [isProject, setIsProject] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     
@@ -184,4 +184,4 @@ const ProfilePage = () => {
     );
 };
 
-export default memo(ProfilePage);
+export default memo(projectBasePage);

@@ -1,4 +1,6 @@
-
+.header{
+  width: 100%;
+}
 .dashboard {
     display: flex;
     min-height: 100vh;
@@ -24,27 +26,24 @@
     }
 }
 .header-right {
-    background: #f1f5f9;
-    text-align: end;
-    justify-content: start;
-    align-items: end;
+  display: flex;
+  justify-content: flex-end; // Thay đổi thành flex-start
+  align-items: center; // Thêm để căn giữa theo chiều dọc
+  
+  .newproject {
+      //margin-left: auto; // Xóa dòng này nếu có
+      font-size: 30px;
+      background-color: rgb(75, 115, 234);
+      border-radius: 30px;
+      height: 30px;
+      width: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+  }
 }
 
-.newproject{
-  font-size: 30px;
-  background-color: rgb(75, 115, 234);
-  border-radius: 30px;
-  height: 30px;
-  width: 200px;
-  text-align: center;
-  padding-top: 2px;
-  justify-self: end;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
 .modal-overlay {
   position: fixed;
   top: 0;

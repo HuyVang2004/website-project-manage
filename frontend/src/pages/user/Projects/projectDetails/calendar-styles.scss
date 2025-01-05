@@ -1,11 +1,18 @@
-
-
-.calendar-wrapper {
-  // Styles chung cho container
+.tab-content {
+  width: 100%;
   padding: 20px;
-  background: #fff;
+  background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  .calendar-wrapper {
+    // Styles chung cho container
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  
 
   // Styles cho thanh header
   .fc-header-toolbar {
@@ -116,4 +123,5 @@
       height: 100px !important;
     }
   }
+}
 }
