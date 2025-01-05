@@ -4,6 +4,7 @@ from botocore.exceptions import NoCredentialsError
 from app.config import settings
 from fastapi import HTTPException
 from io import BytesIO
+from sqlalchemy.orm import Session
 
 def get_image_from_s3(user_id: str):
 
@@ -118,3 +119,26 @@ def upload_image_to_project_s3(project_id: str, file) -> None:
         s3_client.put_object(Body=image_content, Bucket=bucket_name, Key=s3_key, ContentType=file.content_type)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error uploading image: {str(e)}")
+
+def upload_pdf_to_project_document_s3(project_id: str, file, db: Session = None) -> None:
+    """
+    Uploads a PDF file to a folder in the 'project_document' directory in S3.
+    If the folder named after the project_id does not exist, it will be created implicitly by S3.
+    """
+    s3_client = boto3.client(
+        "s3",
+        aws_access_key_id=settings.AWS_ACCESS_KEY,
+        aws_secret_access_key=settings.AWS_SECRET_KEY,
+        region_name=settings.AWS_REGION,
+    )
+
+    bucket_name = settings.AWS_BUCKET_NAME
+
+    # Construct the S3 key for the uploaded file
+    s3_key = f"project_document/{project_id}/{file.filename}"
+
+    try:
+        # Upload the file to the S3 bucket under the project_id folder
+        s3_client.put_object(Body=file.file.read(), Bucket=bucket_name, Key=s3_key, ContentType="application/pdf")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error uploading PDF: {str(e)}")

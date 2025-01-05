@@ -12,7 +12,7 @@ from app.services.project_service import (
 )
 from app.db.session import get_db
 
-from app.services.aws_s3_service import get_image_from_project_s3, upload_image_to_project_s3
+from app.services.aws_s3_service import get_image_from_project_s3, upload_image_to_project_s3, upload_pdf_to_project_document_s3
 
 router = APIRouter()
 
@@ -34,6 +34,31 @@ def get_project_image(project_id: str):
     except HTTPException as e:
         raise e
 
+
+@router.post("/projects/{project_id}/upload-pdf")
+async def upload_project_pdf(project_id: str, file: UploadFile = File(...), db: Session = Depends(get_db)):
+    """
+    Upload a PDF file to the 'project_document' folder in S3 for the given project.
+    If the folder named after the project's name does not exist, it will be created.
+    """
+    # Validate file type
+    if file.content_type != "application/pdf":
+        raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
+
+    # Fetch the project name using the project_id
+    project = get_project_by_id(db, project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found.")
+
+    # Use the project name as the folder name
+    project_name = project.project_name
+
+    try:
+        # Upload the PDF to the corresponding folder in the S3 bucket
+        upload_pdf_to_project_document_s3(project_name, file)
+        return {"message": f"PDF file '{file.filename}' uploaded successfully to project '{project_name}'."}
+    except HTTPException as e:
+        raise e
 
 
 
