@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ROUTERS } from '../../utils/router';
 import Sidebar from '../../components/SlideBar';
-import TopBar from '../../components/topBar';
+import TopBar from '../../components/Nav/TopBar';;
 import Footer from '../../components/Footer';
 import './style/UserDetails.scss';
 

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { users } from './data/UserData';
 import Sidebar from '../../components/SlideBar';
-import TopBar from '../../components/topBar';
+import TopBar from '../../components/Nav/TopBar';
 import Footer from '../../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
@@ -33,7 +33,7 @@ const AdminPage = () => {
         onClick: () => navigate('/admin/users', { state: { filter: 'inactive' }})
       },
       { 
-        title: 'Số dự án', 
+        title: 'Tổng số dự án', 
         count: totalProjects,
         onClick: () => navigate('/admin/projects')
       }

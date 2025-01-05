@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
-import './style/Register.scss';
+import '../../styles/pages/register.scss';
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,7 +15,7 @@ export default function RegisterPage() {
             <input
               id="name"
               className="form-control"
-              type="text"
+              type="text"  
               name="Name"
               placeholder="Tên đăng nhập"
             />

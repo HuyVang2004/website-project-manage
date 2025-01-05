@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/SlideBar';
-import TopBar from '../../components/topBar';
+import TopBar from '../../components/Nav/TopBar';
 import Footer from '../../components/Footer';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './style/UserManagement.scss';

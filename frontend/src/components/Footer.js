@@ -30,7 +30,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 aria-label="Facebook Profile"
                 title="Facebook"
-              >
+              >  
                 <FaFacebook />
               </a>
               <a

@@ -1,0 +1,87 @@
+
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f1f5f9;
+}
+.header_top {
+  display: flex; 
+  justify-content: space-around; 
+  align-items: center; 
+  gap: 17px; 
+  padding: 10px 0;
+  border-radius: 14px;
+  background-color: #ffffff;
+
+  .menu-item { // Sử dụng class menu-item để tương thích với code React
+    display: flex; 
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;    
+    color: #333;
+    cursor: pointer;
+
+    svg {
+      font-size: 25px;
+      color: #030c15cc;
+    }
+
+    p {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    &:hover { // Style khi hover
+      svg {
+        color: #007bff; 
+      }
+      p {
+        color: #007bff; 
+      }
+    }
+
+    &.active { // Style khi active
+      svg {
+        color: #007bff; 
+      }
+      p {
+        color: #007bff; 
+      }
+      // Có thể thêm style khác như border-bottom
+    }
+  }
+}
+
+
+
+
+@keyframes modalFadeIn {
+from {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+to {
+    opacity: 1;
+    transform: translateY(0);
+}
+}
+// Responsive styles
+@media (max-width: 1024px) {
+.stats-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.info-grid {
+  grid-template-columns: 1fr;
+}
+}
+
+@media (max-width: 640px) {
+.stats-grid {
+  grid-template-columns: 1fr;
+}   
+
+.main-content {
+  padding: 1rem;
+}
+}

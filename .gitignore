@@ -1,1 +1,4 @@
 node_modules/
+test/
+Test_components.js
+__pycache__/

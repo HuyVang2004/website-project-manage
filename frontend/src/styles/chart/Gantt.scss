@@ -1,0 +1,105 @@
+// Các biến màu sắc và khoảng cách
+$primary-color: #4caf50;
+$secondary-color: #f0f0f0;
+$task-bar-height: 30px;
+$task-row-margin: 20px;
+$timeline-height: 40px;
+
+// Mixins cho các thuộc tính chung
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gantt-chart {
+  position: relative;
+  height: 400px;
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  overflow: auto; // Cho phép cuộn
+  background-color: $secondary-color;
+
+  .timeline {
+    display: flex;
+    margin-bottom: 20px;
+    overflow-x: scroll; // Cho phép cuộn ngang
+
+    .month {
+      flex: 1;
+      text-align: center;
+      padding: 5px;
+      border-right: 1px solid #ddd;
+      white-space: nowrap;
+    }
+
+    .month-name {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .week {
+      font-size: 12px;
+      background-color: #fafafa;
+      padding: 5px;
+    }
+  }
+
+  .task-rows {
+    position: relative;
+    padding-top: 20px;
+    overflow-y: auto; // Cho phép cuộn dọc
+    max-height: 300px; // Giới hạn chiều cao của phần task rows
+  }
+
+  .task-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: $task-row-margin;
+  }
+
+  .task-name {
+    width: 150px;
+    margin-right: 20px;
+    font-weight: bold;
+  }
+
+  .task-bar {
+    position: absolute;
+    background-color: $primary-color;
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: $task-bar-height;
+    transition: background-color 0.3s;
+  }
+
+  .task-progress {
+    background-color: darkorange;
+    height: 100%;
+    transition: width 0.3s ease;
+  }
+
+  .task-info {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+  }
+
+  .task-bar:hover .task-info {
+    display: block;
+  }
+}

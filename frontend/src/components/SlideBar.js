@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
+import { memo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Home, 
@@ -32,7 +33,7 @@ const Sidebar = () => {
     { id: 2, Icon: ListTodo, label: 'Dự án', onClick: () => navigate('/admin/projects') },
     { id: 3, Icon: Users, label: 'Quản lý người dùng', onClick: () => navigate('/admin/users')},
     { id: 4, Icon: ChartNoAxesCombined, label: 'Thống kê', onClick: () => navigate('/admin/statistics') },
-    { id: 5, Icon: MonitorCog, label: 'Cài đặt hệ thống', onClick: () => navigate('/admin/system') },
+    { id: 5, Icon: MonitorCog, label: 'Cài đặt hệ thống', onClick: () => navigate('/admin/settings') },
     { id: 6, Icon: MessageCircleMore, label: 'Hỗ trợ', onClick: () => navigate('/admin/support') },
   ];
 
@@ -60,4 +61,6 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default memo(Sidebar);
+
+    
