@@ -8,21 +8,6 @@ import { Home, FileText, Target, BarChart2, Users, Plus, HelpCircle } from 'luci
 import Notifications from "./Notification";
 import User from "./User";
 
-const notificationsData = [
-  {
-    text: "Complete the UI design of Landing Page for FoodVentures.",
-    time: "2h",
-    priority: "High",
-    image: "https://via.placeholder.com/52",
-  },
-  {
-    text: "Complete the Mobile app design for Pet Warden.",
-    time: "2h",
-    priority: "Extremely High",
-    image: "https://via.placeholder.com/52",
-  },
-];
-
 const TopBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotification, setNotification] = useState(false);
@@ -91,7 +76,7 @@ const TopBar = () => {
   }, [isNotification, isSetting]);
 
   const menuItems = [
-    { icon: <Home />, text: "Tổng Quan", href: "http://localhost:3000/" },
+    { icon: <Home />, text: "Tổng Quan", href: "http://localhost:3000/trangchu" },
     { icon: <FileText />, text: "Dự Án", href: "http://localhost:3000/duan" },
     { icon: <Target />, text: "Nhiệm Vụ", href: "/" },
     { icon: <BarChart2 />, text: "Báo Cáo", href: "#" },
@@ -124,7 +109,7 @@ const TopBar = () => {
               </div>
             </div>
             <div className="logo">
-              <a href="http://localhost:3000/">LOGO</a>
+              <a href="http://localhost:3000/trangchu">LOGO</a>
             </div>
           </div>
 
@@ -148,8 +133,11 @@ const TopBar = () => {
               >
                 <BsBell />
                 {isNotification && (
-                  <div ref={notificationRef} className="chuong">
-                    <Notifications notifications={notificationsData} />
+
+//                   <div ref={notificationRef} className="chuong">
+//                     <Notifications notifications={notificationsData} />
+                  <div className="chuong">
+                    <Notifications />
                   </div>
                 )}
               </div>

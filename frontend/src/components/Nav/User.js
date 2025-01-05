@@ -17,7 +17,7 @@ const User = () => {
     };
     
     const handleLogout = () => {
-        localStorage.removeItem("user_profile"); // Hoặc sessionStorage.removeItem("user");
+        localStorage.removeItem("user_profile");
         navigate("/dangnhap");
 
         alert(`${name} đã đăng xuất.`);

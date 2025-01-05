@@ -1,4 +1,4 @@
-import axiosClient from "./axiosClient";
+import axiosClient from "../axiosClient";
 
 const taskAPI = {
   // Fetch a task by ID

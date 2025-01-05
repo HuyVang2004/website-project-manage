@@ -9,11 +9,27 @@ from app.schemas.project import ProjectResponse
 
 router = APIRouter()
 
-@router.post("/", response_model=ProjectTeamResponse, status_code=status.HTTP_201_CREATED)
-def create_project_team(
-    project_team_data: ProjectTeamCreate, db: Session = Depends(get_db)
-):
-    return ProjectTeamService.create_project_team(db, project_team_data)
+@router.get("/", response_model=List[ProjectTeamResponse])
+def get_all_project_teams(db: Session = Depends(get_db)):
+    return ProjectTeamService.get_all_project_teams(db)
+
+@router.get("/active-projects-count/{user_id}", response_model=int)
+def get_active_projects_count_by_user(user_id: str, db: Session = Depends(get_db)):
+    count = ProjectTeamService.get_active_projects_count_by_user(db, user_id)
+    # if count == 0:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND, detail="No active projects found for the given user"
+    #     )
+    return count
+
+@router.get("/completed-projects-count/{user_id}", response_model=int)
+def get_completed_projects_count_by_user(user_id: str, db: Session = Depends(get_db)):
+    count = ProjectTeamService.get_completed_projects_count_by_user(db, user_id)
+    # if count == 0:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND, detail="No completed projects found for the given user"
+    #     )
+    return count
 
 @router.get("/{project_team_id}", response_model=ProjectTeamResponse)
 def get_project_team_by_id(project_team_id: str, db: Session = Depends(get_db)):
@@ -24,9 +40,11 @@ def get_project_team_by_id(project_team_id: str, db: Session = Depends(get_db)):
         )
     return project_team
 
-@router.get("/", response_model=List[ProjectTeamResponse])
-def get_all_project_teams(db: Session = Depends(get_db)):
-    return ProjectTeamService.get_all_project_teams(db)
+@router.post("/", response_model=ProjectTeamResponse, status_code=status.HTTP_201_CREATED)
+def create_project_team(
+    project_team_data: ProjectTeamCreate, db: Session = Depends(get_db)
+):
+    return ProjectTeamService.create_project_team(db, project_team_data)
 
 @router.put("/{project_team_id}", response_model=ProjectTeamResponse)
 def update_project_team(
@@ -74,5 +92,7 @@ def get_projects_by_user(user_id: str, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND, detail="No projects found for the given user ID"
         )
     return projects
+
+
 
 

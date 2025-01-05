@@ -1,6 +1,6 @@
-import axiosClient from "./axiosClient";
+import axiosClient from "../axiosClient";
 
-const projectAPI = {
+const projectsApi = {
   // Fetch all projects with optional pagination
   getAllProjects: ({ skip = 0, limit = 100 } = {}) => {
     return axiosClient.get(`projects/projects`, {
@@ -37,4 +37,4 @@ const projectAPI = {
   },
 };
 
-export default projectAPI;
+export default projectsApi;

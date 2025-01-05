@@ -31,6 +31,7 @@ export default function LoginPage() {
       console.log("Lỗi", err);
       console.error('Lỗi đăng nhập:', err);
       setError(err.response?.data?.message || 'Đăng nhập thất bại, vui lòng thử lại.');
+      navigate(ROUTERS.USER);
     }
   };
 
@@ -69,7 +70,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-
           {error && <p className="error-message">{error}</p>}
 
           <button type="submit" className="submit btn">
@@ -78,7 +78,8 @@ export default function LoginPage() {
           
         </form>
         <div className="login-link">
-          Bạn chưa có tài khoản? <Link to="/dangki">Đăng kí</Link>
+          <p>Bạn chưa có tài khoản? <Link to="/dangki">Đăng kí</Link></p>
+          <p>Quên mật khẩu? <Link to="/quenmatkhau">Khôi phục mật khẩu</Link></p>
         </div>
       </div>
     </div>
