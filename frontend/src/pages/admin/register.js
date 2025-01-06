@@ -123,7 +123,7 @@ export default function RegisterPage() {
           </div>
 
           <button type="submit" className="submit btn">
-            Đăng Ký
+            Đăng Kí
           </button>
         </form>
 

@@ -118,9 +118,16 @@ body {
   }
   
   .header-top-right .icon {
+    display: flex;
+    align-items: center; /* Căn giữa icon theo chiều dọc */
+    justify-content: center; /* Căn giữa icon theo chiều ngang */
+    width: 40px; /* Đặt chiều rộng cố định nếu cần */
+    height: 40px; /* Đặt chiều cao cố định nếu cần */
+    font-size: 24px; /* Kích thước đồng nhất cho các icon */
     cursor: pointer;
-    font-size: 24px;
-    
+    background-color: transparent; /* Loại bỏ bất kỳ màu nền nào */
+    border-radius: 50%; /* Nếu muốn các icon có khung tròn */
+    transition: all 0.3s ease; /* Hiệu ứng khi hover */
   }
   
   /* Media query cho màn hình nhỏ */
@@ -244,7 +251,7 @@ body {
     .thongbao {
       padding-top: 10px;
       font-size: 16px;
-      background-color: #ffffff;
+      background-color: #e0e0e0;
       margin: center;
       
     }
@@ -268,7 +275,7 @@ body {
       position: absolute;
       width: 400px;
       height: 400px;
-      background-color: #ccc;
+      background-color: #ffffff;
       top: 35px;
       right: -20px;
       border-radius: 20px;
