@@ -3,3 +3,4 @@ test/
 Test_components.js
 __pycache__/
 env/
+*.pyc
