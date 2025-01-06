@@ -2,7 +2,6 @@ import { memo, useState, useEffect } from "react";
 import "./style.scss";
 import Sidebar from "../../../../components/SlideBar";
 import TopBar from "../../../../components/Nav/TopBar";
-// import Footer from "../../../../components/Footer";
 import { FaListUl } from "react-icons/fa";
 import { IoCalendarNumberSharp } from "react-icons/io5";
 import { HiChartBar } from "react-icons/hi";
@@ -10,29 +9,34 @@ import { IoDocumentTextSharp } from "react-icons/io5";
 import { FaCommentAlt } from "react-icons/fa";
 import FullCalendar from '@fullcalendar/react'; 
 import dayGridPlugin from '@fullcalendar/daygrid'; 
-import interactionPlugin from '@fullcalendar/interaction'; // Cho phép tương tác (kéo thả, chọn)
+import interactionPlugin from '@fullcalendar/interaction'; 
 import timeGridPlugin from '@fullcalendar/timegrid';
 import './calendar-styles.scss';
 import TableListProject from "../../../../components/Table/TableListProject";
 import ChatBox from "../boxChatPage/BoxChatPage";
 import Gantt from "../ganttChart/Gantt";
-
-
+import getListProjectData from "../../../../api/projects/getListProjectData";
 
 const ProjectDetails = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [activeTab, setActiveTab] = useState("cong-viec"); // Tab mặc định là Công việc
-   
+  const [activeTab, setActiveTab] = useState("cong-viec");
+  const [listProject, setListProject] = useState(null);
+  const [events, setEvents] = useState([]);
+  const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");
+  const userId = userData?.user_id || "";
+
   useEffect(() => {
+    // Scroll event handling
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
 
+    
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [userId]);
 
-  // phần mới thêm 
+  // Handling calendar events
   const initialEvents = [
     { id: 'legacy-1', title: 'Họp dự án', date: '2024-12-20' },
     { id: 'legacy-2', title: 'Deadline báo cáo', date: '2024-12-28' }
@@ -48,13 +52,9 @@ const ProjectDetails = () => {
     return event;
   };
 
-  const [events, setEvents] = useState(initialEvents.map(migrateOldEvent));
-
-  // Thêm useEffect để chuyển đổi các event cũ
   useEffect(() => {
-    setEvents(prevEvents => prevEvents.map(migrateOldEvent));
+    setEvents(initialEvents.map(migrateOldEvent));
   }, []);
-
 
   const handleDateSelect = (selectInfo) => {
     const title = prompt('Nhập tên sự kiện:');
@@ -76,28 +76,18 @@ const ProjectDetails = () => {
     if (confirm('Bạn có muốn xóa sự kiện này không?')) {
       const eventId = clickInfo.event.id;
       setEvents(prevEvents => {
-        // Log để debug
-        console.log('Event to delete:', eventId);
-        console.log('Current events:', prevEvents);
-        
-        return prevEvents.filter(event => {
-          // Log để debug
-          console.log('Comparing:', event.id, eventId, event.id !== eventId);
-          return event.id !== eventId;
-        });
+        return prevEvents.filter(event => event.id !== eventId);
       });
     }
   };
-  // đến đây
 
-
-  // Chức năng render nội dung theo tab đã chọn
+  // Rendering content based on active tab
   const renderContent = () => {
     switch (activeTab) {
       case "cong-viec":
         return (
           <div className="tab-content">
-          <TableListProject />
+            {/* <TableListProject data={listProject} /> */}
           </div>
         );
       case "lich":
@@ -200,10 +190,8 @@ const ProjectDetails = () => {
           </div>
         </div>
 
-        {/* Phần nội dung bên dưới */}
         <div className="content">{renderContent()}</div>
       </div>
-      {/*<Footer /> */}
     </div>
   );
 };

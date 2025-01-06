@@ -44,6 +44,7 @@ const HomePage = () => {
   const fetchProjects = async (userId) => {
     try {
       const data = await getListProjectData(userId);
+      console.log("data project",data)
       setListProject(data);
     } catch (error) {
       // setError(error.message);

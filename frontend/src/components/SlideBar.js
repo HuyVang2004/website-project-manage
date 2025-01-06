@@ -15,18 +15,18 @@ import {
   MessageCircleMore 
 } from 'lucide-react';
 import '../styles/SlideBar.scss';
-
+import { ROUTERS } from '../utils/router';
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  // const defaultIcons = [
-  //   { id: 1, Icon: Home, label: 'Trang chủ' },
-  //   { id: 2, Icon: FileText, label: 'Công việc' },
-  //   { id: 3, Icon: Target, label: 'Mục tiêu' },
-  //   { id: 4, Icon: BarChart2, label: 'Báo cáo' },
-  //   { id: 5, Icon: Users, label: 'Người dùng' },
-  //   { id: 6, Icon: Plus, label: 'Thêm mới' },
-  // ];
+  const defaultIcons = [
+    { id: 1, Icon: Home, label: 'Trang chủ', onClick : () => navigate(ROUTERS.USER.HOME)},
+    { id: 2, Icon: FileText, label: 'Dự án', onClick : () => navigate(ROUTERS.USER.PROJECT.BASE) },
+    { id: 3, Icon: Target, label: 'Công việc'},
+    { id: 4, Icon: BarChart2, label: 'Báo cáo'},
+    { id: 5, Icon: Users, label: 'Người dùng'},
+    { id: 6, Icon: Plus, label: 'Thêm mới' },
+  ];
 
   const adminIcons = [
     { id: 1, Icon: Home, label: 'Trang chủ', onClick: () => navigate('/admin') },

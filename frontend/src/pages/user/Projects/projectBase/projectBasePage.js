@@ -4,6 +4,9 @@ import Sidebar from "../../../../components/SlideBar";
 import TopBar from "../../../../components/Nav/TopBar";
 import Footer from "../../../../components/Footer";
 import getListProjectData from "../../../../api/projects/getListProjectData";
+import { ROUTERS } from "../../../../utils/router";
+import { useNavigate } from "react-router-dom";
+
 const ProjectBasePage = () => {
     const [isProject, setIsProject] = useState(false);
     const [scrolled, setScrolled] = useState(false);
@@ -47,6 +50,12 @@ const ProjectBasePage = () => {
         e.stopPropagation();
         toggleProject();
     };
+    const navigate = useNavigate();
+    
+    const handleClickProject = (project_id) => {
+        localStorage.setItem("current_project_id", project_id);
+        navigate(ROUTERS.USER.PROJECT.PROJECTDETAILS);
+    }
 
     return (
         <div className={`dashboard ${scrolled ? 'scrolled' : ''}`}>
@@ -107,25 +116,25 @@ const ProjectBasePage = () => {
                             <p className="error">{error}</p>
                         ) : (
                             projects.map((project) => (
-                                <div key={project.id} className="project-card">
+                                <div key={project.projectID} className="project-card" onClick={handleClickProject}>
                                     <div className="card-header">
-                                        <h3 className="project-title">{project.name}</h3>
+                                        <h3 className="project-title">{project.projectName}</h3>
                                         <div className="status">{project.status}</div>
                                     </div>
                                     <p className="project-description">{project.description}</p>
                                     <div className="card-footer">
                                         <span className="deadline">
-                                            Deadline: <span className="date">{project.deadline}</span>
+                                            Deadline: <span className="date">{project.dueDate}</span>
                                         </span>
                                         <div className="team">
-                                            {project.team.map((member, index) => (
+                                            {project.teamMembers.map((member, index) => (
                                                 <img key={index} src={member.avatar} alt={member.name} />
                                             ))}
-                                            {project.team.length > 3 && (
-                                                <span className="more-members">+{project.team.length - 3}</span>
+                                            {project.teamMembers.length > 3 && (
+                                                <span className="more-members">+{project.teamMembers.length - 3}</span>
                                             )}
                                         </div>
-                                        <span className="issues">{project.issues} Issues</span>
+                                        {/* <span className="issues">{project.issues} Issues</span> */}
                                     </div>
                                 </div>
                             ))
