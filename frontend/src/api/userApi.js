@@ -12,7 +12,7 @@ const userAPI = {
       const { username, password } = credentials;
     
       // Tạo query string với encodeURIComponent để đảm bảo dữ liệu an toàn
-      const query = `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+      const query = `email=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
     
       // Gửi request GET hoặc POST với query string
       return axiosClient.post(`/users/login?${query}`);
@@ -42,10 +42,20 @@ const userAPI = {
       return axiosClient.post(`/users/forgot-password?email=${email}`);
     },
 
+    verifyToken: (token) => {
+      return axiosClient.post(`/users/verify-token?token=${token}`);
+    },
+
     // Đặt lại mật khẩu
     resetPassword: (token, newPassword) => {
-      return axiosClient.post('/users/reset-password', { token, new_password: newPassword });
+      return axiosClient.post(`/users/reset-password?token=${token}&new_password=${newPassword}`);
     },
+
+    getUserImage: (userId) => {
+      return axiosClient.get(`users/get-image/${userId}`, {
+          responseType: 'blob', // Đảm bảo nhận dữ liệu dạng nhị phân (ảnh)
+      });
+  },
       
 };
 

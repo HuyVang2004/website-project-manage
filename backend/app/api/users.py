@@ -66,9 +66,16 @@ def create_user_with_default_role(user: UserCreateForUser, db: Session = Depends
     return new_user
 
 # User login
+# @router.post("/login", response_model=UserResponse)
+# def login(username: str, password: str, db: Session = Depends(get_db)):
+#     user = db.query(User).filter(User.username == username).first()
+#     if not user or not verify_password(password, user.password):
+#         raise HTTPException(status_code=401, detail="Invalid credentials")
+#     return user
+
 @router.post("/login", response_model=UserResponse)
-def login(username: str, password: str, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == username).first()
+def login(email: str, password: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == email).first()
     if not user or not verify_password(password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     return user

@@ -33,7 +33,8 @@ const HomePage = () => {
       setTasks(data);
       localStorage.setItem("list_task", JSON.stringify(data));
     } catch (error) {
-      setError(error.message);
+      // setError(error.message);
+      setTasks([]);
     } finally {
       setLoading(false);
     }
@@ -45,7 +46,8 @@ const HomePage = () => {
       const data = await getListProjectData(userId);
       setListProject(data);
     } catch (error) {
-      setError(error.message);
+      // setError(error.message);
+      setListProject([]);
     } finally {
       setLoading(false);
     }
@@ -61,10 +63,6 @@ const HomePage = () => {
 
   if (loading) {
     return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
   }
 
   return (
@@ -130,6 +128,7 @@ const HomePage = () => {
       {/* Footer Component */}
       <Footer />
     </div>
+    
   );
 };
 

@@ -4,6 +4,7 @@ import projectApi from "./projectsApi";
 const getListProjectData = async (userId) => {
   try {
     const projectTeamsResponse = await projectTeamApi.getProjectsByUser(userId);
+    
     const projectIds = projectTeamsResponse.map((team) => team.project_id);
 
     // Lấy thông tin chi tiết của từng project theo `project_id`
