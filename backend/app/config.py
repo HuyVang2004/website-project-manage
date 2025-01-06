@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = 'mysql+pymysql://root:truong@localhost:3306/project_manager_database'
+    DATABASE_URL: str = 'mysql+pymysql://root:truong@localhost:3306/web_database'
     
     AWS_ACCESS_KEY: str = "AKIAYS2NR4TTOSD5YFHG"
     AWS_SECRET_KEY: str = "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"

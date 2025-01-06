@@ -37,10 +37,7 @@ def get_project_image(project_id: str):
 
 @router.post("/projects/{project_id}/upload-pdf")
 async def upload_project_pdf(project_id: str, file: UploadFile = File(...), db: Session = Depends(get_db)):
-    """
-    Upload a PDF file to the 'project_document' folder in S3 for the given project.
-    If the folder named after the project's name does not exist, it will be created.
-    """
+
     # Validate file type
     if file.content_type != "application/pdf":
         raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
