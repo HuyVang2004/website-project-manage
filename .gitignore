@@ -2,3 +2,7 @@ node_modules/
 test/
 Test_components.js
 __pycache__/
+venv/
+env/
+*.pyc
+

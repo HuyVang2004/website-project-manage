@@ -10,10 +10,14 @@ const projectTeamApi = {
   getProjectTeamById: (projectTeamId) => {
     return axiosClient.get(`project-teams/${projectTeamId}`);
   },
+  
+  getProjectTeamByProjectId: (projectId) => {
+    return axiosClient.get(`project_teams/by-project/${projectId}`);
+  },
 
   // Create a new project team
   createProjectTeam: (userId, projectId, role) => {
-    return axiosClient.post('project-teams', {
+    return axiosClient.post('project_teams', {
       user_id: userId,
       project_id: projectId,
       role: role,

@@ -21,7 +21,7 @@ const Footer = () => {
           {/* Right Column */}
           <div className="col-6 footer_right">
             <h3>Thông tin liên hệ</h3>
-            <p>Email: thukyvu@gamil.com</p>
+            <p>Email: thukyvu@gmail.com</p>
             <p>Phone: 0123321123</p>
             <div className="social_links">
               <a
