@@ -9,8 +9,8 @@
   
   
 .header-left {
-    background-color: #f1f5f9;
-    background: #f1f5f9;
+    //background-color: #e5f6ff;
+    background: #e5f6ff;
     text-align: start;
     display: flex;
     
@@ -29,7 +29,7 @@
   display: flex;
   justify-content: flex-end; // Thay đổi thành flex-start
   align-items: center; // Thêm để căn giữa theo chiều dọc
-  
+  background-color: #e5f6ff;
   .newproject {
       //margin-left: auto; // Xóa dòng này nếu có
       font-size: 30px;

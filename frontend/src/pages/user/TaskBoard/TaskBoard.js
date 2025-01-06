@@ -1,30 +1,39 @@
 import React, { useState } from 'react';
 import { Plus, MessageCircle, Paperclip, Clock } from 'lucide-react';
-import "./TaskBoard.scss"
+import "./TaskBoard.scss";
 import TopBar from '../../../components/Nav/TopBar';
 import Slidebar from '../../../components/SlideBar';
+import TaskDetailModal from './TaskDetailModal';
+import AddTaskModal from './AddTaskModal';  // Add this import
 
 const TaskBoard = () => {
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [showAddTaskModal, setShowAddTaskModal] = useState(false);  // Add this state
   const [tasks, setTasks] = useState({
     todo: [
-      { id: 1, title: 'Thiết kế cơ sở dữ liệu', days: 12, comments: 0, attachments: 0, members: ['1'] },
-      { id: 2, title: 'Thiết kế cơ sở dữ liệu', days: 12, comments: 0, attachments: 0, members: ['1', '2'] },
-      { id: 3, title: 'Thiết kế cơ sở dữ liệu', days: 12, comments: 0, attachments: 0, members: ['1', '2', '3'] }
+      { 
+        id: 1, 
+        title: 'Thiết kế cơ sở dữ liệu', 
+        frame: 'Frame 12',
+        priority: 'High',
+        status: 'Completed',
+        manager: { id: '1', name: 'Vang', avatar: '/avatar1.jpg' },
+        members: [{ id: '2', name: 'Truong', avatar: '/avatar2.jpg' }],
+        deadline: '24-12-2024',
+        days: 12, 
+        comments: 0, 
+        attachments: 0
+      },
+      // ... other tasks
     ],
-    inProgress: [
-      { id: 4, title: 'Thiết kế cơ sở dữ liệu', days: 12, comments: 0, attachments: 0, members: ['1', '2'] },
-      { id: 5, title: 'Thiết kế cơ sở dữ liệu', days: 12, comments: 0, attachments: 0, members: ['1', '2'] }
-    ],
-    completed: [
-      { id: 6, title: 'Thiết kế cơ sở dữ liệu', days: 12, comments: 0, attachments: 0, members: ['1', '2', '3'] },
-      { id: 7, title: 'Thiết kế cơ sở dữ liệu', days: 12, comments: 0, attachments: 0, members: ['1'] }
-    ]
+    inProgress: [/* ... */],
+    completed: [/* ... */]
   });
 
   const TaskCard = ({ task }) => (
-    <div className="task-board__card">
-      <div className="task-board__card-priority">medium priority</div>
+    <div className="task-board__card" onClick={() => setSelectedTask(task)}>
       <h3 className="task-board__card-title">{task.title}</h3>
+      <div className="task-board__card-priority">medium priority</div>
       <div className="task-board__card-footer">
         <div className="metrics">
           <div className="metrics-item">
@@ -43,7 +52,7 @@ const TaskBoard = () => {
         <div className="assignees">
           {task.members.map((member, idx) => (
             <div key={idx} className="assignees-avatar">
-              {member}
+              {member.name[0]}
             </div>
           ))}
         </div>
@@ -51,6 +60,7 @@ const TaskBoard = () => {
     </div>
   );
 
+  // Modified Column component to handle add button click
   const Column = ({ title, tasks, showAddButton }) => (
     <div className="task-board__column">
       <h2 className="task-board__column-header">{title}</h2>
@@ -59,7 +69,10 @@ const TaskBoard = () => {
           <TaskCard key={task.id} task={task} />
         ))}
         {showAddButton && (
-          <button className="task-board__add-button">
+          <button 
+            className="task-board__add-button"
+            onClick={() => setShowAddTaskModal(true)}  // Modified this line
+          >
             <Plus />
             <span>Thêm công việc</span>
           </button>
@@ -97,6 +110,17 @@ const TaskBoard = () => {
           </div>
         </div>
       </div>
+      {selectedTask && (
+        <TaskDetailModal 
+          task={selectedTask} 
+          onClose={() => setSelectedTask(null)} 
+        />
+      )}
+      {showAddTaskModal && (  // Add this block
+        <AddTaskModal 
+          onClose={() => setShowAddTaskModal(false)} 
+        />
+      )}
     </div>
   );
 };
