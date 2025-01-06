@@ -15,8 +15,6 @@ import PeopleList from "./pages/user/PeopleList/PeopleList";
 import ForgotPasswordPage from "./pages/admin/forgotPasswordPage";
 
 
-
-
 // Admin Pages
 // import ForgotPassword from "./pages/auth/ForgotPassword" 
 import AdminPage from "./pages/admin/AdminPage";
@@ -63,19 +61,17 @@ const renderUserRouter = () => {
         <Route path={ROUTERS.USER.LOGIN} element={<LoginPage />} />
         <Route path={ROUTERS.USER.CHANGEPASSWORD} element={<ChangePasswordPage/>}/>
         <Route path={ROUTERS.USER.SETTINGUSER} element={<SettingUserPage/>}/>
-
         <Route path={ROUTERS.USER.MYTASK} element={<TaskBoard/>}/>
         <Route path={ROUTERS.USER.PEOPLELIST} element={<PeopleList/>}/>
-
         <Route path={ROUTERS.USER.FORGOTPASSWORD} element={<ForgotPasswordPage/>}/>
 
 
         {/* <Route path={ROUTERS.USER.FORGOTPASSWORD} element={<ForgotPasswordPage/>}/> */}
 
          {/* Admin Routes */}
-         <Route path={ROUTERS.ADMIN.REGISTER} element={<RegisterPage />} />
+        <Route path={ROUTERS.ADMIN.REGISTER} element={<RegisterPage />} />
         <Route path={ROUTERS.ADMIN.LOGIN} element={<LoginPage />} />
-        <Route path={ROUTERS.ADMIN.FORGOTPASSWORD} element={<ForgotPassword />} />
+        {/* <Route path={ROUTERS.ADMIN.FORGOTPASSWORD} element={<ForgotPassword />} /> */}
         <Route path={ROUTERS.ADMIN.DASHBOARD} element={<AdminPage />} />
         <Route path={ROUTERS.ADMIN.MANAGEMENT} element={<UserManagement />} />
         <Route path={ROUTERS.ADMIN.LANDINGPAGE} element={<LandingPage />} />
