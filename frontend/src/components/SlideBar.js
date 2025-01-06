@@ -7,7 +7,7 @@ const Sidebar = () => {
     <div className="sidebar">
       {/* Sidebar Icons */}
       <div className="sidebar__icons">
-        <a href="http://localhost:3000/" className="sidebar__link">
+        <a href="http://localhost:3000/trangchu" className="sidebar__link">
           <Home className="sidebar__icon" />
         </a>
         <a href="http://localhost:3000/duan" className="sidebar__link">

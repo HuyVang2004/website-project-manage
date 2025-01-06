@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './TableListTask.scss';
-import taskRoleAPI from '../../api/taskRoleApi';
-import taskAPI from '../../api/tasksApi';
 
-const TableListTask = () => {
-  const userData = JSON.parse(localStorage.getItem('user_profile'));
-  const userID = userData.user_id;
+
+const TableListTask = ({tasks}) => {
   const [filters, setFilters] = useState({
     priority: '',
     status: '',
@@ -15,59 +12,7 @@ const TableListTask = () => {
     key: '',
     direction: 'asc',
   });
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4; 
 
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    // Function to fetch task roles by user
-    const fetchTaskRoles = async (userId) => {
-      try {
-        // Get task roles for the user
-        const taskRolesResponse = await taskRoleAPI.getTaskRolesByUser(userId);
-        const taskIds = taskRolesResponse.map((role) => role.task_id);
-        console.log("Task ID",taskIds);
-        // Fetch tasks by their task_ids
-        const tasksPromises = taskIds.map((taskId) => taskAPI.getTaskById(taskId));
-        const tasksResponse = await Promise.all(tasksPromises);
-        console.log("task", tasksResponse)
-        // Format and set tasks state
-        const formattedTasks = tasksResponse.map((task) => ({
-          taskId: task.task_id,
-          taskName: task.task_name,
-          status: task.status,
-          dueDate: new Date(task.due_date).toLocaleString('vi-VN', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-          priority: task.priority || 'Không xác định', // Default if priority is not provided
-        }));
-        localStorage.setItem('list_task', formattedTasks);
-        setTasks(formattedTasks);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching task roles or tasks:', error);
-        setError('Failed to fetch tasks');
-        setLoading(false);
-      }
-    };
-
-    fetchTaskRoles(userID); // Pass userID from props to fetch task roles
-  }, [userID]); // Dependency array to re-fetch tasks when userID changes
-
-  if (loading) {
-    return <div>Loading tasks...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
 
   const handleFilterChange = (field, value) => {
     setFilters((prev) => {
@@ -120,6 +65,8 @@ const TableListTask = () => {
     return matchesProgress && matchesStatus && matchesDueDate;
 });
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4; 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   const handlePageChange = (page) => {
