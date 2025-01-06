@@ -69,6 +69,9 @@ export default function LoginPage() {
             >
             </button>
           </div>
+          <div className="forgot-password">
+            <Link to="./quenmatkhau">Quên mật khẩu?</Link>
+          </div>
 
           {error && <p className="error-message">{error}</p>}
 

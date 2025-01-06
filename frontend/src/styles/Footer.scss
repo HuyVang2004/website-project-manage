@@ -29,13 +29,9 @@
 }
 
 .footer_right {
-    justify-content: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    //align-items: flex-start; /* Căn phải nội dung bên trong */
-    //text-align: right; /* Căn chỉnh văn bản sang phải */
-    //padding-left: 200px; /* Đã giảm padding để đảm bảo tính phản hồi tốt */
+    align-items: flex-start; /* Căn phải nội dung bên trong */
+    text-align: right; /* Căn chỉnh văn bản sang phải */
+    padding-left: 200px; /* Đã giảm padding để đảm bảo tính phản hồi tốt */
 }
 
 .footer h3 {
@@ -45,7 +41,7 @@
 }
 
 .footer p {
-    font-size: 14px;
+    font-size: 15px;
     margin: 5px 0;
     line-height: 1.5;
 }
@@ -63,7 +59,7 @@
 } 
 
 .social_links a:hover {
-    color: #6e2aeb; /* Màu sắc khi hover */
+    color:rgb(57, 59, 57); /* Màu sắc khi hover */
 }
 // @media (max-width: 768px) {
 //     .footer_right{
