@@ -8,12 +8,17 @@ import LoginPage from "./pages/admin/login";
 import ChangePasswordPage from "./pages/user/ChangePassword/ChangePasswordPage";
 import SettingUserPage from "./pages/user/Personal/SettingUserPage";
 import ProjectBasePage from "./pages/user/Projects/projectBase/projectBasePage";
+
+import TaskBoard from "./pages/user/TaskBoard/TaskBoard";
+import PeopleList from "./pages/user/PeopleList/PeopleList";
+
 import ForgotPasswordPage from "./pages/admin/forgotPasswordPage";
 
 
 
+
 // Admin Pages
-import ForgotPassword from "./pages/auth/ForgotPassword" 
+// import ForgotPassword from "./pages/auth/ForgotPassword" 
 import AdminPage from "./pages/admin/AdminPage";
 import LandingPage from "./pages/admin/LandingPage";
 import UserManagement from "./pages/admin/UserManagement"; 
@@ -21,6 +26,7 @@ import UserDetails from "./pages/admin/UserDetails";
 import Project from "./pages/admin/Project";
 import UserAnalytics from "./pages/admin/Statistics.js";
 import SystemSettings from "./pages/admin/SystemSettings.js"
+
 
 const renderUserRouter = () => {
     const userRouter = [
@@ -58,6 +64,12 @@ const renderUserRouter = () => {
         <Route path={ROUTERS.USER.CHANGEPASSWORD} element={<ChangePasswordPage/>}/>
         <Route path={ROUTERS.USER.SETTINGUSER} element={<SettingUserPage/>}/>
 
+        <Route path={ROUTERS.USER.MYTASK} element={<TaskBoard/>}/>
+        <Route path={ROUTERS.USER.PEOPLELIST} element={<PeopleList/>}/>
+
+        <Route path={ROUTERS.USER.FORGOTPASSWORD} element={<ForgotPasswordPage/>}/>
+
+
         {/* <Route path={ROUTERS.USER.FORGOTPASSWORD} element={<ForgotPasswordPage/>}/> */}
 
          {/* Admin Routes */}
@@ -72,6 +84,7 @@ const renderUserRouter = () => {
         <Route path={ROUTERS.ADMIN.PROJECTDETAILS} element={<Project />} />
         <Route path={ROUTERS.ADMIN.STATISTICS} element={<UserAnalytics />} />
         <Route path={ROUTERS.ADMIN.SETTINGS} element={<SystemSettings />} />
+
 
       </Routes>
     );
