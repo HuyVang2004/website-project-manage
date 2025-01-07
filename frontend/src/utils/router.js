@@ -1,7 +1,11 @@
 export const ROUTERS = {
     USER: {
+        DEFAULT:'/',
+        HOME: "/trangchu",
+        PROFILE: "/profile",
         HOME: "/",
         REGISTER: "/dangki",
+        FORGOTPASSWORD: "/quenmatkhau",
         LOGIN: "/dangnhap",
         CHANGEPASSWORD: "/changepassword",
         SETTINGUSER: "/setting_user",

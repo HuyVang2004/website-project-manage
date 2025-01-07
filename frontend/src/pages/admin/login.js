@@ -78,9 +78,11 @@ export default function LoginPage() {
           <button type="submit" className="submit btn">
             Đăng Nhập
           </button>
+          
         </form>
         <div className="login-link">
-          Bạn chưa có tài khoản? <Link to="/dangki">Đăng kí</Link>
+          <p>Bạn chưa có tài khoản? <Link to="/dangki">Đăng kí</Link></p>
+          <p>Quên mật khẩu? <Link to="/quenmatkhau">Khôi phục mật khẩu</Link></p>
         </div>
       </div>
     </div>

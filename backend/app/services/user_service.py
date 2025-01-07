@@ -28,3 +28,4 @@ def reset_password(email: str, new_password: str, db: Session):
     user.password = pwd_context.hash(new_password)
     db.commit()
     return {"message": "Password updated successfully"}
+

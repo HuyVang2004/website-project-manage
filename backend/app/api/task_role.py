@@ -44,3 +44,15 @@ def delete_task_role_endpoint(task_role_id: str, db: Session = Depends(get_db)):
     if not task_role:
         raise HTTPException(status_code=404, detail="Task role not found")
     return {"message": f"Task role with ID {task_role_id} has been deleted successfully"}
+
+@router.get("/user/{user_id}/in-progress-count", response_model=int)
+def get_in_progress_task_count_by_user_endpoint(user_id: str, db: Session = Depends(get_db)):
+    from app.services.task_service import count_in_progress_tasks_by_user
+    count = count_in_progress_tasks_by_user(user_id, db)
+    return count
+
+@router.get("/user/{user_id}/completed-count", response_model=int)
+def get_completed_task_count_by_user_endpoint(user_id: str, db: Session = Depends(get_db)):
+    from app.services.task_service import count_completed_tasks_by_user
+    count = count_completed_tasks_by_user(user_id, db)
+    return count

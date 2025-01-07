@@ -8,9 +8,9 @@ import userAPI from "../../api/userApi";
 import "./Profile.scss";
 import { ROUTERS } from "../../utils/router";
 
-const Profile = ({ userId }) => {
+const Profile = () => {
   const [user, setUser] = useState(null); // State để lưu thông tin người dùng
-  const [loading, setLoading] = useState(true); // State để quản lý trạng thái tải dữ liệu
+  const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); // State để lưu lỗi nếu có
   const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ const Profile = ({ userId }) => {
     };
 
     fetchUserProfile();
-  }, [userId]);
+  }, []);
 
 
   if (loading) {

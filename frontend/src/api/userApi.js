@@ -38,6 +38,14 @@ const userAPI = {
           `/users/change-password/${userId}?old_password=${encodeURIComponent(passwordData.old_password)}&new_password=${encodeURIComponent(passwordData.new_password)}`
         );
       },
+    forgotPassword: (email) => {
+      return axiosClient.post(`/users/forgot-password?email=${email}`);
+    },
+
+    // Đặt lại mật khẩu
+    resetPassword: (token, newPassword) => {
+      return axiosClient.post('/users/reset-password', { token, new_password: newPassword });
+    },
       
 };
 

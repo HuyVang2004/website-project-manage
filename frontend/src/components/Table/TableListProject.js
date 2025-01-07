@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './TableListProject.scss';
-import projectAPI from '../../api/projectsApi';
 import { ROUTERS } from '../../utils/router';
 import { useNavigate } from 'react-router-dom';
 
-// Thiểu userID
-const TableListProject = () => {
-    const [data, setData] = useState([]); // Store project data
+const TableListProject = ({data}) => {
     const [filters, setFilters] = useState({
         progress: '',
         status: '',
@@ -19,24 +16,6 @@ const TableListProject = () => {
     });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4; // Number of items per page
-
-    useEffect(() => {
-        // Fetch data from API and set it to state
-        projectAPI.getAllProjects()  
-            .then((projects) => {
-                // console.log("Danh sách dự án:", projects);
-                const formattedData = projects.map(project => ({
-                    project: project.project_name,
-                    progress: project.progress || 0, // Assuming progress is a percentage
-                    dueDate: new Date(project.end_date).toLocaleString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
-                    status: project.status,
-                }));
-                setData(formattedData);
-            })
-            .catch((error) => {
-                console.error("Lỗi khi lấy danh sách dự án:", error);
-            });
-    }, []);
 
     const handleFilterChange = (field, value) => {
         setFilters(prev => {
@@ -207,7 +186,7 @@ const Row = ({ row , onClick}) => {
                 <div className="project">
                     <div className="icon"></div>
                     <div>
-                        <div className="project-title">{row.project}</div>
+                        <div className="project-title">{row.projectName}</div>
                     </div>
                 </div>
             </Cell>

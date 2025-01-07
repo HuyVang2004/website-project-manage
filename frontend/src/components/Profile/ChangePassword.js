@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import "./ChangePassword.scss";
 import userApi from "../../api/userApi";
 
-const ChangePassword = ({ user }) => {
+const ChangePassword = () => {
+  const userData = JSON.parse(localStorage.getItem('user_profile'));
+  const userId = userData.user_id;
+  const name = userData.full_name
+  const avatar = userData.profile_picture
+  const email = userData.email
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -36,7 +41,7 @@ const ChangePassword = ({ user }) => {
         newPassword: formData.newPassword,
       };
 
-      await userApi.changePassword(user.id, data); 
+      await userApi.changePassword(userId, data); 
       setMessageType("success");
       setMessage("Thay đổi mật khẩu thành công!");
 
@@ -57,10 +62,10 @@ const ChangePassword = ({ user }) => {
 
       {/* Header - User Info */}
       <div className="user-info">
-        <img src={user.avatar} alt="User Avatar" className="user-avatar" />
+        <img src={avatar} alt="User Avatar" className="user-avatar" />
         <div>
-          <h3>{user.name}</h3>
-          <p>{user.email}</p>
+          <h3>{name}</h3>
+          <p>{email}</p>
         </div>
       </div>
 
