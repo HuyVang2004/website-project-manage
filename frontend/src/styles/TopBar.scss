@@ -1,6 +1,6 @@
 /* Header Styles (TopBar) */
 .header-top {
-  background: #e0e0e0;
+  background: #ffffff;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -235,13 +235,13 @@ body {
   }
   .chuong-icon{
     position: relative;
-    background-color: #e0e0e0;
+    background-color: #ffffff;
     align-items: center;
     .chuong{
       position: absolute;
       width: 400px;
       height: 400px;
-      background-color: #e0e0e0;
+      background-color: #ffffff;
       padding-left: 10px;
       left: -380px;
       top: 28px;
@@ -270,12 +270,12 @@ body {
 
   .caidat-icon{
     position: relative;
-    background-color: #e0e0e0;
+    background-color: #ffffff;
     .setting{
       position: absolute;
       width: 400px;
       height: 400px;
-      background-color: #ccc;
+      background-color: #ffffff;
       top: 35px;
       right: -20px;
       border-radius: 20px;

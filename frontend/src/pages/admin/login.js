@@ -31,7 +31,7 @@ export default function LoginPage() {
       console.log("Lỗi", err);
       console.error('Lỗi đăng nhập:', err);
       setError(err.response?.data?.message || 'Đăng nhập thất bại, vui lòng thử lại.');
-      navigate(ROUTERS.USER);
+      navigate(ROUTERS.USER.LOGIN);
     }
   };
 

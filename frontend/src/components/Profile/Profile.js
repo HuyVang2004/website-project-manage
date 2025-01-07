@@ -12,6 +12,7 @@ const Profile = () => {
   const [user, setUser] = useState(null); // State để lưu thông tin người dùng
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); // State để lưu lỗi nếu có
+  const [avatarUrl, setAvatarUrl] = useState("");
   const navigate = useNavigate();
 
   // Lấy thông tin người dùng khi component được mount
@@ -29,9 +30,21 @@ const Profile = () => {
     };
 
     fetchUserProfile();
+    fetchUserImage();
   }, []);
 
-
+  const fetchUserImage = async () => {
+    try {
+        if (user.user_id) {
+            const response = await userAPI.getUserImage(user.user_id);
+            const imageUrl = URL.createObjectURL(response);
+            console.log("avatar url",imageUrl);
+            setAvatarUrl(imageUrl);
+        }
+    } catch (error) {
+        console.error("Error fetching user image:", error);
+    }
+  };
   if (loading) {
     return <Typography variant="h6">Đang tải thông tin...</Typography>;
   }
@@ -67,33 +80,33 @@ const Profile = () => {
 
       <Box className="profile-avatar-container">
         <Avatar
-          src={user.profile_picture || "https://via.placeholder.com/150"} // Hiển thị avatar nếu có, nếu không sẽ dùng avatar mặc định
+          src={avatarUrl || "https://via.placeholder.com/150"} // Hiển thị avatar nếu có, nếu không sẽ dùng avatar mặc định
           alt="Avatar"
           className="profile-avatar"
         />
         <Typography variant="h5" className="profile-name">
-          {user.full_name || "Phạm Hữu Vang"} {/* Hiển thị tên người dùng nếu có */}
+          {user.full_name} {/* Hiển thị tên người dùng nếu có */}
         </Typography>
       </Box>
 
       <Box className="profile-info">
         <Typography variant="h6" className="profile-info-title">Số điện thoại</Typography>
-        <Typography variant="h6" className="profile-info-content">{user.phone || "0123456789"}</Typography>
+        <Typography variant="h6" className="profile-info-content">{user.phone|| ""}</Typography>
 
         <Typography variant="h6" className="profile-info-title">Email</Typography>
-        <Typography variant="h6" className="profile-info-content">{user.email || "vpham0838@gmail.com"}</Typography>
+        <Typography variant="h6" className="profile-info-content">{user.email || ""}</Typography>
 
         <Typography variant="h6" className="profile-info-title">Giới tính</Typography>
-        <Typography variant="h6" className="profile-info-content">{user.gender || "Nam"}</Typography>
+        <Typography variant="h6" className="profile-info-content">{user.gender || ""}</Typography>
 
         <Typography variant="h6" className="profile-info-title">Công việc</Typography>
-        <Typography variant="h6" className="profile-info-content">{user.job || "Kỹ sư phần mềm"}</Typography>
+        <Typography variant="h6" className="profile-info-content">{user.job || ""}</Typography>
 
         <Typography variant="h6" className="profile-info-title">Địa chỉ</Typography>
-        <Typography variant="h6" className="profile-info-content">{user.address || "Hà Nội"}</Typography>
+        <Typography variant="h6" className="profile-info-content">{user.address || ""}</Typography>
 
         <Typography variant="h6" className="profile-info-title">Mô tả</Typography>
-        <Typography variant="h6" className="profile-info-content">{user.description || "Đây là mô tả của người dùng."}</Typography>
+        <Typography variant="h6" className="profile-info-content">{user.description || ""}</Typography>
       </Box>
 
       <Grid container spacing={2} className="profile-actions">

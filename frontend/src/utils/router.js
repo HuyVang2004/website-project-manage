@@ -3,7 +3,6 @@ export const ROUTERS = {
         DEFAULT:'/',
         HOME: "/trangchu",
         PROFILE: "/profile",
-        HOME: "/",
         REGISTER: "/dangki",
         FORGOTPASSWORD: "/quenmatkhau",
         LOGIN: "/dangnhap",
@@ -13,6 +12,8 @@ export const ROUTERS = {
             BASE: "/duan",
             PROJECTDETAILS: "/duan/chitiet",
         },
+        MYTASK : "/mytask",
+        PEOPLELIST : "/nguoidung"
     },
 
     ADMIN: {

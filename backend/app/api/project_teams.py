@@ -31,14 +31,15 @@ def get_completed_projects_count_by_user(user_id: str, db: Session = Depends(get
     #     )
     return count
 
-@router.get("/{project_team_id}", response_model=ProjectTeamResponse)
-def get_project_team_by_id(project_team_id: str, db: Session = Depends(get_db)):
-    project_team = ProjectTeamService.get_project_team_by_id(db, project_team_id)
-    if not project_team:
+@router.get("/by-project/{project_id}", response_model=List[ProjectTeamResponse])
+def get_project_team_by_project_id(project_id: str, db: Session = Depends(get_db)):
+    project_teams = ProjectTeamService.get_project_team_by_project_id(db, project_id)
+    if not project_teams:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Project team not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="No project teams found for the given project ID"
         )
-    return project_team
+    return project_teams
+
 
 @router.post("/", response_model=ProjectTeamResponse, status_code=status.HTTP_201_CREATED)
 def create_project_team(
@@ -46,23 +47,24 @@ def create_project_team(
 ):
     return ProjectTeamService.create_project_team(db, project_team_data)
 
-@router.put("/{project_team_id}", response_model=ProjectTeamResponse)
-def update_project_team(
-    project_team_id: str, project_team_data: ProjectTeamUpdate, db: Session = Depends(get_db)
+@router.put("/update-by-project/{project_id}", response_model=ProjectTeamResponse)
+def update_project_team_by_project_id(
+    project_id: str, project_team_data: ProjectTeamUpdate, db: Session = Depends(get_db)
 ):
-    project_team = ProjectTeamService.update_project_team(db, project_team_id, project_team_data)
+    project_team = ProjectTeamService.update_project_team_by_project_id(db, project_id, project_team_data)
     if not project_team:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Project team not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Project team not found for the given project ID"
         )
     return project_team
 
-@router.delete("/{project_team_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_project_team(project_team_id: str, db: Session = Depends(get_db)):
-    success = ProjectTeamService.delete_project_team(db, project_team_id)
+
+@router.delete("/delete-by-project/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_project_team_by_project_id(project_id: str, db: Session = Depends(get_db)):
+    success = ProjectTeamService.delete_project_team_by_project_id(db, project_id)
     if not success:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Project team not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Project team not found for the given project ID"
         )
     return {"detail": "Project team deleted successfully"}
 
@@ -93,6 +95,13 @@ def get_projects_by_user(user_id: str, db: Session = Depends(get_db)):
         )
     return projects
 
-
+@router.get("/project-team-info/{project_id}", response_model=List[dict])
+def get_project_team_info_by_project_id(project_id: str, db: Session = Depends(get_db)):
+    project_team_info = ProjectTeamService.get_project_team_info_by_project_id(db, project_id)
+    if not project_team_info:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No project team info found for the given project ID"
+        )
+    return project_team_info
 
 

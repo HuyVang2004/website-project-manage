@@ -21,16 +21,16 @@ class ProjectTeamService:
         return project_team
 
     @staticmethod
-    def get_project_team_by_id(db: Session, project_team_id: str) -> Optional[ProjectTeam]:
-        return db.query(ProjectTeam).filter(ProjectTeam.project_team_id == project_team_id).first()
+    def get_project_team_by_project_id(db: Session, project_id: str) -> List[ProjectTeam]:
+        return db.query(ProjectTeam).filter(ProjectTeam.project_id == project_id).all()
 
     @staticmethod
     def get_all_project_teams(db: Session) -> List[ProjectTeam]:
         return db.query(ProjectTeam).all()
 
     @staticmethod
-    def update_project_team(db: Session, project_team_id: str, project_team_data: ProjectTeamUpdate) -> Optional[ProjectTeam]:
-        project_team = db.query(ProjectTeam).filter(ProjectTeam.project_team_id == project_team_id).first()
+    def update_project_team_by_project_id(db: Session, project_id: str, project_team_data: ProjectTeamUpdate) -> Optional[ProjectTeam]:
+        project_team = db.query(ProjectTeam).filter(ProjectTeam.project_id == project_id).first()
         if not project_team:
             return None
 
@@ -41,15 +41,17 @@ class ProjectTeamService:
         db.refresh(project_team)
         return project_team
 
+
     @staticmethod
-    def delete_project_team(db: Session, project_team_id: str) -> bool:
-        project_team = db.query(ProjectTeam).filter(ProjectTeam.project_team_id == project_team_id).first()
+    def delete_project_team_by_project_id(db: Session, project_id: str) -> bool:
+        project_team = db.query(ProjectTeam).filter(ProjectTeam.project_id == project_id).first()
         if not project_team:
             return False
 
         db.delete(project_team)
         db.commit()
         return True
+
 
     @staticmethod
     def get_user_and_project_ids(db: Session, username: str, project_name: str) -> Optional[dict]:
@@ -84,3 +86,14 @@ class ProjectTeamService:
             Project.status == 'hoàn thành',
             ProjectTeam.user_id == user_id
         ).count()
+        
+    @staticmethod
+    def get_project_team_info_by_project_id(db: Session, project_id: str):
+        # Query the database to get user_id and role from the project team table
+        result = db.query(ProjectTeam).filter(ProjectTeam.project_id == project_id).all()
+        
+        if not result:
+            return None
+        
+        # Map the result to a list of dictionaries containing only user_id and role
+        return [{"user_id": team.user_id, "role": team.role} for team in result]
