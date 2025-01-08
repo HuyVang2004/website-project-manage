@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './AddTaskModal.scss';
 
 const AddTaskModal = ({ onClose }) => {
+  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     title: '',
     deadline: '',
@@ -9,11 +10,66 @@ const AddTaskModal = ({ onClose }) => {
     description: '',
     image: null
   });
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  useEffect(() => {
+    // Cleanup URL khi component unmount
+    return () => {
+      if (selectedImage) {
+        URL.revokeObjectURL(selectedImage);
+      }
+    };
+  }, [selectedImage]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission logic here
     onClose();
+  };
+
+  const handleBrowseClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Kiểm tra kích thước file (giới hạn 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File quá lớn. Vui lòng chọn file nhỏ hơn 5MB');
+        return;
+      }
+      
+      // Kiểm tra loại file
+      if (!file.type.startsWith('image/')) {
+        alert('Vui lòng chọn file ảnh');
+        return;
+      }
+
+      const imageUrl = URL.createObjectURL(file);
+      setSelectedImage(imageUrl);
+      setFormData({ ...formData, image: file });
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File quá lớn. Vui lòng chọn file nhỏ hơn 5MB');
+        return;
+      }
+      const imageUrl = URL.createObjectURL(file);
+      setSelectedImage(imageUrl);
+      setFormData({ ...formData, image: file });
+    } else {
+      alert('Vui lòng chọn file ảnh');
+    }
   };
 
   return (
@@ -91,15 +147,34 @@ const AddTaskModal = ({ onClose }) => {
 
             <div className="form-group image-upload">
               <label>Thêm ảnh</label>
-              <div className="upload-area">
-                <img src="/placeholder-image.svg" alt="Upload" />
+              <div 
+                className="upload-area"
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              >
+                {selectedImage ? (
+                  <img 
+                    src={selectedImage} 
+                    alt="Preview" 
+                    style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }}
+                  />
+                ) : (
+                  <img src="/placeholder-image.svg" alt="Upload" />
+                )}
                 <p>Drag&Drop files here</p>
                 <p>or</p>
-                <button type="button" className="browse-button">Browse</button>
+                <button 
+                  type="button" 
+                  className="browse-button"
+                  onClick={handleBrowseClick}
+                >
+                  Browse
+                </button>
                 <input
+                  ref={fileInputRef}
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
+                  onChange={handleFileChange}
                   hidden
                 />
               </div>
