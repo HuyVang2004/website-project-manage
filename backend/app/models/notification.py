@@ -3,6 +3,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from app.db.base import Base
 import uuid
+
 class Notification(Base):
     __tablename__ = "notifications"
 
@@ -11,6 +12,6 @@ class Notification(Base):
     message = Column(Text, nullable=False)
     created_time = Column(DateTime, server_default=func.now(), nullable=False)
     is_read = Column(Boolean, default=False)
+    link = Column(String(255), nullable=True) 
 
-    # Relationship to users
     user = relationship("User", backref="notifications")

@@ -13,7 +13,6 @@ def create_project(db: Session, project: ProjectCreate):
         start_date=project.start_date,
         end_date=project.end_date,
         status=project.status,
-        budget=project.budget,
         created_by=project.created_by,
         target=project.target,
     )

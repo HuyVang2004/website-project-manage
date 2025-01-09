@@ -8,7 +8,6 @@ class ProjectCreate(BaseModel):
     start_date: datetime
     end_date: datetime
     status: str
-    budget: int
     created_by: str
     target: str | None = None
 
@@ -19,7 +18,6 @@ class ProjectResponse(BaseModel):
     start_date: datetime
     end_date: datetime
     status: str
-    budget: int
     created_by: str
     update_time: datetime | None
     target: str | None
@@ -31,7 +29,6 @@ class ProjectUpdate(BaseModel):
     start_date: Optional[datetime]
     end_date: Optional[datetime]
     status: Optional[str]
-    budget: Optional[int]
     target: Optional[str]
     
 
