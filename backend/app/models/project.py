@@ -10,7 +10,5 @@ class Project(Base):
     description = Column(Text, nullable=True)
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
-    status = Column(String(100), nullable=False)
     created_by = Column(String(36), ForeignKey("users.user_id"), nullable=False)
     update_time = Column(DateTime, onupdate=func.now())
-    target = Column(Text, nullable=True)

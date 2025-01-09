@@ -12,9 +12,7 @@ def create_project(db: Session, project: ProjectCreate):
         description=project.description,
         start_date=project.start_date,
         end_date=project.end_date,
-        status=project.status,
         created_by=project.created_by,
-        target=project.target,
     )
     db.add(new_project)
     db.commit()
