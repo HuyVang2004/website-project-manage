@@ -10,7 +10,6 @@ class Task(Base):
     project_id = Column(String(36), ForeignKey("projects.project_id"), nullable=False)
     task_name = Column(String(100), nullable=False)
     assigned_to = Column(String(36), ForeignKey("users.user_id"), nullable=True)
-    status = Column(String(100), nullable=False)
     due_date = Column(DateTime, nullable=False)  
     priority = Column(String(50), nullable=False)
     description = Column(Text, nullable=True)  
