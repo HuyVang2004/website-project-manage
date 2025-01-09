@@ -1,0 +1,113 @@
+.calendar-container {
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    // display: flex;
+    // justify-content: center;
+  
+    .fc {
+      font-family: Arial, sans-serif;
+      width: 100%;
+      height: 100%;
+      .fc-toolbar-title {
+        color: #333;
+        font-size: 1.5em;
+      }
+      .fc-daygrid-day {
+        border: 1px solid #ddd;
+      }
+      .fc-event {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+.modal {
+  position: fixed;
+  top: 76px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);  /* Làm mờ phần còn lại của trang */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Đảm bảo modal nằm trên các phần tử khác */
+  height: 540px;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Thêm đổ bóng cho modal */
+  z-index: 1100; /* Đảm bảo modal nội dung luôn nằm trên lớp mờ */
+}
+
+.modal-content h3 {
+  margin-top: 0;
+}
+
+.modal-content label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+.modal-content input,
+.modal-content textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.modal-content button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.modal-content button:hover {
+  background-color: #0056b3;
+}
+
+.custom-event {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.event-header {
+  display: flex;
+  align-items: center;
+}
+
+.event-priority {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.event-attendees {
+  display: flex;
+  margin-top: 5px;
+}
+
+.event-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 3px;
+}

@@ -1,4 +1,4 @@
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useEffect, useCallback } from "react";
 import "./style.scss";
 import Sidebar from "../../../../components/SlideBar";
 import TopBar from "../../../../components/Nav/TopBar";
@@ -7,16 +7,11 @@ import { IoCalendarNumberSharp } from "react-icons/io5";
 import { HiChartBar } from "react-icons/hi";
 import { IoDocumentTextSharp } from "react-icons/io5";
 import { FaCommentAlt } from "react-icons/fa";
-import FullCalendar from '@fullcalendar/react'; 
-import dayGridPlugin from '@fullcalendar/daygrid'; 
-import interactionPlugin from '@fullcalendar/interaction'; 
-import timeGridPlugin from '@fullcalendar/timegrid';
-import './calendar-styles.scss';
 import TableListProject from "../../../../components/Table/TableListProject";
 import ChatBox from "../boxChatPage/BoxChatPage";
 import Gantt from "../ganttChart/Gantt";
 import getListProjectData from "../../../../api/projects/getListProjectData";
-
+import Calendar from "../Calendar/Calendar";
 const ProjectDetails = () => {
   const [scrolled, setScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState("cong-viec");
@@ -24,6 +19,8 @@ const ProjectDetails = () => {
   const [events, setEvents] = useState([]);
   const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");
   const userId = userData?.user_id || "";
+
+
 
   useEffect(() => {
     // Scroll event handling
@@ -56,30 +53,6 @@ const ProjectDetails = () => {
     setEvents(initialEvents.map(migrateOldEvent));
   }, []);
 
-  const handleDateSelect = (selectInfo) => {
-    const title = prompt('Nhập tên sự kiện:');
-    if (title) {
-      const newEvent = {
-        id: String(Date.now()), // Convert to string
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay
-      };
-      
-      setEvents(prevEvents => [...prevEvents, newEvent]);
-    }
-    selectInfo.view.calendar.unselect();
-  };
-
-  const handleEventClick = (clickInfo) => {
-    if (confirm('Bạn có muốn xóa sự kiện này không?')) {
-      const eventId = clickInfo.event.id;
-      setEvents(prevEvents => {
-        return prevEvents.filter(event => event.id !== eventId);
-      });
-    }
-  };
 
   // Rendering content based on active tab
   const renderContent = () => {
@@ -92,40 +65,7 @@ const ProjectDetails = () => {
         );
       case "lich":
         return (
-          <div className="tab-content">
-            <div className="calendar-wrapper">
-              <FullCalendar
-                plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-                initialView="dayGridMonth"
-                events={events}
-                selectable={true}
-                select={handleDateSelect}
-                eventClick={handleEventClick}
-                headerToolbar={{
-                  left: 'prev,next today',
-                  center: 'title',
-                  right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                }}
-                height={"800px"}
-                editable={true}
-                eventDrop={(info) => {
-                  const droppedEventId = info.event.id;
-                  setEvents(prevEvents => {
-                    const updatedEvents = prevEvents.filter(
-                      event => event.id !== droppedEventId
-                    );
-                    return [...updatedEvents, {
-                      id: droppedEventId,
-                      title: info.event.title,
-                      start: info.event.startStr,
-                      end: info.event.endStr,
-                      allDay: info.event.allDay
-                    }];
-                  });
-                }}
-              />
-            </div>
-          </div>
+          <Calendar />
         );
       case "gantt":
         return (

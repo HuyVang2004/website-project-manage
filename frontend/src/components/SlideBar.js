@@ -22,9 +22,9 @@ const Sidebar = () => {
   const defaultIcons = [
     { id: 1, Icon: Home, label: 'Trang chủ', onClick : () => navigate(ROUTERS.USER.HOME)},
     { id: 2, Icon: FileText, label: 'Dự án', onClick : () => navigate(ROUTERS.USER.PROJECT.BASE) },
-    { id: 3, Icon: Target, label: 'Công việc'},
+    { id: 3, Icon: Target, label: 'Công việc', onClick: () => navigate(ROUTERS.USER.MYTASK)},
     { id: 4, Icon: BarChart2, label: 'Báo cáo'},
-    { id: 5, Icon: Users, label: 'Người dùng'},
+    { id: 5, Icon: Users, label: 'Người dùng', onClick: () => navigate(ROUTERS.USER.PEOPLELIST)},
     { id: 6, Icon: Plus, label: 'Thêm mới' },
   ];
 
@@ -49,13 +49,13 @@ const Sidebar = () => {
         <a href="http://localhost:3000/duan" className="sidebar__link">
           <FileText className="sidebar__icon" />
         </a>
-        <a href="/target" className="sidebar__link">
+        <a href="http://localhost:3000/mytask" className="sidebar__link">
           <Target className="sidebar__icon" />
         </a>
         <a href="/stats" className="sidebar__link">
           <BarChart2 className="sidebar__icon" />
         </a>
-        <a href="/users" className="sidebar__link">
+        <a href="http://localhost:3000/nguoidung" className="sidebar__link">
           <Users className="sidebar__icon" />
         </a>
         <a href="/add" className="sidebar__link">

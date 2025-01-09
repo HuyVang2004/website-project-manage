@@ -14,6 +14,5 @@ class ProjectDocument(Base):
     uploaded_time = Column(DateTime, server_default=func.now(), nullable=False)
     description = Column(Text, nullable=True)
 
-    # Relationships to projects and users
     project = relationship("Project", backref="documents")
     uploaded_by_user = relationship("User", backref="uploaded_documents")

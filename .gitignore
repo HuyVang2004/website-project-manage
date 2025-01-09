@@ -3,6 +3,9 @@ test/
 Test_components.js
 __pycache__/
 venv/
-env/
+.venv/
+.env
+.venv
+.backend_env
 *.pyc
 
