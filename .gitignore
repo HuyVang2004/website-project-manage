@@ -1,0 +1,11 @@
+node_modules/
+test/
+Test_components.js
+__pycache__/
+venv/
+.venv/
+.env
+.venv
+.backend_env
+*.pyc
+

@@ -1,0 +1,152 @@
+.add-task-modal {
+    position: fixed;
+    top: 60px;
+    left: 1px;
+    right: 1px;
+    bottom: 1px;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  
+    &__content {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+  
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #eee;
+  
+      h2 {
+        font-size: 24px;
+        font-weight: 600;
+        margin: 0;
+      }
+    }
+  
+    &__close {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      
+      &:hover {
+        color: #333;
+      }
+    }
+  
+    .form-group {
+      margin-bottom: 20px;
+  
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+  
+      input[type="text"],
+      input[type="date"],
+      textarea {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+  
+        &:focus {
+          outline: none;
+          border-color: #0066cc;
+        }
+      }
+    }
+  
+    .priority-options {
+      display: flex;
+      gap: 16px;
+  
+      .priority-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+  
+        input[type="radio"] {
+          margin: 0;
+        }
+      }
+    }
+  
+    .form-row {
+      display: flex;
+      gap: 24px;
+  
+      .description {
+        flex: 1;
+  
+        textarea {
+          height: 150px;
+          resize: none;
+        }
+      }
+  
+      .image-upload {
+        width: 300px;
+  
+        .upload-area {
+          border: 2px dashed #ddd;
+          border-radius: 8px;
+          padding: 24px;
+          text-align: center;
+          cursor: pointer;
+  
+          img {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+          }
+  
+          p {
+            margin: 8px 0;
+            color: #666;
+          }
+  
+          .browse-button {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+  
+            &:hover {
+              background: #eee;
+            }
+          }
+        }
+      }
+    }
+  
+    .submit-button {
+      background: #ff4d4f;
+      color: white;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+  
+      &:hover {
+        background: darken(#ff4d4f, 5%);
+      }
+    }
+  }

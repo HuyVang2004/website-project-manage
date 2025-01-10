@@ -1,0 +1,71 @@
+.footer {
+    background: #f5f5f5; /* Màu nền */
+    padding: 20px 0; /* Khoảng cách trên và dưới */
+}
+
+.footer .container {
+    max-width: 1200px;
+    margin: auto; /* Căn giữa container */
+}
+
+.footer .row {
+    display: flex; /* Kích hoạt Flexbox */
+    justify-content: space-between; /* Tạo khoảng cách đều giữa hai cột */
+    align-items: center; /* Căn giữa các cột theo chiều dọc */
+}
+
+.footer_left {
+    display: flex; /* Kích hoạt Flexbox cho từng cột */
+    flex-direction: column; /* Sắp xếp nội dung theo chiều dọc */
+    justify-content: center; /* Căn giữa nội dung theo chiều dọc */
+    align-items: flex-start; /* Căn trái nội dung bên trong */
+}
+
+.footer_left {
+    flex: 0 0 70%; /* Cột bên trái chiếm 70% */
+    max-width: 70%; /* Giới hạn chiều rộng tối đa */
+    /* background: #1dbd1d; */
+    
+}
+
+.footer_right {
+    align-items: flex-start; /* Căn phải nội dung bên trong */
+    text-align: right; /* Căn chỉnh văn bản sang phải */
+    padding-left: 200px; /* Đã giảm padding để đảm bảo tính phản hồi tốt */
+}
+
+.footer h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.footer p {
+    font-size: 15px;
+    margin: 5px 0;
+    line-height: 1.5;
+}
+
+/* Định dạng cho các icon mạng xã hội */
+.social_links {
+    display: flex;
+    gap: 20px; /* Khoảng cách giữa các icon */
+}
+
+.social_links a {
+    font-size: 34px; /* Kích thước biểu tượng */
+    color: #c6c6cc; /* Màu sắc biểu tượng */
+    text-decoration: none; /* Xóa gạch chân */
+} 
+
+.social_links a:hover {
+    color:rgb(57, 59, 57); /* Màu sắc khi hover */
+}
+// @media (max-width: 768px) {
+//     .footer_right{
+        
+//         justify-content: start;
+//         padding-left: 1px;
+        
+//     }
+// }
