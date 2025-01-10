@@ -8,6 +8,7 @@ class ProjectCreate(BaseModel):
     start_date: datetime
     end_date: datetime
     created_by: str
+    status: Optional[str] = None 
 
 class ProjectResponse(BaseModel):
     project_id: str
@@ -16,6 +17,7 @@ class ProjectResponse(BaseModel):
     start_date: datetime
     end_date: datetime
     created_by: str
+    status: Optional[str] = None 
     update_time: datetime | None
  
 
@@ -24,6 +26,7 @@ class ProjectUpdate(BaseModel):
     description: Optional[str]
     start_date: Optional[datetime]
     end_date: Optional[datetime]
+    status: Optional[str] = None 
     
 
 class Config:

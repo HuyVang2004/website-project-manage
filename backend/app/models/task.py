@@ -12,6 +12,7 @@ class Task(Base):
     assigned_to = Column(String(36), ForeignKey("users.user_id"), nullable=True)
     due_date = Column(DateTime, nullable=False)  
     priority = Column(String(50), nullable=False)
+    status = Column(String(50), nullable=True)
     description = Column(Text, nullable=True)  
     start_time = Column(DateTime, default=func.now()) 
     update_time = Column(DateTime, onupdate=func.now()) 
