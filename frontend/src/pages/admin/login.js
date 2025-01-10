@@ -31,7 +31,6 @@ export default function LoginPage() {
       console.log("Lỗi", err);
       console.error('Lỗi đăng nhập:', err);
       setError(err.response?.data?.message || 'Đăng nhập thất bại, vui lòng thử lại.');
-      navigate(ROUTERS.USER.LOGIN);
     }
   };
 
@@ -81,7 +80,7 @@ export default function LoginPage() {
           
         </form>
         <div className="login-link">
-          <p>Bạn chưa có tài khoản? <Link to="/dangki">Đăng kí</Link></p>
+          <p>Bạn chưa có tài khoản? <Link to="/dangki">Đăng kí</Link></p>   
         </div>
       </div>
     </div>

@@ -1,72 +1,123 @@
+
+
+.main-container {
+  display: flex;
+  height: 100vh;
+  width: 10%;
+}
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .analytics-container {
   display: flex;
-  width: 103%;
-  height: calc(100vh - 64px - 50px);
-  background-color: #f1f5f9;
+  justify-content: center;
+  align-items: center;
   padding-top: 6rem;
-  padding-bottom: 2rem;
-  gap:2rem;
+  background-color: #EAF8FF;
+  padding-bottom: 5rem;
+  padding-left: 5rem;
+}
 
-  .chart-section {
-    flex: 1;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    
-    h2 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 1.5rem;
-      text-align: center;
-    }
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); // Chia làm 2 cột
+  grid-gap: 2rem; // Khoảng cách giữa các biểu đồ
+  width: 100%;
+  max-width: 1400px; // Giới hạn chiều rộng tối đa
+  margin: 0 auto;
+}
 
-    .chart-content {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+.chart-wrapper {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
 
-      // Đảm bảo biểu đồ responsive
-      svg {
-        width: 100% !important;
-        height: 100% !important;
-        max-height: calc(100vh - 200px);
-      }
-    }
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
-  // Media query cho màn hình nhỏ
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    height: auto;
-    
-    .chart-section {
-      height: 500px;
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .chart-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .recharts-wrapper {
+      margin: 0 auto;
+      width: 100%;
+      height: auto;
     }
   }
 }
 
-// Style cho scrollbar
-.flex-1.overflow-auto {
-  &::-webkit-scrollbar {
-    width: 6px;
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+
+  &:hover {
+    background: #666;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1024px) {
+  .charts-grid {
+    grid-template-columns: 1fr; // Chỉ hiển thị 1 cột trên màn hình nhỏ
+  }
+}
+
+@media (max-width: 768px) {
+  .analytics-container {
+    padding: 1rem;
   }
 
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
+  .chart-wrapper {
+    padding: 1rem;
 
-  &::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 3px;
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
   }
+}
 
-  &::-webkit-scrollbar-thumb:hover {
-    background: #555;
+// Print styles
+@media print {
+  .chart-wrapper {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #e5e7eb;
   }
 }
 .footer {

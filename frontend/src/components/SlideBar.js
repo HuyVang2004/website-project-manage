@@ -42,39 +42,12 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <div className="sidebar__icons">
-<<<<<<< HEAD
-=======
-
-        {/* <a href="http://localhost:3000/trangchu" className="sidebar__link">
-          <Home className="sidebar__icon" />
-        </a>
-        <a href="http://localhost:3000/duan" className="sidebar__link">
-          <FileText className="sidebar__icon" />
-        </a>
-        <a href="http://localhost:3000/mytask" className="sidebar__link">
-          <Target className="sidebar__icon" />
-        </a>
-        <a href="/stats" className="sidebar__link">
-          <BarChart2 className="sidebar__icon" />
-        </a>
-        <a href="http://localhost:3000/nguoidung" className="sidebar__link">
-          <Users className="sidebar__icon" />
-        </a>
-        <a href="/add" className="sidebar__link">
-          <Plus className="sidebar__icon" />
-        </a> */}
-
->>>>>>> 5fccb28ebbb7d21eaceabe8f4de4294430cd8ac2
         {icons.map(({ id, Icon, label,onClick }) => (
           <div key={id} className="sidebar__item"  onClick={onClick}>
             <Icon className="sidebar__icon" />
             <span className="sidebar__label">{label}</span>
           </div>
         ))}
-<<<<<<< HEAD
-=======
-
->>>>>>> 5fccb28ebbb7d21eaceabe8f4de4294430cd8ac2
       </div>
 
 

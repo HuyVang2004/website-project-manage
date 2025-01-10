@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ROUTERS } from '../../utils/router';
-import { users } from './data/UserData';
+import projectsApi from '../../api/projects/projectsApi';
 import Sidebar from '../../components/SlideBar';
 import TopBar from '../../components/Nav/TopBar';
 import Footer from '../../components/Footer';
@@ -10,18 +10,83 @@ import './style/Project.scss';
 const Project = () => {
   const navigate = useNavigate();
   const { project } = useParams();
-  
-  // Get unique projects
-  const allProjects = [...new Set(users.flatMap(user => user.project))].sort();
-  
-  // Get users for current project if project is selected
-  const projectUsers = project 
-    ? users.filter(user => user.project.includes(project))
-    : [];
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleUserClick = (user) => {
-    navigate(`/${ROUTERS.ADMIN.USERDETAILS.replace(':id', user.id)}`, { state: { user } });
-  };
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const data = await projectsApi.getAllProjects({ skip: 0, limit: 100 });
+        
+        if (isMounted) {
+          // Kiểm tra data trực tiếp vì axiosClient đã xử lý response.data
+          if (Array.isArray(data)) {
+            console.log('Projects data:', data);
+            setProjects(data);
+          } else {
+            console.error('Invalid data format:', data);
+            setError('Định dạng dữ liệu không hợp lệ');
+            setProjects([]);
+          }
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.error('Error fetching projects:', err);
+          setError('Có lỗi xảy ra khi tải danh sách dự án');
+          setProjects([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchProjects();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Get current project details using project_name
+  const currentProject = project 
+    ? projects.find(p => p.project_name === decodeURIComponent(project))
+    : null;
+
+  if (loading) {
+    return (
+      <div className="dashboard">
+        <Sidebar />
+        <div className="main-content">
+          <TopBar />
+          <div className="project-container">
+            <div className="loading">Đang tải dữ liệu...</div>
+          </div>
+          <Footer />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="dashboard">
+        <Sidebar />
+        <div className="main-content">
+          <TopBar />
+          <div className="project-container">
+            <div className="error">{error}</div>
+          </div>
+          <Footer />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard">
@@ -30,63 +95,52 @@ const Project = () => {
         <TopBar />
         <div className="project-container">
           {!project ? (
-            // Project List View
             <>
               <h2>Danh sách dự án</h2>
-              <div className="projects-grid">
-                {allProjects.map((projectName) => (
-                  <Link 
-                    key={projectName}
-                    to={`/${ROUTERS.ADMIN.PROJECT}/${projectName}`}
-                    className="project-card"
-                  >
-                    <h3>Dự án {projectName}</h3>
-                    <div className="project-stats">
-                      <span>
-                        {users.filter(user => user.project.includes(projectName)).length} thành viên
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </>
-          ) : (
-            // Project Detail View
-            <>
-              <div className="project-detail-container">
-            <Link to={`/${ROUTERS.ADMIN.PROJECT}`} className="back-button">
-                ← Quay lại
-            </Link>
-            
-            <div className="project-header">
-                <h2>
-                Dự án {project}
-                <span className="member-count">
-                    ({projectUsers.length} thành viên)
-                </span>
-                </h2>
-            </div>
-            </div>
-              <div className="project-details">
-                <h3>Danh sách thành viên dự án </h3>
-                <div className="users-grid">
-                  {projectUsers.map((user) => (
-                    <div
-                      key={user.id}
-                      className="user-card"
-                      onClick={() => handleUserClick(user)}
+              {projects && projects.length > 0 ? (
+                <div className="projects-grid">
+                  {projects.map((projectItem) => (
+                    <Link 
+                      key={projectItem.project_id}
+                      to={`/${ROUTERS.ADMIN.PROJECT}/${encodeURIComponent(projectItem.project_name)}`}
+                      className="project-card"
                     >
-                      <div className="user-info">
-                        <h4>{user.name}</h4>
-                        <p>{user.phone}</p>
-                        <p>{user.email}</p>
-                        <p className={`status ${user.status === 'Hoạt động' ? 'active' : 'locked'}`}>
-                          {user.status}
-                        </p>
+                      <h3>{projectItem.project_name}</h3>
+                      <div className="project-stats">
+                        <p>Trạng thái: {projectItem.status}</p>
+                        <p>Ngân sách: {projectItem.budget?.toLocaleString()} VND</p>
+                        <p>Người tạo: {projectItem.created_by}</p>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
+              ) : (
+                <div>Không có dự án nào</div>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="project-detail-container">
+                <Link to={`/${ROUTERS.ADMIN.PROJECT}`} className="back-button">
+                  ← Quay lại
+                </Link>
+                
+                {currentProject ? (
+                  <div className="project-header">
+                    <h2>{currentProject.project_name}</h2>
+                    <div className="project-info">
+                      <p>Mô tả: {currentProject.description || 'Không có mô tả'}</p>
+                      <p>Trạng thái: {currentProject.status}</p>
+                      <p>Ngân sách: {currentProject.budget?.toLocaleString()} VND</p>
+                      <p>Ngày bắt đầu: {new Date(currentProject.start_date).toLocaleDateString('vi-VN')}</p>
+                      <p>Ngày kết thúc: {new Date(currentProject.end_date).toLocaleDateString('vi-VN')}</p>
+                      <p>Người tạo: {currentProject.created_by}</p>
+                      {currentProject.target && <p>Mục tiêu: {currentProject.target}</p>}
+                    </div>
+                  </div>
+                ) : (
+                  <div>Không tìm thấy thông tin dự án</div>
+                )}
               </div>
             </>
           )}
