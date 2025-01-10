@@ -18,9 +18,9 @@ app.add_middleware(
 Base.metadata.create_all(bind=engine)
 
 # Đăng ký router
-app.include_router(admins.router, prefix="/admin", tags=["Admin"])
-app.include_router(users.router, prefix="/users", tags=["Users"])
-app.include_router(projects.router, prefix="/projects", tags=["Projects"])
+app.include_router(admins.router, prefix="/admin", tags=["admin"])
+app.include_router(users.router, prefix="/users", tags=["users"])
+app.include_router(projects.router, prefix="/projects", tags=["projects"])
 app.include_router(tasks.router, prefix="/tasks", tags=["tasks"])
 app.include_router(project_teams.router, prefix="/project_teams", tags=["project_teams"])
 app.include_router(comments.router, prefix="/comments", tags=["comments"])

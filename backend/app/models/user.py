@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.sql import func
 from app.db.base import Base
+from sqlalchemy.orm import relationship
 import uuid
 
 class User(Base):
@@ -16,3 +17,6 @@ class User(Base):
     full_name = Column(String(100), nullable=True)
     gender = Column(String(20), nullable=True) 
     job = Column(String(100), nullable=True)  
+
+    # Relationship to Message
+    messages = relationship("Message", back_populates="sender")
