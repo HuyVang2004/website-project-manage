@@ -45,17 +45,11 @@ const HomePage = () => {
   const fetchProjects = async (userId) => {
     try {
       const data = await getListProjectData(userId);
-<<<<<<< HEAD
       console.log("data project",data)
       setListProject(data);
     } catch (error) {
       // setError(error.message);
       setListProject([]);
-=======
-      setListProject(data);
-    } catch (error) {
-      setError(error.message);
->>>>>>> e977878784fd76b38554772ecc689f1afbdeeb93
     } finally {
       setLoading(false);
     }
@@ -73,13 +67,6 @@ const HomePage = () => {
     return <div>Loading...</div>;
   }
 
-<<<<<<< HEAD
-=======
-  if (error) {
-    return <div>{error}</div>;
-  }
-
->>>>>>> e977878784fd76b38554772ecc689f1afbdeeb93
   return (
     <div className="dashboard">
       {/* Sidebar Component */}

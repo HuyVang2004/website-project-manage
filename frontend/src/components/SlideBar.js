@@ -16,9 +16,12 @@ import {
 } from 'lucide-react';
 import '../styles/SlideBar.scss';
 import { ROUTERS } from '../utils/router';
+
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const isAdmin = location.pathname.startsWith('/admin');
+
   const defaultIcons = [
     { id: 1, Icon: Home, label: 'Trang chủ', onClick : () => navigate(ROUTERS.USER.HOME)},
     { id: 2, Icon: FileText, label: 'Dự án', onClick : () => navigate(ROUTERS.USER.PROJECT.BASE) },
@@ -37,22 +40,29 @@ const Sidebar = () => {
     { id: 6, Icon: MessageCircleMore, label: 'Hỗ trợ', onClick: () => navigate('/admin/support') },
   ];
 
-  const icons = location.pathname.startsWith('/admin') ? adminIcons : defaultIcons;
+  const icons = isAdmin ? adminIcons : defaultIcons;
+
+  const handleHelpClick = () => {
+    if (isAdmin) {
+      navigate('/admin/help');
+    } else {
+      navigate('/help');
+    }
+  };
 
   return (
     <div className="sidebar">
       <div className="sidebar__icons">
-        {icons.map(({ id, Icon, label,onClick }) => (
-          <div key={id} className="sidebar__item"  onClick={onClick}>
+        {icons.map(({ id, Icon, label, onClick }) => (
+          <div key={id} className="sidebar__item" onClick={onClick}>
             <Icon className="sidebar__icon" />
             <span className="sidebar__label">{label}</span>
           </div>
         ))}
       </div>
 
-
       <div className="sidebar__bottom">
-        <div className="sidebar__item">
+        <div className="sidebar__item" onClick={handleHelpClick}>
           <HelpCircle className="sidebar__icon" />
           <span className="sidebar__label">Trợ giúp</span>
         </div>
@@ -62,5 +72,3 @@ const Sidebar = () => {
 };
 
 export default memo(Sidebar);
-
-    
