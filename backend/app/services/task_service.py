@@ -14,8 +14,8 @@ def create_task(task: TaskCreate, db: Session):
         db.refresh(new_task)
         return new_task
     except Exception as e:
-        db.rollback()  # Rollback in case of error
-        raise e  # Re-raise the exception after rollback
+        db.rollback()  
+        raise e 
 
 def get_task_by_id(task_id: str, db: Session):
     try:

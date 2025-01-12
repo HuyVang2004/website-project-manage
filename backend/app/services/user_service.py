@@ -4,6 +4,8 @@ from app.schemas.user import UserCreate
 from app.db.session import get_db
 from passlib.context import CryptContext
 from fastapi import HTTPException
+from app.core.security import create_access_token, verify_password
+
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -29,3 +31,13 @@ def reset_password(email: str, new_password: str, db: Session):
     db.commit()
     return {"message": "Password updated successfully"}
 
+
+# Đăng nhập người dùng và tạo access token
+def login_user(email: str, password: str, db: Session):
+    user = db.query(User).filter(User.email == email).first()
+    if not user or not verify_password(password, user.password):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+
+    access_token = create_access_token(data={"sub": user.email, "user_id": user.user_id})
+
+    return {"access_token": access_token, "token_type": "bearer", "user": user}

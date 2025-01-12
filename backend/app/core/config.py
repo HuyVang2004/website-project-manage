@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 from fastapi_mail import ConnectionConfig  # Nhập ConnectionConfig từ fastapi_mail
 
 class Settings(BaseSettings):
-    secret_key: str = "your_secret_key"
+    secret_key: str = "secret_key"
     
     # Cấu hình email sử dụng ConnectionConfig với các tham số đúng
     mail_config: ConnectionConfig = ConnectionConfig(

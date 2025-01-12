@@ -9,6 +9,7 @@ class TaskCreate(BaseModel):
     assigned_to: Optional[str] = None  
     due_date: datetime
     priority: str
+    status: Optional[str] = None 
     description: Optional[str] = None  
 
 class TaskResponse(BaseModel):
@@ -18,6 +19,7 @@ class TaskResponse(BaseModel):
     assigned_to: Optional[str] = None  
     due_date: datetime
     priority: str
+    status: Optional[str] = None 
     description: Optional[str] = None  
     start_time: Optional[datetime] = None   
     update_time: Optional[datetime] = None  
@@ -27,4 +29,5 @@ class TaskUpdate(BaseModel):
     assigned_to: Optional[str] = None
     due_date: Optional[datetime] = None
     priority: Optional[str] = None
+    status: Optional[str] = None 
     description: Optional[str] = None
