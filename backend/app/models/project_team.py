@@ -12,6 +12,5 @@ class ProjectTeam(Base):
     role = Column(String(100), nullable=False)
     join_time = Column(DateTime, server_default=func.now(), nullable=False)
 
-    # Relationship to users and projects
     user = relationship("User", backref="project_teams")
     project = relationship("Project", backref="project_teams")

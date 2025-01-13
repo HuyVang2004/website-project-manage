@@ -9,16 +9,13 @@ from app.models.user import User
 class ProjectTeamService:
     @staticmethod
     def create_project_team(db: Session, project_team_data: ProjectTeamCreate) -> ProjectTeam:
-        project_team = ProjectTeam(
-            project_team_id=str(uuid4()),
-            user_id=project_team_data.user_id,
-            project_id=project_team_data.project_id,
-            role=project_team_data.role
-        )
+        project_team = ProjectTeam(**project_team_data.dict()) 
+        project_team.project_team_id = str(uuid4()) 
         db.add(project_team)
         db.commit()
         db.refresh(project_team)
         return project_team
+
 
     @staticmethod
     def get_project_team_by_project_id(db: Session, project_id: str) -> List[ProjectTeam]:

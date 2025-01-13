@@ -6,28 +6,28 @@ import uuid
 class TaskCreate(BaseModel):
     project_id: str
     task_name: str
-    assigned_to: Optional[str]
-    status: str
+    assigned_to: Optional[str] = None  
     due_date: datetime
     priority: str
-    budget: int
+    status: Optional[str] = None 
+    description: Optional[str] = None  
 
 class TaskResponse(BaseModel):
     task_id: str
     project_id: str
     task_name: str
-    assigned_to: Optional[str]
-    status: str
+    assigned_to: Optional[str] = None  
     due_date: datetime
     priority: str
-    budget: int
-    create_time: datetime
-    update_time: Optional[datetime]
+    status: Optional[str] = None 
+    description: Optional[str] = None  
+    start_time: Optional[datetime] = None   
+    update_time: Optional[datetime] = None  
 
 class TaskUpdate(BaseModel):
-    task_name: Optional[str]
-    assigned_to: Optional[str]
-    status: Optional[str]
-    due_date: Optional[datetime]
-    priority: Optional[str]
-    budget: Optional[int]
+    task_name: Optional[str] = None
+    assigned_to: Optional[str] = None
+    due_date: Optional[datetime] = None
+    priority: Optional[str] = None
+    status: Optional[str] = None 
+    description: Optional[str] = None

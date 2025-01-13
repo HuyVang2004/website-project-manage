@@ -11,5 +11,4 @@ class Help(Base):
     help_type = Column(String(100), nullable=False)
     create_time = Column(DateTime, nullable=False)
 
-    # Relationship to the User model
     user = relationship("User", backref="helps")

@@ -12,6 +12,5 @@ class Comment(Base):
     content = Column(Text, nullable=False)
     created_time = Column(DateTime, server_default=func.now(), nullable=False)
 
-    # Relationship to tasks and users
     task = relationship("Task", backref="comments")
     user = relationship("User", backref="comments")

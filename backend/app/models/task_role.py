@@ -11,6 +11,5 @@ class TaskRole(Base):
     can_read = Column(Boolean, default=True, nullable=False)
     can_change = Column(Boolean, default=False, nullable=False)
 
-    # Relationships
     task = relationship("Task", backref="task_roles")
     user = relationship("User", backref="task_roles")
