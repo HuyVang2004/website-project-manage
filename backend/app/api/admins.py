@@ -4,6 +4,7 @@ from app.core.security import hash_password
 from app.schemas.user import UserCreate, UserResponse
 from app.models.user import User
 from app.db.session import get_db
+from typing import List
 
 router = APIRouter()
 
@@ -32,3 +33,17 @@ def delete_user_by_username(username: str, db: Session = Depends(get_db)):
     db.delete(user)
     db.commit()
     return {"message": f"User '{username}' deleted successfully"}
+
+# Get all users
+@router.get("/users", response_model=List[UserResponse])
+def get_all_users(db: Session = Depends(get_db)):
+    users = db.query(User).all()
+    return users
+
+# Get all admins
+@router.get("/admins", response_model=List[UserResponse])
+def get_all_admins(db: Session = Depends(get_db)):
+    admins = db.query(User).filter(User.role == "admin").all()
+    if not admins:
+        raise HTTPException(status_code=404, detail="No admins found.")
+    return admins
