@@ -8,12 +8,6 @@ from typing import Dict, List, Optional
 from datetime import datetime
 import json
 from collections import defaultdict
-import pytz
-
-router = APIRouter()
-
-# Tạo timezone cho Việt Nam
-vietnam_tz = pytz.timezone('Asia/Ho_Chi_Minh')
 
 router = APIRouter()
 
@@ -21,9 +15,8 @@ class ConnectionManager:
     def __init__(self):
         self.active_connections: Dict[str, Dict[str, WebSocket]] = {}
         self.pending_messages: Dict[str, List[MessageCreate]] = defaultdict(list)
-        self.batch_size = 100
-        self.flush_interval = 60
-        self.message_history_limit = 50  # Giới hạn tin nhắn lịch sử
+        self.batch_size = 100  # Adjust based on your needs
+        self.flush_interval = 60  # Seconds between periodic flushes
 
     async def connect(self, websocket: WebSocket, project_id: str, client_id: str):
         try:
@@ -37,6 +30,7 @@ class ConnectionManager:
             raise
 
     async def flush_messages(self, project_id: str, db: Session):
+        """Flush pending messages to database"""
         if project_id in self.pending_messages and self.pending_messages[project_id]:
             messages = self.pending_messages[project_id]
             try:
@@ -87,24 +81,6 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
-def serialize_datetime(dt):
-    return dt.isoformat() if isinstance(dt, datetime) else dt
-
-def serialize_message(message):
-    """Convert SQLAlchemy message model to serializable dict"""
-    return {
-        "message_id": str(message.message_id),
-        "content": message.content,
-        "project_id": str(message.project_id),
-        "sender_id": str(message.sender_id),
-        "sent_time": serialize_datetime(message.sent_time)
-    }
-
-def get_vietnam_time():
-    """Lấy thời gian hiện tại theo múi giờ Việt Nam"""
-    utc_now = datetime.utcnow()
-    return pytz.utc.localize(utc_now).astimezone(vietnam_tz)
-
 @router.websocket("/ws/projects/{project_id}/{client_id}")
 async def websocket_endpoint(
     websocket: WebSocket, 
@@ -112,26 +88,19 @@ async def websocket_endpoint(
     client_id: str,
     db: Session = Depends(get_db)
 ):
+    # Start periodic flush task
     flush_task = asyncio.create_task(manager.periodic_flush(db))
     
     try:
         await manager.connect(websocket, project_id, client_id)
         
-        # Lấy tin nhắn lịch sử với giới hạn
-        existing_messages = get_messages_by_project(
-            project_id, 
-            db, 
-            limit=manager.message_history_limit,
-            order_by_desc=True  # Lấy tin nhắn mới nhất
-        )
-        
+        # Send existing messages when client connects
+        existing_messages = get_messages_by_project(project_id, db)
         if existing_messages:
-            # Đảo ngược danh sách để hiển thị theo thứ tự thời gian
-            for message in reversed(existing_messages):
-                message_dict = serialize_message(message)
+            for message in existing_messages:
                 await websocket.send_json({
                     "type": "history",
-                    "message": message_dict
+                    "message": MessageResponse.from_orm(message).dict()
                 })
         
         while True:
@@ -139,36 +108,35 @@ async def websocket_endpoint(
                 data = await websocket.receive_text()
                 message_data = json.loads(data)
                 
-                # Tạo message với thời gian Việt Nam
+                # Create message object but don't save to database yet
                 new_message = MessageCreate(
                     project_id=project_id,
                     sender_id=client_id,
                     content=message_data.get("content", ""),
-                    sent_time=get_vietnam_time()
+                    timestamp=datetime.utcnow()
                 )
                 
+                # Add to pending messages
                 manager.pending_messages[project_id].append(new_message)
                 
-                message_dict = {
-                    "content": new_message.content,
-                    "project_id": new_message.project_id,
-                    "sender_id": new_message.sender_id,
-                    "sent_time": serialize_datetime(new_message.sent_time)
-                }
-                
+                # Broadcast to all clients in the project
                 await manager.broadcast_to_project(
                     project_id,
                     {
                         "type": "message",
-                        "message": message_dict
+                        "message": new_message.dict()
                     }
                 )
                 
+                # If batch size reached, flush to database
                 if len(manager.pending_messages[project_id]) >= manager.batch_size:
                     await manager.flush_messages(project_id, db)
-                    
+                
             except WebSocketDisconnect:
+                # Flush remaining messages and disconnect
                 created_messages = await manager.disconnect(project_id, client_id, db)
+                
+                # Broadcast disconnect message
                 await manager.broadcast_to_project(
                     project_id,
                     {
@@ -177,17 +145,20 @@ async def websocket_endpoint(
                     }
                 )
                 break
+                
             except Exception as e:
                 print(f"Error processing message: {str(e)}")
                 await websocket.send_json({
                     "type": "error",
                     "message": "Error processing your message"
                 })
-                
+    
     except Exception as e:
         print(f"WebSocket error: {str(e)}")
         await manager.disconnect(project_id, client_id, db)
+    
     finally:
+        # Cancel periodic flush task
         flush_task.cancel()
         try:
             await flush_task

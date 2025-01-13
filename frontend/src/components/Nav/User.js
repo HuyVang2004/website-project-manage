@@ -12,7 +12,7 @@ const User = () => {
     const [avatarUrl, setAvatarUrl] = useState("");
     const userData = JSON.parse(localStorage.getItem("user_profile")) || {};
 
-    const name = userData.full_name
+    const name = userData.username;
     const email = userData.email
     const fetchUserImage = async () => {
         try {
@@ -38,8 +38,11 @@ const User = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("user_profile");
-        navigate("/dangnhap");
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("token_expiry");
+        localStorage.removeItem("refresh_token");
         alert(`${name} đã đăng xuất.`);
+        navigate("/dangnhap");
     };
 
     return (
@@ -48,6 +51,7 @@ const User = () => {
                 {/* Avatar and Name */}
                 <Box className="user-avatar">
                     <Avatar src={avatarUrl} alt={name} className="avatar-img" />
+                    
                     <Typography variant="h5" className="user-name">
                         {name}
                     </Typography>

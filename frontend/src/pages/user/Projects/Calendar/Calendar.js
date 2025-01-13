@@ -1,6 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Calendar.scss'
 import EventForm from './FormCalender/EventForm';
+import projectTeamApi from '../../../../api/projects/projectTeamApi';
+
 // Helper functions
 const formatTime = (date) => {
   return date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
@@ -21,7 +23,7 @@ const getWeekDays = (date) => {
   return days;
 };
 
-const Calendar = () => {
+const Calendar = ({listEvent, projectId}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [events, setEvents] = useState([]);
@@ -31,6 +33,23 @@ const Calendar = () => {
   const [formPosition, setFormPosition] = useState(null);
   const [draggedEvent, setDraggedEvent] = useState(null);
   
+  const userData = JSON.parse(localStorage.getItem('user_profile') || '{}');
+  const userId = userData?.user_id;
+
+  const [role, setRole] = useState('');
+  useEffect(() => {
+    const fetchRole = async () => {
+      const fetchedRole = await projectTeamApi.getRole(projectId, userId);
+      setRole(fetchedRole);
+    };
+    fetchRole();
+  }, [projectId, userId]);
+
+  
+  useEffect(() => {
+    setEvents(listEvent);
+  });
+
   const dragCounter = useRef(0);
   const dragTarget = useRef(null);
 
@@ -69,6 +88,11 @@ const Calendar = () => {
   };
 
   const handleEventSave = (eventData) => {
+    if (role !== 'Quản lý') {
+      alert('Bạn không có quyền thực hiện thao tác này');
+      return;
+    }
+  
     if (eventData === null) {
       // Xóa sự kiện
       setEvents(events.filter(e => e.id !== selectedEvent.id));
@@ -79,6 +103,17 @@ const Calendar = () => {
       // Thêm sự kiện mới
       setEvents([...events, eventData]);
     }
+    setSelectedEvent(null);
+  };
+
+  const handleEventUpdate = (eventData) => {
+    if (role !== 'Quản lý') {
+      alert('Bạn không có quyền thực hiện thao tác này');
+      return;
+    }
+  
+    // Logic cập nhật sự kiện
+    setEvents(events.map(e => e.id === selectedEvent.id ? eventData : e));
     setSelectedEvent(null);
   };
 
@@ -315,6 +350,7 @@ const Calendar = () => {
             event={selectedEvent || { dueDate: selectedDate?.toISOString().split('T')[0] }}
             onSave={handleEventSave}
             onClose={() => setShowEventForm(false)}
+            projectId={projectId}
         />
         )}
     </div>

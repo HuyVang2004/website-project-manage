@@ -1,106 +1,266 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatBox.scss';
 
-const ChatBox = () => {
+const ChatBox = ({ projectId }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
-  const chatContainerRef = useRef(null);
+  const [wsStatus, setWsStatus] = useState('connecting');
+  const [error, setError] = useState('');
+  const socketRef = useRef(null);
+  const scrollRef = useRef(null);
+  const reconnectTimeoutRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  // Get user data from localStorage
+  const userData = JSON.parse(localStorage.getItem('user_profile') || '{}');
+  const userId = userData?.user_id;
+
+  // Debug logging function
+  const debugLog = (type, data) => {
+    console.log(`[${type}]`, data);
   };
 
+  // Convert local time to UTC+7 (Vietnam timezone)
+  const getVietnamTime = () => {
+    const now = new Date();
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const vietnamOffset = 7 * 60 * 60000; // UTC+7 in milliseconds
+    return new Date(utc + vietnamOffset).toISOString();
+  };
+
+  // Format timestamp to Vietnam time
+  const formatTime = (timestamp) => {
+    if (!timestamp) return '';
+    try {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString('vi-VN', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'Asia/Ho_Chi_Minh'
+      });
+    } catch (error) {
+      debugLog('Time format error', { timestamp, error });
+      return '';
+    }
+  };
+
+  // Auto scroll to bottom when new messages arrive
   useEffect(() => {
-    scrollToBottom();
-    inputRef.current?.focus();
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
   }, [messages]);
 
-  // Ngăn scroll của window khi focus vào chatbox
+  // WebSocket connection
   useEffect(() => {
-    const handleWheel = (e) => {
-      if (chatContainerRef.current?.contains(e.target)) {
-        e.preventDefault(); // Thêm preventDefault để chặn cuộn mặc định
-        e.stopPropagation();
+    const connectWebSocket = () => {
+      if (!projectId || !userId) {
+        debugLog('Error', 'Missing projectId or userId');
+        return;
       }
-    };
-  
-    const container = chatContainerRef.current?.parentElement;
-    if (container) {
-      container.addEventListener('wheel', handleWheel, { passive: false });
-    }
-  
-    return () => {
-      if (container) {
-        container.removeEventListener('wheel', handleWheel);
-      }
-    };
-  }, []);
-  
-  const sendMessage = () => {
-    if (newMessage.trim()) {
-      const message = {
-        id: Date.now(),
-        text: newMessage,
-        sender: 'user',
-        timestamp: new Date().toLocaleTimeString()
-      };
-      
-      setMessages(prevMessages => [...prevMessages, message]);
-      setNewMessage('');
-    }
-  };
 
+      debugLog('Config', { projectId, userId });
+
+      const wsUrl = `ws://localhost:8000/message/ws/projects/${projectId}/${userId}`;
+      debugLog('Connecting to', wsUrl);
+      
+      const ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        debugLog('WebSocket', 'Connected');
+        setWsStatus('connected');
+        setError('');
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const rawData = event.data;
+          debugLog('Raw WebSocket message', rawData);
+
+          const data = JSON.parse(rawData);
+          debugLog('Parsed WebSocket message', data);
+
+          switch (data.type) {
+            case 'history':
+              setMessages(prevMessages => {
+                // Filter out duplicate messages based on ID
+                const newMessages = [...prevMessages];
+                if (!prevMessages.some(msg => msg.id === data.message.id)) {
+                  newMessages.push(data.message);
+                }
+                return newMessages;
+              });
+              break;
+
+            case 'message':
+              const newMsg = {
+                id: data.message.id || Date.now().toString(),
+                content: data.message.content,
+                sender_id: data.message.sender_id || userId,
+                sent_time: data.message.sent_time || getVietnamTime(), // Use Vietnam time
+                project_id: projectId
+              };
+              
+              setMessages(prevMessages => {
+                // Remove pending message if it exists and add the confirmed message
+                const filteredMessages = prevMessages.filter(msg => 
+                  !(msg.pending && 
+                    msg.content === newMsg.content && 
+                    msg.sender_id === newMsg.sender_id)
+                );
+                return [...filteredMessages, newMsg];
+              });
+              break;
+
+            case 'system':
+              const systemMsg = {
+                id: 'system-' + Date.now(),
+                content: data.message,
+                type: 'system',
+                sent_time: getVietnamTime() // Use Vietnam time
+              };
+              setMessages(prevMessages => [...prevMessages, systemMsg]);
+              break;
+
+            case 'error':
+              debugLog('Error message', data.message);
+              setError(data.message);
+              break;
+
+            default:
+              debugLog('Unknown message type', data);
+          }
+        } catch (error) {
+          console.error('Error processing message:', error);
+          debugLog('Error', { error: error.message, data: event.data });
+        }
+      };
+
+      ws.onerror = (error) => {
+        debugLog('WebSocket Error', error);
+        setWsStatus('error');
+        setError('Connection error occurred');
+      };
+
+      ws.onclose = () => {
+        setWsStatus('disconnected');
+        // Attempt to reconnect after 5 seconds
+        reconnectTimeoutRef.current = setTimeout(connectWebSocket, 5000);
+      };
+
+      socketRef.current = ws;
+    };
+
+    connectWebSocket();
+
+    // Cleanup on unmount
+    return () => {
+      debugLog('Cleanup', 'Closing WebSocket connection');
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+    };
+  }, [projectId, userId]);
+
+  // Handle message submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    e.stopPropagation(); // Ngăn sự kiện lan ra container cha
-    sendMessage();
+    if (!newMessage.trim() || wsStatus !== 'connected') return;
+    
+    const messageContent = newMessage.trim();
+    const messageData = {
+      content: messageContent,
+      sender_id: userId,
+      project_id: projectId,
+      sent_time: getVietnamTime() // Use Vietnam time
+    };
+
+    try {
+      // Send message through WebSocket
+      socketRef.current.send(JSON.stringify(messageData));
+      
+      // Add optimistic message
+      const optimisticMessage = {
+        ...messageData,
+        id: `temp-${Date.now()}`,
+        pending: true
+      };
+      setMessages(prevMessages => [...prevMessages, optimisticMessage]);
+      
+      // Clear input
+      setNewMessage('');
+    } catch (error) {
+      debugLog('Send Error', error);
+      setError('Failed to send message');
+    }
   };
 
-  const handleKeyPress = (e) => {
+  // Handle Enter key press
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      e.stopPropagation(); // Ngăn sự kiện lan ra container cha
-      sendMessage();
+      if (newMessage.trim() && wsStatus === 'connected') {
+        handleSubmit(e);
+      }
     }
   };
 
   return (
-    <div ref={chatContainerRef} className="chat-container" onWheel={e => e.stopPropagation()}>
+    <div className="chat-container">
       <div className="chat-header">
         <h3>Chat Box</h3>
+        <span className={`status-indicator ${wsStatus}`}>
+          {wsStatus === 'connected' ? '🟢' : wsStatus === 'connecting' ? '🟡' : '🔴'}
+        </span>
       </div>
-      
-      <div className="messages-container">
+
+      {error && <div className="error-message">{error}</div>}
+
+      <div className="messages-container" ref={scrollRef}>
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`message-wrapper ${message.sender === 'user' ? 'user-message' : 'other-message'}`}
+            className={`message-wrapper ${
+              message.type === 'system'
+                ? 'system-message'
+                : message.sender_id === userId
+                ? 'user-message'
+                : 'other-message'
+            }`}
           >
-            <div className="message">
-              <p>{message.text}</p>
-              <span className="timestamp">{message.timestamp}</span>
+            <div className={`message ${message.pending ? 'pending' : ''}`}>
+              <p>{message.content}</p>
+              <span className="timestamp">{formatTime(message.sent_time)}</span>
             </div>
           </div>
         ))}
-        <div ref={messagesEndRef} />
       </div>
 
       <form onSubmit={handleSubmit} className="input-form">
         <input
-          ref={inputRef}
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Nhập tin nhắn..."
+          onKeyDown={handleKeyDown}
+          placeholder="Enter message..."
           className="message-input"
+          disabled={wsStatus !== 'connected'}
         />
-        <button type="submit" className="send-button">
-          Gửi
+        <button 
+          type="submit" 
+          className="send-button" 
+          disabled={wsStatus !== 'connected'}
+        >
+          Send
         </button>
       </form>
+
+      <div className="debug-info" style={{ fontSize: '10px', color: '#666' }}>
+        Status: {wsStatus} | Messages: {messages.length}
+      </div>
     </div>
   );
 };

@@ -38,9 +38,9 @@ const TableListProject = ({data}) => {
         setSortConfig({ key, direction });
     };
 
-    const handleRowClick = (id) => {
-      console.log('chuyển trang')
-      navigate(ROUTERS.USER.PROJECT.PROJECTDETAILS); // Navigate to project details page
+    const handleRowClick = (projectId) => {
+        localStorage.setItem("current_project_id", projectId);
+        navigate(ROUTERS.USER.PROJECT.PROJECTDETAILS); // Navigate to project details page
     };
 
     const sortedData = [...data].sort((a, b) => {
@@ -96,6 +96,7 @@ const TableListProject = ({data}) => {
                     <select
                         value={filters.status}
                         onChange={(e) => handleFilterChange('status', e.target.value)}
+                        onClick={() => {console.log("Click")}}
                         className="filter-select"
                     >
                         <option value="">Tất cả trạng thái</option>

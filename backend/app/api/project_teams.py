@@ -58,6 +58,18 @@ def update_project_team_by_project_id(
         )
     return project_team
 
+@router.get("/role-by-user-project", response_model=str)
+def get_user_role_by_project(
+    project_id: str, user_id: str, db: Session = Depends(get_db)
+):
+    role = ProjectTeamService.get_user_role_by_project(db, project_id, user_id)
+    if not role:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No role found for the given user and project ID"
+        )
+    return role
+
 
 @router.delete("/delete-by-project/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_project_team_by_project_id(project_id: str, db: Session = Depends(get_db)):
@@ -69,22 +81,22 @@ def delete_project_team_by_project_id(project_id: str, db: Session = Depends(get
     return {"detail": "Project team deleted successfully"}
 
 
-@router.post("/from-names", response_model=ProjectTeamResponse, status_code=status.HTTP_201_CREATED)
-def create_project_team_from_names(
-    username: str, project_name: str, role: str, db: Session = Depends(get_db)
-):
-    ids = ProjectTeamService.get_user_and_project_ids(db, username, project_name)
-    if not ids:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User or Project not found"
-        )
+# @router.post("/from-names", response_model=ProjectTeamResponse, status_code=status.HTTP_201_CREATED)
+# def create_project_team_from_names(
+#     username: str, project_name: str, role: str, db: Session = Depends(get_db)
+# ):
+#     ids = ProjectTeamService.get_user_and_project_ids(db, username, project_name)
+#     if not ids:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND, detail="User or Project not found"
+#         )
 
-    project_team_data = ProjectTeamCreate(
-        user_id=ids["user_id"],
-        project_id=ids["project_id"],
-        role=role
-    )
-    return ProjectTeamService.create_project_team(db, project_team_data)
+#     project_team_data = ProjectTeamCreate(
+#         user_id=ids["user_id"],
+#         project_id=ids["project_id"],
+#         role=role
+#     )
+#     return ProjectTeamService.create_project_team(db, project_team_data)
 
 @router.get("/projects-by-user/{user_id}", response_model=List[ProjectResponse])
 def get_projects_by_user(user_id: str, db: Session = Depends(get_db)):

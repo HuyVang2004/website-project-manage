@@ -1,30 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PeopleList.scss'; // Assuming the SASS file is saved as TeamMembers.scss
 import TopBar from '../../../components/Nav/TopBar';
 import SlideBar from '../../../components/SlideBar';
+import getListPeopleData from '../../../api/getLisPepole'; // Import API function
 
 const TeamMembers = () => {
   const navigate = useNavigate();
-
-  const members = [
-    { id: 1, name: 'Addodie', avatar: '/images/bùi anh tuấn.jpg', username: 'addodie' },
-    { id: 2, name: 'Marketplace', avatar: '/images/charli.jpg', username: 'marketplace' },
-    { id: 3, name: 'Von Dracula', avatar: '/images/Dương_DOMIC.jpg', username: 'von-dracula' },
-    { id: 4, name: 'Von Dracula', avatar: '/images/erik.jpg', username: 'von-dracula-2' },
-    { id: 5, name: 'John_Joestar', avatar: '/images/hieuthuhai.jpg', username: 'john-joestar' },
-    { id: 6, name: 'Akali Jin', avatar: '/images/hòa minzy.jpg', username: 'akali-jin' },
-    { id: 7, name: 'Kayn Vampyr', avatar: '/images/lowg.jpg', username: 'kayn-vampyr' },
-    { id: 8, name: 'Kayn Vampyr', avatar: '/images/ngoc-son.jpg', username: 'kayn-vampyr-2' },
-    { id: 9, name: 'John_Joestar', avatar: '/images/Noo phước thịnh.webp', username: 'john-joestar' },
-    { id: 10, name: 'Akali Jin', avatar: '/images/orange.jpg', username: 'akali-jin' },
-    { id: 11, name: 'Kayn Vampyr', avatar: '/images/sơn tùng.jpg', username: 'kayn-vampyr' },
-    { id: 12, name: 'Kayn Vampyr', avatar: '/images/rhyder.jpg', username: 'kayn-vampyr-2' },
-    { id: 13, name: 'New User', avatar: '/images/lê sang.jpg', username: 'new-user' },
-    // Add more members as needed
-  ];
-
+  
+  // State to store team members data
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true); // State to handle loading
   const [showAll, setShowAll] = useState(false);
+
+  useEffect(() => {
+    const fetchPeopleData = async () => {
+      try {
+        const peopleData = await getListPeopleData();
+        setMembers(peopleData); // Set the fetched data into state
+      } catch (error) {
+        console.error("Lỗi khi lấy thông tin thành viên:", error);
+      } finally {
+        setLoading(false); // Set loading to false once data is fetched
+      }
+    };
+
+    fetchPeopleData();
+  }, []);
 
   const handleProfileClick = (username) => {
     navigate(`/profile/${username}`);
@@ -36,6 +38,10 @@ const TeamMembers = () => {
 
   const visibleMembers = showAll ? members : members.slice(0, 12);
 
+  if (loading) {
+    return <div>Loading...</div>; // Show loading text while fetching data
+  }
+
   return (
     <div className="dashboard">
       <TopBar />
@@ -46,23 +52,23 @@ const TeamMembers = () => {
             <div className="team-members__header">
               <h2>Mọi người</h2>
               <button className="view-all" onClick={toggleView}>
-                {showAll ? 'Tóm Gọn' : 'View All'}
+                {showAll ? 'Tóm Gọn' : 'Xem tất cả'}
               </button>
             </div>
 
             <div className="team-members__grid">
               {visibleMembers.map((member) => (
-                <div key={member.id} className="team-members__member">
+                <div key={member.user_id} className="team-members__member">
                   <div
                     onClick={() => handleProfileClick(member.username)}
                     className="team-members__member-avatar"
                   >
                     <img
-                      src={member.avatar}
+                      src={member.avatarUrl}
                       alt={`${member.name}'s avatar`}
                     />
                   </div>
-                  <span className="team-members__member-name">{member.name}</span>
+                  <span className="team-members__member-name">{member.username}</span>
                 </div>
               ))}
             </div>

@@ -36,7 +36,7 @@ const TableListTask = ({tasks}) => {
   };
 
   // Sorting function
-  const sortedData = [...tasks].sort((a, b) => {
+  const sortedData = Array.isArray(tasks) ? [...tasks].sort((a, b) => {
     if (sortConfig.key) {
       const aValue = a[sortConfig.key];
       const bValue = b[sortConfig.key];
@@ -49,7 +49,7 @@ const TableListTask = ({tasks}) => {
       }
     }
     return 0;
-  });
+  }) : [];
 
   // Filtering data
   const filteredData = sortedData.filter(row => {

@@ -1,5 +1,4 @@
 import projectTeamApi from "./projectTeamApi";
-import projectApi from "./projectsApi";
 import getProjectData from "./getProjectData";
 
 const getListProjectData = async (userId) => {
@@ -16,7 +15,7 @@ const getListProjectData = async (userId) => {
   } catch (error) {
     console.log("Error fetching project teams or projects:", error)
     console.error("Error fetching project teams or projects:", error);
-    throw new Error("Failed to fetch projects");
+    return [];
   }
 };
 

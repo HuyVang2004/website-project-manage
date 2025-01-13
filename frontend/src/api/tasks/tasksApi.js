@@ -11,7 +11,6 @@ const taskAPI = {
     return axiosClient.get(`tasks/project/${projectId}`);
   },
 
-  // Create a new task
   createTask: (taskData) => {
     return axiosClient.post(`tasks/`, taskData);
   },

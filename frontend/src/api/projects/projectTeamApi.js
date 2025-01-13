@@ -16,12 +16,8 @@ const projectTeamApi = {
   },
 
   // Create a new project team
-  createProjectTeam: (userId, projectId, role) => {
-    return axiosClient.post('project_teams', {
-      user_id: userId,
-      project_id: projectId,
-      role: role,
-    });
+  createProjectTeam: (data) => {
+    return axiosClient.post('project_teams', data);
   },
 
   // Create a project team from username and project name
@@ -46,6 +42,18 @@ const projectTeamApi = {
   // Fetch all projects associated with a user
   getProjectsByUser: (userId) => {
     return axiosClient.get(`project_teams/projects-by-user/${userId}`);
+  },
+
+  getNumActiveProject: (userId) => {
+    return axiosClient.get(`project_teams/active-projects-count/${userId}`);
+  },
+
+  getNumCompletedProject: (projectId) => {
+    return axiosClient.get(`project_teams/completed-projects-count/${projectId}`);
+  },
+
+  getRole: (projectId, userId) => {
+    return axiosClient.get(`project_teams/role-by-user-project?project_id=${projectId}&user_id=${userId}`);
   },
 };
 
