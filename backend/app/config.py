@@ -16,10 +16,14 @@ try:
 except Exception as e:
     print("Error loading settings:", e)
 
-    # DATABASE_URL: str = 'mysql+pymysql://root:Thach2003@localhost:3306/project_database'
+    DATABASE_URL: str = 'mysql+pymysql://root:Thach2003@localhost:3306/project_database'
 
+
+
+# #     DATABASE_URL: str = 'mysql+pymysql://root:truong@localhost:3306/web_database'
 
 #     DATABASE_URL: str = 'mysql+pymysql://root:truong@localhost:3306/web_database'
+
 #     DATABASE_URL: str = 'mysql+pymysql://root:11012004@localhost:3306/projects_manage_website'
     
 #     AWS_ACCESS_KEY: str = "AKIAYS2NR4TTOSD5YFHG"
