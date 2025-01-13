@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends, File, UploadFile, Form
 from sqlalchemy.orm import Session
 from app.core.security import (hash_password, verify_password, create_access_token, 
-                               create_refresh_token)
+                               create_refresh_token, verify_access_token)
 from app.core.dependencies import get_current_user
-from app.schemas.user import UserCreateForUser, UserResponse, UserUpdate
+from app.schemas.user import UserCreateForUser, UserResponse, UserUpdate, LoginRequest
 from app.models.user import User
 from app.db.session import get_db
 from app.services.aws_s3_service import get_image_from_s3, upload_image_to_s3
@@ -20,9 +20,6 @@ import jwt
 
 router = APIRouter()
 
-
-
-
 class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str
@@ -34,15 +31,13 @@ def generate_numeric_token(length=6):
 
 # Login endpoint to authenticate user with email and password
 @router.post("/login", response_model=TokenResponse)
-def login(email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == email).first()
-    if not user or not verify_password(password, user.password):
+def login(request: LoginRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == request.email).first()
+    if not user or not verify_password(request.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
-
-    # Tạo access và refresh token
+    # Tạo và trả về tokens
     access_token = create_access_token({"sub": user.email})
     refresh_token = create_refresh_token({"sub": user.email})
-
     return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "Bearer"}
 
 
@@ -154,23 +149,65 @@ def reset_password(token: str, new_password: str, db: Session = Depends(get_db))
     return {"message": "Password reset successfully"}
 
 # Upload image for user
-@router.post("/upload-image")
-async def upload_user_image(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
-    if file.content_type not in ["image/jpeg", "image/png"]:
-        raise HTTPException(status_code=400, detail="Invalid file type")
+# @router.post("/upload-image")
+# async def upload_user_image(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
+#     if file.content_type not in ["image/jpeg", "image/png"]:
+#         raise HTTPException(status_code=400, detail="Invalid file type")
 
-    upload_image_to_s3(current_user["sub"], file)
-    return {"message": "Image uploaded successfully"}
+#     upload_image_to_s3(current_user["sub"], file)
+#     return {"message": "Image uploaded successfully"}
 
-# Get user image
-@router.get("/get-image")
-async def get_user_image(current_user: dict = Depends(get_current_user)):
-    image_data = get_image_from_s3(current_user["sub"])
-    if not image_data:
-        raise HTTPException(status_code=404, detail="Image not found")
+# # Get user image
+# @router.get("/get-image")
+# async def get_user_image(current_user: dict = Depends(get_current_user)):
+#     image_data = get_image_from_s3(current_user["sub"])
+#     if not image_data:
+#         raise HTTPException(status_code=404, detail="Image not found")
 
+    # return StreamingResponse(BytesIO(image_data), media_type="image/jpeg")
+
+@router.post("/upload-image/{user_id}")
+async def upload_user_image(user_id: str, file: UploadFile = File(...), db: Session = Depends(get_db)):
+    """
+    API to upload an image for a user. The image will be renamed to user_id.jpg
+    and uploaded to AWS S3 under the 'avatar/' folder.
+    """
+    try:
+        # Call the service to upload the image to AWS S3 and rename it to user_id.jpg
+        upload_image_to_s3(user_id, file)
+
+        # Update the user's profile_picture path in the database (optional)
+        user = db.query(User).filter(User.user_id == user_id).first()
+        if user:
+            user.profile_picture = f"avatar/{user_id}.jpg"  # Update the profile picture field
+            db.commit()
+            db.refresh(user)
+            return {"message": "Image uploaded successfully", "user": user}
+        else:
+            raise HTTPException(status_code=404, detail="User not found")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error uploading image: {str(e)}")
+
+@router.get("/get-image/{user_id}")
+async def get_user_image(user_id: str):
+    image_data = get_image_from_s3(user_id)  # Fetch image data from S3 (user or default)
+
+    # Return the image as a StreamingResponse
     return StreamingResponse(BytesIO(image_data), media_type="image/jpeg")
 
+@router.get("/get-user-info-email/{email}", response_model=UserResponse)
+def get_user_by_id(email: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+@router.get("/get-user-info/{id}", response_model=UserResponse)
+def get_user_by_id(email: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
 
 

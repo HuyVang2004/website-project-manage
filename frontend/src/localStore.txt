@@ -1,0 +1,3 @@
+localStorage.setItem("current_project_id", projectId);
+localStorage.setItem('user_profile', JSON.stringify(response));
+localStorage.setItem('my_project_id', response2.project_id);

@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import './EvenForm.scss'
-const EventForm = ({ event, onSave, onClose }) => {
+import taskAPI from '../../../../../api/tasks/tasksApi';
+import taskRoleAPI from '../../../../../api/tasks/taskRoleApi';
+import userAPI from '../../../../../api/userApi';
+
+const EventForm = ({ event, onSave, onClose, projectId }) => {
   const [formData, setFormData] = useState({
     title: event?.title || '',
     startDate: event?.startDate || '',
@@ -13,14 +17,28 @@ const EventForm = ({ event, onSave, onClose }) => {
     members: event?.members || []
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Tạo đối tượng Date cho thời gian bắt đầu
     const startDateTime = new Date(`${formData.startDate}T${formData.startTime}`);
     // Tạo đối tượng Date cho thời gian kết thúc
     const endDateTime = new Date(`${formData.endDate}T${formData.endTime}`);
-    
+    const currentDateTime = new Date();
+
+    let status = "";
+    if (endDateTime < startDateTime) {
+        alert("Thời gian kết thúc không được trước thời gian bắt đầu");
+        return;
+    }
+    if (endDateTime <= currentDateTime) {
+        status = "Hoàn thành";
+    } else if (startDateTime > currentDateTime) {
+        status = "Chưa bắt đầu";
+    } else {
+        status = "Đang thực hiện";
+    }
+
     const eventData = {
       id: event?.id || Date.now(),
       title: formData.title,
@@ -32,6 +50,31 @@ const EventForm = ({ event, onSave, onClose }) => {
       image: formData.image,
       members: formData.members
     };
+
+    const userData = JSON.parse(localStorage.getItem('user_profile') || '{}');
+    const userId = userData?.user_id;
+
+    const responseTask = await taskAPI.createTask({
+      project_id: projectId,
+      task_name: formData.title,
+      assigned_to: userId,
+      due_date: endDateTime,
+      start_time: startDateTime,
+      priority: formData.priority,
+      status: status,
+      description: formData.description,
+      update_time: startDateTime,
+    });
+
+    await Promise.all(formData.members.map(async (member) => {
+      const responseUser = await userAPI.getUserInfoEmail(member.email);
+      await taskRoleAPI.createTaskRole({
+        task_id: responseTask.task_id,
+        user_id: responseUser.user_id,
+        can_read: true,
+        can_change: false,
+      });
+    }));
 
     onSave(eventData);
     onClose();

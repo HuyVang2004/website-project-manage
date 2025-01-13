@@ -55,7 +55,7 @@ const renderUserRouter = () => {
         <Route path={ROUTERS.USER.DEFAULT} element={<Navigate to={ROUTERS.USER.LOGIN}/>}/>
         <Route path={ROUTERS.USER.HOME} element={<HomePage />} />
         <Route path={ROUTERS.USER.PROJECT.BASE} element={<ProjectBasePage />} /> 
-        <Route path={ROUTERS.USER.PROJECT.PROJECTDETAILS} element={<ProjectDetails />} />
+        <Route path={`${ROUTERS.USER.PROJECT.PROJECTDETAILS}/:project_id`} element={<ProjectDetails />} />
         <Route path={ROUTERS.USER.PROFILE} element={<ProfilePage />} />
         <Route path={ROUTERS.USER.REGISTER} element={<RegisterPage />} />
         <Route path={ROUTERS.USER.LOGIN} element={<LoginPage />} />

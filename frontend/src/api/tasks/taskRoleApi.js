@@ -3,7 +3,7 @@ import axiosClient from "../axiosClient";
 const taskRoleAPI = {
   // Create a new task role
   createTaskRole: (taskRoleData) => {
-    return axiosClient.post("task_roles/", taskRoleData);
+    return axiosClient.post("task_role/", taskRoleData);
   },
 
   // Get a task role by ID
@@ -30,6 +30,14 @@ const taskRoleAPI = {
   deleteTaskRole: (taskRoleId) => {
     return axiosClient.delete(`task_role/${taskRoleId}`);
   },
+
+  getNumProcessTask: (userId) => {
+    return axiosClient.get(`task_role/user/${userId}/in-progress-count`);
+  },
+
+  getNumCompletedTask: (userId) => {
+    return axiosClient.get(`task_role/user/${userId}/completed-count`);
+  } 
 };
 
 export default taskRoleAPI;

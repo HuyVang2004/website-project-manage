@@ -8,9 +8,11 @@ class TaskCreate(BaseModel):
     task_name: str
     assigned_to: Optional[str] = None  
     due_date: datetime
+    start_time: datetime
     priority: str
     status: Optional[str] = None 
     description: Optional[str] = None  
+    update_time: datetime
 
 class TaskResponse(BaseModel):
     task_id: str

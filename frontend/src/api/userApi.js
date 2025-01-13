@@ -3,24 +3,35 @@ import axiosClient from './axiosClient';
 const userAPI = {
     // Đăng ký
     register: (data) => {
-        // data: { name, email, password, etc. }
         return axiosClient.post('/users/register', data);
     },
 
     // Đăng nhập 
     login: (credentials) => {
-      const { username, password } = credentials;
+      // const { email, password } = credentials;
     
-      // Tạo query string với encodeURIComponent để đảm bảo dữ liệu an toàn
-      const query = `email=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+      // // Tạo query string với encodeURIComponent để đảm bảo dữ liệu an toàn
+      // const query = `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
     
       // Gửi request GET hoặc POST với query string
-      return axiosClient.post(`/users/login?${query}`);
+      return axiosClient.post('/users/login', credentials);
+    },
+
+    getCurrentUserInfo: (token) => {
+      return axiosClient.get('/users/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,  // Đảm bảo gửi token trong header
+        },
+      });
     },
 
     // Lấy thông tin user
-    getUserInfo: (userId) => {
-        return axiosClient.get(`/users/get-user-info/${userId}`);
+    getUserInfo: (id) => {
+        return axiosClient.get(`/users/get-user-info/${id}`);
+    },
+
+    getUserInfoEmail: (email) => {
+      return axiosClient.get(`/users/get-user-info-email/${email}`);
     },
 
     // Cập nhật thông tin

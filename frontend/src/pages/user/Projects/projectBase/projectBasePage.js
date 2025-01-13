@@ -5,9 +5,14 @@ import Sidebar from "../../../../components/SlideBar";
 import TopBar from "../../../../components/Nav/TopBar";
 import Footer from "../../../../components/Footer";
 import getListProjectData from "../../../../api/projects/getListProjectData";
+import getProjectData from "../../../../api/projects/getProjectData";
+import projectsApi from "../../../../api/projects/projectsApi";
 import { ROUTERS } from "../../../../utils/router";
+import userAPI from "../../../../api/userApi";
+import projectTeamApi from "../../../../api/projects/projectTeamApi";
 
 const ProjectBasePage = () => {
+    
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
@@ -21,9 +26,19 @@ const ProjectBasePage = () => {
         endDate: '',
         description: '',
         memberEmail: '',
-        memberRole: 'member'
+        memberRole: 'Thành viên'
     });
-    const [members, setMembers] = useState([]);
+
+    
+    const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");
+    const userId = userData?.user_id || "";
+    const userMail = userData?.email || "";
+
+    const [members, setMembers] = useState([
+        {email: userMail,
+         role : "Quản lý"
+        },
+    ]);
 
     const projectsPerPage = 4;
     const indexOfLastProject = currentPage * projectsPerPage;
@@ -43,8 +58,6 @@ const ProjectBasePage = () => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");
-                const userId = userData?.user_id;
                 if (!userId) throw new Error("User ID not found");
 
                 const data = await getListProjectData(userId);
@@ -68,42 +81,96 @@ const ProjectBasePage = () => {
         }));
     };
 
-    const handleAddMember = () => {
+    const handleAddMember = async () => {
         if (newProject.memberEmail && newProject.memberRole) {
             setMembers(prev => [...prev, {
                 email: newProject.memberEmail,
                 role: newProject.memberRole
             }]);
+
             setNewProject(prev => ({
                 ...prev,
                 memberEmail: '',
                 memberRole: 'member'
             }));
+          
         }
+        console.log("add member", members);
     };
 
     const handleRemoveMember = (email) => {
         setMembers(prev => prev.filter(member => member.email !== email));
     };
 
+    const saveMemberToDatabase = async (member, projectId) => {
+        console.log('member', member);
+        try {
+            const userInfo = await userAPI.getUserInfoEmail(member.email);
+            console.log("data", {
+                user_id: userInfo.user_id, 
+                project_id: projectId,
+                role: member.role,
+            });
+
+            const response = await projectTeamApi.createProjectTeam({
+                user_id: userInfo.user_id, 
+                project_id: projectId,
+                role: member.role,
+            });
+
+        } catch (error) {
+            console.error(`Error saving member ${member.email}: ${error.message}`);
+        }
+    };
+
     const handleCreateProject = async () => {
-        // Add your project creation logic here
-        // After successful creation:
-        setIsModalOpen(false);
-        setNewProject({
-            projectName: '',
-            startDate: '',
-            endDate: '',
-            description: '',
-            memberEmail: '',
-            memberRole: 'member'
-        });
-        setMembers([]);
+        const projectData = {
+            project_name: newProject.projectName,
+            description: newProject.description,
+            start_date: newProject.startDate,
+            end_date: newProject.endDate,
+            // status: "pending", // xóa 
+            created_by: userId,
+            // target: "default", // xóa
+        };
+        
+        try {
+            const response = await projectsApi.createProject(projectData);
+            const promises = members.map((member) => 
+                saveMemberToDatabase(member, response.project_id)
+            );
+            await Promise.all(promises);
+    
+            // setProjects(prev => [...prev, response]); // Thêm dự án mới vào danh sách
+            setIsModalOpen(false);
+
+            setNewProject({
+                projectName: '',
+                startDate: '',
+                endDate: '',
+                description: '',
+                memberEmail: '',
+                memberRole: 'Thành viên'
+            });
+            setMembers([
+                {email: userMail,
+                role : "Quản lý"
+               }]);
+            
+            // const data = getProjectData(response.project_id);
+            // setProjects(prev => [...prev, data]);
+
+            const data = await getListProjectData(userId);
+            setProjects(data);
+            // console.log("data", projects);
+            alert("Dự án đã được tạo thành công!");
+        } catch (error) {
+            alert(`Có lỗi xảy ra: ${error.message}`);
+        }
     };
 
     const handleClickProject = (projectId) => {
-        localStorage.setItem("current_project_id", projectId);
-        navigate(ROUTERS.USER.PROJECT.PROJECTDETAILS);
+        navigate(`${ROUTERS.USER.PROJECT.PROJECTDETAILS}/${projectId}`);
     };
 
     const renderPagination = () => {
@@ -180,6 +247,7 @@ const ProjectBasePage = () => {
                                             placeholder="Nhập tên dự án"
                                         />
                                     </div>
+
                                     <div className="form-group date-group">
                                         <div className="date-item">
                                             <label htmlFor="startDate">Thời gian bắt đầu:</label>
@@ -232,8 +300,8 @@ const ProjectBasePage = () => {
                                                 value={newProject.memberRole}
                                                 onChange={handleInputChange}
                                             >
-                                                <option value="member">Thành viên</option>
-                                                <option value="manager">Quản lý</option>
+                                                <option value="Thành viên">Thành viên</option>
+                                                <option value="Quản lý">Quản lý</option>
                                                 <option value="customer">Khách hàng</option>
                                             </select>
                                             <button 
@@ -246,7 +314,9 @@ const ProjectBasePage = () => {
                                         <div className="members-list">
                                             {members.map((member, index) => (
                                                 <div key={index} className="member-item">
-                                                    <span>{member.email} ({member.role})</span>
+                                                    <span className="member-info">
+                                                        {member.email} <span className="member-role">({member.role})</span>
+                                                    </span>
                                                     <button 
                                                         onClick={() => handleRemoveMember(member.email)}
                                                         className="remove-member"
@@ -283,11 +353,11 @@ const ProjectBasePage = () => {
                             <p className="error">{error}</p>
                         ) : (
                             <>
-                                {currentProjects.map((project) => (
+                                {projects.map((project) => (
                                     <div 
-                                        key={project.projectID}
+                                        key={project.projectId}
                                         className="project-card" 
-                                        onClick={() => handleClickProject(project.projectID)}
+                                        onClick={() => handleClickProject(project.projectId)}
                                     >
                                         <div className="card-header">
                                             <h3 className="project-title">{project.projectName}</h3>

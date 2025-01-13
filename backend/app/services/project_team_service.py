@@ -94,3 +94,14 @@ class ProjectTeamService:
         
         # Map the result to a list of dictionaries containing only user_id and role
         return [{"user_id": team.user_id, "role": team.role} for team in result]
+    
+    @staticmethod
+    def get_user_role_by_project(db: Session, project_id: str, user_id: str) -> str:
+        project_team = db.query(ProjectTeam).filter(
+            ProjectTeam.project_id == project_id,
+            ProjectTeam.user_id == user_id
+        ).first()
+        
+        if project_team:
+            return project_team.role
+        return None

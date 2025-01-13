@@ -37,3 +37,9 @@ def get_user_and_project_ids(db: Session, username: str, project_name: str) -> O
 
 def count_tasks_by_user_and_status(user_id: str, status: str, db: Session) -> int:
     return db.query(Task).filter(Task.assigned_to == user_id, Task.status == status).count()
+
+def count_in_progress_tasks_by_user(user_id: str, db: Session) -> int:
+    return db.query(Task).filter(Task.assigned_to == user_id, Task.status == "đang tiến hành").count()
+
+def count_completed_tasks_by_user(user_id: str, db: Session) -> int:
+    return db.query(Task).filter(Task.assigned_to == user_id, Task.status == "hoàn thành").count()

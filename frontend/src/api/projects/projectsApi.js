@@ -1,13 +1,7 @@
 import axiosClient from "../axiosClient";
 
 const projectsApi = {
-  // Fetch all projects with optional pagination
-  getAllProjects: ({ skip = 0, limit = 100 } = {}) => {
-    return axiosClient.get(`projects/projects`, {
-      params: { skip, limit },
-    });
-  },
-
+  
   // Fetch a single project by ID
   getProjectById: (projectId) => {
     return axiosClient.get(`projects/projects/${projectId}`);

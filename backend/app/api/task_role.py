@@ -47,12 +47,12 @@ def delete_task_role_endpoint(task_role_id: str, db: Session = Depends(get_db)):
 
 @router.get("/user/{user_id}/in-progress-count", response_model=int)
 def get_in_progress_task_count_by_user_endpoint(user_id: str, db: Session = Depends(get_db)):
-    from app.services.task_service import count_in_progress_tasks_by_user
-    count = count_in_progress_tasks_by_user(user_id, db)
+    from app.services.task_service import count_tasks_by_user_and_status
+    count = count_tasks_by_user_and_status(user_id, 'Đang tiến hành', db)
     return count
 
 @router.get("/user/{user_id}/completed-count", response_model=int)
 def get_completed_task_count_by_user_endpoint(user_id: str, db: Session = Depends(get_db)):
-    from app.services.task_service import count_completed_tasks_by_user
-    count = count_completed_tasks_by_user(user_id, db)
+    from app.services.task_service import count_tasks_by_user_and_status
+    count = count_tasks_by_user_and_status(user_id, 'Đã hoàn thành', db)
     return count

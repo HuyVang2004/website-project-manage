@@ -9,17 +9,41 @@ import MyCalendar from "../../components/Calendar/Calendar";
 import getListTaskData from "../../api/tasks/getListTaskData";
 import React, { useState, useEffect } from 'react';
 import getListProjectData from "../../api/projects/getListProjectData";
-
+import projectTeamApi from "../../api/projects/projectTeamApi";
+import taskRoleAPI from "../../api/tasks/taskRoleApi";
 const HomePage = () => {
-  const stats = [
-    { title: 'Số dự án đang làm', count: 0 },
-    { title: 'Số công việc đang làm', count: 0 },  
-    { title: 'Số dự án đã làm', count: 0 },
-    { title: 'Số công việc đã làm', count: 0 }
-  ];
 
   const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");
   const userId = userData?.user_id || "";
+
+  const [stats, setStats] = useState([
+    { title: 'Số dự án đang làm', count: 0 },
+    { title: 'Số công việc đang làm', count: 0 },
+    { title: 'Số dự án đã làm', count: 0 },
+    { title: 'Số công việc đã làm', count: 0 },
+  ]);
+
+  const fetchStats = async () => {
+    try {
+      // Gọi các API để lấy dữ liệu
+      const [activeProjects, completedProjects, processTasks, completedTasks] = await Promise.all([
+        projectTeamApi.getNumActiveProject(userId),
+        taskRoleAPI.getNumProcessTask(userId),
+        projectTeamApi.getNumCompletedProject(userId),
+        taskRoleAPI.getNumCompletedTask(userId),
+      ]);
+
+      // Cập nhật state với dữ liệu từ API
+      setStats([
+        { title: 'Số dự án đang làm', count: activeProjects || 0 },
+        { title: 'Số công việc đang làm', count: processTasks || 0 },
+        { title: 'Số dự án đã làm', count: completedProjects || 0 },
+        { title: 'Số công việc đã làm', count: completedTasks || 0 },
+      ]);
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  }
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -31,7 +55,6 @@ const HomePage = () => {
     try {
       const data = await getListTaskData(userId);
       setTasks(data);
-      localStorage.setItem("list_task", JSON.stringify(data));
     } catch (error) {
       // setError(error.message);
       setTasks([]);
@@ -59,6 +82,7 @@ const HomePage = () => {
       setLoading(true);
       fetchTasks(userId);
       fetchProjects(userId);
+      fetchStats();
     }
   }, [userId]);
 

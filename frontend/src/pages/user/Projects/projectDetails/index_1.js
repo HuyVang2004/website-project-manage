@@ -1,5 +1,5 @@
-import { memo, useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router";
+import { memo, useState, useEffect} from "react";
+import { useParams } from 'react-router-dom';
 import "./style.scss";
 import Sidebar from "../../../../components/SlideBar";
 import TopBar from "../../../../components/Nav/TopBar";
@@ -8,24 +8,23 @@ import { IoCalendarNumberSharp } from "react-icons/io5";
 import { HiChartBar } from "react-icons/hi";
 import { IoDocumentTextSharp } from "react-icons/io5";
 import { FaCommentAlt } from "react-icons/fa";
-import TableListProject from "../../../../components/Table/TableListProject";
 import ChatBox from "../boxChatPage/BoxChatPage";
-import getListTaskInProject from "../../../../api/tasks/getTaskInProject";
+// import Gantt from "../ganttChart/Gantt";
 import Calendar from "../Calendar/Calendar";
-
+import taskAPI from "../../../../api/tasks/tasksApi";
+import getListTaskInProject from "../../../../api/tasks/getTaskInProject";
+import TableListTask from "../../../../components/Table/TableListTask";
 
 const ProjectDetails = () => {
   const { project_id } = useParams();
   const [scrolled, setScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState("cong-viec");
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  //const [events, setEvents] = useState([]);
-
-  const [tasks, setTasks] = useState([]);
   const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");
   const userId = userData?.user_id || "";
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
 
   useEffect(() => {
     // Scroll event handling
@@ -38,21 +37,20 @@ const ProjectDetails = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [userId]);
 
+
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         setLoading(true);
         setError(null);
-        const tasks = await getListTaskInProject(project_id);
-        setTasks(tasks);
-        // console.log(tasks);
+        const tasks = getListTaskInProject(project_id);
+        console.log(tasks);
         if ((await tasks).length > 0) {
           const mappedEvents = tasks.map((task) => ({
             id: task.id,
             title: task.name,
             date: task.due_date,
           }));
-
           setEvents(mappedEvents);
         }
       } catch (err) {
@@ -68,21 +66,25 @@ const ProjectDetails = () => {
     }
   }, [project_id]);
 
-  // Rendering content based on active tab
+  // Xử lý nội dung dựa trên tab đang chọn
   const renderContent = () => {
+    if (loading) {
+      return <p>Đang tải dữ liệu...</p>;
+    }
+    if (error) {
+      return <p className="error">{error}</p>;
+    }
+
     switch (activeTab) {
       case "cong-viec":
         return (
           <div className="tab-content">
-            <TableListProject data={tasks} />
+            {/* Truyền dữ liệu danh sách công việc */}
+            <TableListTask data={events} />
           </div>
         );
-        case "lich":
-          return (
-            <Calendar listEvent={events} projectId={project_id}/>
-          );
-        // case "gantt":
-        //   return <GanttChart />;
+      case "lich":
+        return <Calendar events={events} />; // Truyền sự kiện cho Calendar
       case "tai-lieu":
         return (
           <div className="tab-content">
@@ -91,13 +93,12 @@ const ProjectDetails = () => {
           </div>
         );
       case "thao-luan":
-        return (
-            <ChatBox projectId={project_id}/>
-        );
+        return <ChatBox projectId={project_id}/>;
       default:
         return <div className="tab-content">Chọn tab hợp lệ để xem nội dung</div>;
     }
   };
+
 
   return (
     <div className={`dashboard ${scrolled ? "scrolled" : ""}`}>
@@ -119,13 +120,13 @@ const ProjectDetails = () => {
             <IoCalendarNumberSharp />
             <p>Lịch</p>
           </div>
-          <div
+          {/* <div
             className={`menu-item ${activeTab === "gantt" ? "active" : ""}`}
             onClick={() => setActiveTab("gantt")}
           >
             <HiChartBar />
             <p>Gantt</p>
-          </div>
+          </div> */}
           <div
             className={`menu-item ${activeTab === "tai-lieu" ? "active" : ""}`}
             onClick={() => setActiveTab("tai-lieu")}
@@ -141,7 +142,6 @@ const ProjectDetails = () => {
             <p>Thảo luận</p>
           </div>
         </div>
-
         <div className="content">{renderContent()}</div>
       </div>
     </div>

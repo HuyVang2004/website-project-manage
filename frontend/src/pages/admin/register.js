@@ -1,8 +1,11 @@
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/pages/register.scss";
 import userAPI from "../../api/userApi";
 import { ROUTERS } from "../../utils/router";
+import projectsApi from "../../api/projects/projectsApi";
+import projectTeamApi from "../../api/projects/projectTeamApi";
+
 export default function RegisterPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -10,6 +13,9 @@ export default function RegisterPage() {
     email: "",
     password: "",
     confirmPassword: "",
+    full_name: "",
+    gender: "",
+    job: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -31,22 +37,54 @@ export default function RegisterPage() {
     }
 
     try {
-      // Gửi yêu cầu POST tới API
+      // Gửi yêu cầu POST tới API đăng ký
       const response = await userAPI.register({
         username: formData.name,
         password: formData.password,
         email: formData.email,
         full_name: formData.full_name,
-        profile_picture: '',
+        gender: formData.gender,
+        job: formData.job,
       });
-      // console.log("data", response.user_id);
+
       setSuccessMessage("Đăng ký thành công!");
 
-      const response1 = await userAPI.login({ username: formData.name, password: formData.password });
-      console.log('Đăng nhập thành công:', response1);
-      localStorage.setItem('user_profile', JSON.stringify(response1));
+      const loginResponse = await userAPI.login({ email: formData.email, password: formData.password });
+      console.log("Đăng nhập thành công:", loginResponse);
+
+      // Lưu token và user profile vào localStorage
+      const { access_token, refresh_token } = loginResponse;
+      const expiryTime = new Date().getTime() + 2 * 24 * 60 * 60 * 1000; // Token hết hạn sau 2 ngày
+      localStorage.setItem("auth_token", access_token);
+      localStorage.setItem("refresh_token", refresh_token);
+      localStorage.setItem("token_expiry", expiryTime);
+
+      const userInfo = await userAPI.getCurrentUserInfo(access_token);
+      localStorage.setItem("user_profile", JSON.stringify(userInfo));
+
+      // Tạo dự án và thêm người vào nhóm
+      const userId = loginResponse.user_id;
+      const projectData = {
+        project_name: "My project",
+        description: "",
+        start_date: new Date("2025-01-01").toISOString(),
+        end_date: new Date("2099-01-01").toISOString(),
+        created_by: userId,
+      };
+
+      const projectResponse = await projectsApi.createProject(projectData);
+      const projectId = projectResponse.project_id;
+
+      await projectTeamApi.createProjectTeam({
+        user_id: userId,
+        project_id: projectId,
+        role: "Quản lý",
+      });
+
+      // Lưu project ID vào localStorage
+      localStorage.setItem("my_project_id", projectId); 
       navigate(ROUTERS.USER.HOME);
-      
+
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Đăng ký thất bại!");
     }
@@ -72,7 +110,7 @@ export default function RegisterPage() {
 
           <div className="mb-2">
             <input
-              id="full-name"
+              id="name"
               className="form-control"
               type="text"
               name="full_name"
