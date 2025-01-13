@@ -37,3 +37,11 @@ def delete_activity_log_endpoint(act_id: str, db: Session = Depends(get_db)):
     if not activity_log:
         raise HTTPException(status_code=404, detail="Activity log not found")
     return {"message": f"Activity log with ID {act_id} has been deleted successfully"}
+
+@router.get("/", response_model=list[ActivityLogResponse])
+def get_all_activity_logs_endpoint(db: Session = Depends(get_db)):
+    activity_logs = db.query(ActivityLog).all()  # Assuming ActivityLog is your model
+    if not activity_logs:
+        raise HTTPException(status_code=404, detail="No activity logs found")
+    return activity_logs
+
