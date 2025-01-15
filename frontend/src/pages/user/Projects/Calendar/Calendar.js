@@ -25,7 +25,7 @@ const getWeekDays = (date) => {
 
 const Calendar = ({listEvent, projectId}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState([]);
   const [view, setView] = useState('month');
   const [showEventForm, setShowEventForm] = useState(false);
@@ -36,6 +36,7 @@ const Calendar = ({listEvent, projectId}) => {
   const userData = JSON.parse(localStorage.getItem('user_profile') || '{}');
   const userId = userData?.user_id;
 
+  console.log("event", listEvent);
   const [role, setRole] = useState('');
   useEffect(() => {
     const fetchRole = async () => {
@@ -181,9 +182,9 @@ const Calendar = ({listEvent, projectId}) => {
                 <img 
                   key={index}
                   src={member.avatar}
-                  alt={member.name}
+                  alt={member.username}
                   className="member-avatar"
-                  title={member.name}
+                  title={member.username}
                 />
               ))}
               {event.members.length > 3 && (
@@ -212,8 +213,8 @@ const Calendar = ({listEvent, projectId}) => {
     // Add days of the month
     for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
         const currentEvents = events.filter(event => {
-          const eventStart = new Date(event.start);
-          const eventEnd = new Date(event.end);
+          const eventStart = new Date(event.startDate);
+          const eventEnd = new Date(event.endDate);
           const currentDate = new Date(date);
           
           return currentDate >= eventStart && currentDate <= eventEnd;
@@ -237,11 +238,12 @@ const Calendar = ({listEvent, projectId}) => {
   };
 
   const renderWeekView = () => {
-    const hours = Array.from({ length: 24 }, (_, i) => i);
-    const weekDays = getWeekDays(currentDate);
-
+    const hours = Array.from({ length: 24 }, (_, i) => i); // Tạo danh sách 24 giờ.
+    const weekDays = getWeekDays(currentDate); // Lấy danh sách các ngày trong tuần hiện tại.
+  
     return (
       <div className="week-view">
+        {/* Cột thời gian */}
         <div className="time-column">
           {hours.map(hour => (
             <div key={hour} className="hour-cell">
@@ -249,25 +251,36 @@ const Calendar = ({listEvent, projectId}) => {
             </div>
           ))}
         </div>
+  
+        {/* Các cột ngày trong tuần */}
         {weekDays.map(day => (
           <div key={day.toISOString()} className="day-column">
+            {/* Tiêu đề ngày trong tuần */}
             <div className="weekday-header">
               {day.toLocaleDateString('vi-VN', { weekday: 'short', month: 'numeric', day: 'numeric' })}
             </div>
+  
+            {/* Các ô giờ trong ngày */}
             {hours.map(hour => {
-              const currentEvents = events.filter(event => 
-                event.start.toDateString() === day.toDateString() &&
-                event.start.getHours() === hour
-              );
-
+              const hourDate = new Date(day); // Tạo đối tượng Date cho từng giờ.
+              hourDate.setHours(hour, 0, 0, 0);
+  
+              // Lọc các sự kiện có khoảng thời gian bao phủ giờ này.
+              const currentEvents = events.filter(event => {
+                const eventStart = new Date(`${event.startDate}T${event.startTime}`);
+                const eventEnd = new Date(`${event.endDate}T${event.endTime}`);
+                return hourDate >= eventStart && hourDate < eventEnd; // Kiểm tra nếu giờ nằm trong khoảng thời gian.
+              });
+  
               return (
                 <div
                   key={hour}
                   className="hour-cell"
-                  onClick={(e) => handleDateClick(new Date(day.setHours(hour)), e)}
-                  onDragOver={(e) => handleDragOver(new Date(day.setHours(hour)), e)}
-                  onDrop={(e) => handleDrop(new Date(day.setHours(hour)), e)}
+                  onClick={(e) => handleDateClick(new Date(hourDate), e)}
+                  onDragOver={(e) => handleDragOver(new Date(hourDate), e)}
+                  onDrop={(e) => handleDrop(new Date(hourDate), e)}
                 >
+                  {/* Hiển thị các sự kiện phù hợp */}
                   {currentEvents.map(event => renderEvent(event, true))}
                 </div>
               );
@@ -277,6 +290,7 @@ const Calendar = ({listEvent, projectId}) => {
       </div>
     );
   };
+  
 
   return (
     <div className="calendar-container">

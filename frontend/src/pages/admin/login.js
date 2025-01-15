@@ -35,7 +35,6 @@ export default function LoginPage() {
 
     try {
       const response = await userAPI.login({ email, password });
-
       console.log('Đăng nhập thành công:', response);
 
       const { access_token, refresh_token } = response;

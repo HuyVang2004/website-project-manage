@@ -4,7 +4,7 @@ import './TaskDetailModal.scss';
 
 const TaskDetailModal = ({ task, onClose }) => {
   if (!task) return null;
-
+  console.log(task);
   return (
     <div className="task-modal-overlay" onClick={onClose}>
       <div className="task-modal-content" onClick={e => e.stopPropagation()}>
@@ -35,25 +35,14 @@ const TaskDetailModal = ({ task, onClose }) => {
 
           <div className="task-info-row">
             <div className="task-info-label">
-              <File size={16} />
-              Người quản lý
-            </div>
-            <div className="member-info">
-              <div className="member-avatar">{task.manager.name[0]}</div>
-              <span>{task.manager.name}</span>
-            </div>
-          </div>
-
-          <div className="task-info-row">
-            <div className="task-info-label">
               <MessageCircle size={16} />
-              Thành viên khác
+              Thành viên
             </div>
             <div className="member-info">
-              {task.members.map(member => (
-                <div key={member.id} className="member-item">
-                  <div className="member-avatar">{member.name[0]}</div>
-                  <span>{member.name}</span>
+              {task.attendees.map(member => (
+                <div key={member.user_id} className="member-item">
+                  <div className="member-avatar">{member.username[0]}</div>
+                  <span>{member.username}</span>
                 </div>
               ))}
             </div>
@@ -64,10 +53,10 @@ const TaskDetailModal = ({ task, onClose }) => {
               <Clock size={16} />
               Hạn
             </div>
-            <div className="deadline-info">{task.deadline}</div>
+            <div className="deadline-info">{task.dueDate}</div>
           </div>
 
-          <div className="task-files-section">
+          {/* <div className="task-files-section">
             <h3>Tài liệu</h3>
             <div className="document-links">
               <a href="#" className="document-link">
@@ -79,7 +68,7 @@ const TaskDetailModal = ({ task, onClose }) => {
               <Plus size={16} />
               Thêm tài liệu
             </button>
-          </div>
+          </div> */}
 
           <div className="task-description-section">
             <h3>Mô tả</h3>

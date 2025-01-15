@@ -29,6 +29,12 @@ const projectsApi = {
   deleteProject: (projectId) => {
     return axiosClient.delete(`projects/projects/${projectId}`);
   },
+
+  getProjectImage: (projectId) => {
+    return axiosClient.get(`projects/projects/${projectId}/image`, {
+      responseType: 'blob',
+    });
+  }
 };
 
 export default projectsApi;

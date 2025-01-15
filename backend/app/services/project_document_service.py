@@ -3,11 +3,11 @@ from app.models.project_document import ProjectDocument
 from app.schemas.project_document import ProjectDocumentCreate, ProjectDocumentUpdate
 from app.db.session import get_db
 
-def create_project_document(project_id: str, project_document: ProjectDocumentCreate, db: Session = next(get_db())):
+def create_project_document(project_document: ProjectDocumentCreate, db: Session = next(get_db())):
     """
     Create a new project document associated with a specific project ID.
     """
-    new_project_document = ProjectDocument(project_id=project_id, **project_document.dict())
+    new_project_document = ProjectDocument(**project_document.dict())
     db.add(new_project_document)
     db.commit()
     db.refresh(new_project_document)

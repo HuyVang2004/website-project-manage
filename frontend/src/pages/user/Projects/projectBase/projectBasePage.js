@@ -5,11 +5,12 @@ import Sidebar from "../../../../components/SlideBar";
 import TopBar from "../../../../components/Nav/TopBar";
 import Footer from "../../../../components/Footer";
 import getListProjectData from "../../../../api/projects/getListProjectData";
-import getProjectData from "../../../../api/projects/getProjectData";
 import projectsApi from "../../../../api/projects/projectsApi";
 import { ROUTERS } from "../../../../utils/router";
 import userAPI from "../../../../api/userApi";
 import projectTeamApi from "../../../../api/projects/projectTeamApi";
+import notificationsAPI from "../../../../api/notificationsAPI";
+
 
 const ProjectBasePage = () => {
     
@@ -33,6 +34,7 @@ const ProjectBasePage = () => {
     const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");
     const userId = userData?.user_id || "";
     const userMail = userData?.email || "";
+    const userName = userData.username;
 
     const [members, setMembers] = useState([
         {email: userMail,
@@ -102,15 +104,20 @@ const ProjectBasePage = () => {
         setMembers(prev => prev.filter(member => member.email !== email));
     };
 
-    const saveMemberToDatabase = async (member, projectId) => {
+    const saveMemberToDatabase = async (member, project) => {
         console.log('member', member);
         try {
             const userInfo = await userAPI.getUserInfoEmail(member.email);
             console.log("data", {
                 user_id: userInfo.user_id, 
-                project_id: projectId,
+                project_id: project.project_id,
                 role: member.role,
             });
+
+            const responseNotifi = await notificationsAPI.createNotification({
+                user_id: userInfo.user_id,
+                message: `${userName} đã thêm bạn vào dự án ${project.name}`
+            })
 
             const response = await projectTeamApi.createProjectTeam({
                 user_id: userInfo.user_id, 
@@ -133,6 +140,7 @@ const ProjectBasePage = () => {
             created_by: userId,
             // target: "default", // xóa
         };
+
         
         try {
             const response = await projectsApi.createProject(projectData);
@@ -169,8 +177,8 @@ const ProjectBasePage = () => {
         }
     };
 
-    const handleClickProject = (projectId) => {
-        navigate(`${ROUTERS.USER.PROJECT.PROJECTDETAILS}/${projectId}`);
+    const handleClickProject = (project) => {
+        navigate(`${ROUTERS.USER.PROJECT.PROJECTDETAILS}/${project.projectId}`, { state: { projectData: project } });
     };
 
     const renderPagination = () => {
@@ -302,7 +310,7 @@ const ProjectBasePage = () => {
                                             >
                                                 <option value="Thành viên">Thành viên</option>
                                                 <option value="Quản lý">Quản lý</option>
-                                                <option value="customer">Khách hàng</option>
+                                                {/* <option value="customer">Khách hàng</option> */}
                                             </select>
                                             <button 
                                                 className="add-member-btn"
@@ -356,32 +364,43 @@ const ProjectBasePage = () => {
                                 {projects.map((project) => (
                                     <div 
                                         key={project.projectId}
-                                        className="project-card" 
-                                        onClick={() => handleClickProject(project.projectId)}
+                                        className="project-card"
+                                        onClick={() => handleClickProject(project)}
                                     >
-                                        <div className="card-header">
-                                            <h3 className="project-title">{project.projectName}</h3>
-                                            <div className="status">{project.status}</div>
-                                        </div>
-                                        <p className="project-description">{project.description}</p>
-                                        <div className="card-footer">
-                                            <span className="deadline">
-                                                Deadline: <span className="date">{project.dueDate}</span>
-                                            </span>
-                                            <div className="team">
-                                                {project.teamMembers.map((member, index) => (
-                                                    <img 
-                                                        key={index}
-                                                        src={member.avatar}
-                                                        alt={member.name}
-                                                        title={member.name}
-                                                    />
-                                                ))}
-                                                {project.teamMembers.length > 3 && (
-                                                    <span className="more-members">
-                                                        +{project.teamMembers.length - 3}
+                                        <div className="project-card-content">
+                                            <div className="project-image">
+                                                <img 
+                                                    src={project.image} 
+                                                    alt={`${project.projectName} Image`} 
+                                                />
+                                            </div>
+                                            <div className="project-info">
+                                                <div className="card-header">
+                                                    <h3 className="project-title">{project.projectName}</h3>
+                                                    <div className="status">{project.status}</div>
+                                                </div>
+                                                <p className="project-description">{project.description}</p>
+                                                <div className="card-footer">
+                                                    <span className="deadline">
+                                                        Deadline: <span className="date">{project.dueDate}</span>
                                                     </span>
-                                                )}
+                                                    <div className="team">
+                                                        {project.teamMembers.slice(0, 3).map((member, index) => (
+                                                            <img 
+                                                                key={index}
+                                                                src={member.avatar}
+                                                                alt={member.name}
+                                                                title={member.name}
+                                                                className="team-avatar"
+                                                            />
+                                                        ))}
+                                                        {project.teamMembers.length > 3 && (
+                                                            <span className="more-members">
+                                                                +{project.teamMembers.length - 3}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

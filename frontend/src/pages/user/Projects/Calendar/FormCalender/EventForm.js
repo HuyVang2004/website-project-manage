@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './EvenForm.scss'
 import taskAPI from '../../../../../api/tasks/tasksApi';
 import taskRoleAPI from '../../../../../api/tasks/taskRoleApi';
 import userAPI from '../../../../../api/userApi';
-
+import projectTeamApi from '../../../../../api/projects/projectTeamApi';
 const EventForm = ({ event, onSave, onClose, projectId }) => {
   const [formData, setFormData] = useState({
+    task_id: event?.task_id || '',
     title: event?.title || '',
     startDate: event?.startDate || '',
     startTime: event?.startTime || '00:00',
@@ -16,6 +17,18 @@ const EventForm = ({ event, onSave, onClose, projectId }) => {
     image: event?.image || null,
     members: event?.members || []
   });
+
+  const userData = JSON.parse(localStorage.getItem('user_profile') || '{}');
+  const userId = userData?.user_id;
+
+  const [role, setRole] = useState('');
+  useEffect(() => {
+      const fetchRole = async () => {
+        const fetchedRole = await projectTeamApi.getRole(projectId, userId);
+        setRole(fetchedRole);
+      };
+      fetchRole();
+  }, [projectId, userId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,46 +52,60 @@ const EventForm = ({ event, onSave, onClose, projectId }) => {
         status = "Đang thực hiện";
     }
 
-    const eventData = {
-      id: event?.id || Date.now(),
-      title: formData.title,
-      start: startDateTime,
-      end: endDateTime,
-      type: 'default',
-      description: formData.description,
-      priority: formData.priority,
-      image: formData.image,
-      members: formData.members
-    };
-
-    const userData = JSON.parse(localStorage.getItem('user_profile') || '{}');
-    const userId = userData?.user_id;
-
-    const responseTask = await taskAPI.createTask({
-      project_id: projectId,
-      task_name: formData.title,
-      assigned_to: userId,
-      due_date: endDateTime,
-      start_time: startDateTime,
-      priority: formData.priority,
-      status: status,
-      description: formData.description,
-      update_time: startDateTime,
-    });
-
-    await Promise.all(formData.members.map(async (member) => {
-      const responseUser = await userAPI.getUserInfoEmail(member.email);
-      await taskRoleAPI.createTaskRole({
-        task_id: responseTask.task_id,
-        user_id: responseUser.user_id,
-        can_read: true,
-        can_change: false,
-      });
-    }));
-
-    onSave(eventData);
-    onClose();
+    
+    if (role === "Quản lý") {
+      if (!formData.task_id) {
+        const responseTask = await taskAPI.createTask({
+          project_id: projectId,
+          task_name: formData.title,
+          assigned_to: userId,
+          due_date: endDateTime,
+          start_time: startDateTime,
+          priority: formData.priority,
+          status: status,
+          description: formData.description,
+          update_time: startDateTime,
+        });
+  
+        await Promise.all(formData.members.map(async (member) => {
+          await taskRoleAPI.createTaskRole({
+            task_id: responseTask.task_id,
+            user_id: member.user_id,
+            can_read: true,
+            can_change: false,
+          });
+        }));
+  
+        const eventData = {
+          task_id: responseTask.task_id,
+          title: formData.title,
+          start: startDateTime,
+          end: endDateTime,
+          type: 'default',
+          description: formData.description,
+          priority: formData.priority,
+          image: formData.image,
+          members: formData.members
+        };
+        onSave(eventData);
+        onClose();
+      } else {
+        const responseTask = await taskAPI.updateTask({
+          task_name: formData.title,
+          assigned_to: userId,
+          due_date: endDateTime,
+          // start_time: startDateTime,
+          priority: formData.priority,
+          status: status,
+          description: formData.description,
+          // update_time: startDateTime,
+        });
+      }
+    } else {
+      alert('Bạn không có quyền thực hiện thao tác này');
+    }
   };
+  // Thêm ảnh vào database
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -88,27 +115,49 @@ const EventForm = ({ event, onSave, onClose, projectId }) => {
       };
       reader.readAsDataURL(file);
     }
+
   };
 
   const handleDelete = () => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa sự kiện này?')) {
-      onSave(null); // Truyền null để báo hiệu xóa sự kiện
-      onClose();
-    }
+    if (role === "Quản lý") {
+      if (window.confirm('Bạn có chắc chắn muốn xóa sự kiện này?')) {
+        onSave(null); // Truyền null để báo hiệu xóa sự kiện
+        taskAPI.deleteTask(event.task_id);
+        onClose();
+      }
+    }  else {
+      alert('Bạn không có quyền thực hiện thao tác này');
+    } 
   };
+
   const [emailInput, setEmailInput] = useState('');
   const [isDragging, setIsDragging] = useState(false);
-  const addMember = () => {
+  const addMember = async () => {
     if (emailInput && !formData.members.find(m => m.email === emailInput)) {
-      setFormData({
-        ...formData,
-        members: [...formData.members, { 
-          email: emailInput,
-          avatar: `https://ui-avatars.com/api/?name=${emailInput.split('@')[0]}`,
-          name: emailInput.split('@')[0]
-        }]
-      });
-      setEmailInput(''); // Reset email input sau khi thêm
+      try {
+        // Gọi API để lấy thông tin người dùng dựa trên email
+        const responseUser = await userAPI.getUserInfoEmail(emailInput);
+  
+        setFormData({
+          ...formData,
+          members: [
+            ...formData.members,
+            {
+              user_id: responseUser.user_id,
+              email: emailInput,
+              avatar: userAPI.getUserImage(responseUser.user_id),
+              name: responseUser.username,
+              full_name: responseUser.full_name,
+            },
+          ],
+        });
+  
+        // Reset input email
+        setEmailInput('');
+      } catch (error) {
+        console.error("Lỗi khi thêm thành viên:", error);
+        alert("Không thể tìm thấy người dùng với email này.");
+      }
     }
   };
 
@@ -178,7 +227,7 @@ const EventForm = ({ event, onSave, onClose, projectId }) => {
     <div className="modal-overlay">
       <div className="modal-content">
       <div className="modal-header">
-          <h2>{event?.id ? 'Chỉnh sửa công việc' : 'Thêm công việc'}</h2>
+          <h2>{event?.task_id ? 'Chỉnh sửa công việc' : 'Thêm công việc'}</h2>
           <button onClick={onClose} className="go-back-btn">Go Back</button>
         </div>
 
@@ -386,7 +435,7 @@ const EventForm = ({ event, onSave, onClose, projectId }) => {
 
           <div className="form-actions">
             <button type="submit" className="done-btn">Done</button>
-            {event?.id && ( // Chỉ hiển thị nút Delete khi đang edit sự kiện
+            {event?.task_id && ( // Chỉ hiển thị nút Delete khi đang edit sự kiện
               <button 
                 type="button" 
                 onClick={handleDelete} 

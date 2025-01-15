@@ -107,8 +107,8 @@ def get_vietnam_time():
 
 @router.websocket("/ws/projects/{project_id}/{client_id}")
 async def websocket_endpoint(
-    websocket: WebSocket, 
-    project_id: str, 
+    websocket: WebSocket,
+    project_id: str,
     client_id: str,
     db: Session = Depends(get_db)
 ):
@@ -118,21 +118,18 @@ async def websocket_endpoint(
         await manager.connect(websocket, project_id, client_id)
         
         # Lấy tin nhắn lịch sử với giới hạn
-        existing_messages = get_messages_by_project(
-            project_id, 
-            db, 
+        existing_messages = await  get_messages_by_project(
+            project_id,
+            db,
             limit=manager.message_history_limit,
             order_by_desc=True  # Lấy tin nhắn mới nhất
         )
         
         if existing_messages:
-            # Đảo ngược danh sách để hiển thị theo thứ tự thời gian
-            for message in reversed(existing_messages):
-                message_dict = serialize_message(message)
-                await websocket.send_json({
-                    "type": "history",
-                    "message": message_dict
-                })
+            await websocket.send_json({
+                "type": "history",
+                "messages": [serialize_message(msg) for msg in existing_messages]
+            })
         
         while True:
             try:
@@ -146,6 +143,10 @@ async def websocket_endpoint(
                     content=message_data.get("content", ""),
                     sent_time=get_vietnam_time()
                 )
+                
+                # Khởi tạo list nếu chưa tồn tại
+                if project_id not in manager.pending_messages:
+                    manager.pending_messages[project_id] = []
                 
                 manager.pending_messages[project_id].append(new_message)
                 

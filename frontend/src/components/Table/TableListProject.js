@@ -39,8 +39,7 @@ const TableListProject = ({data}) => {
     };
 
     const handleRowClick = (projectId) => {
-        localStorage.setItem("current_project_id", projectId);
-        navigate(ROUTERS.USER.PROJECT.PROJECTDETAILS); // Navigate to project details page
+        navigate(`ROUTERS.USER.PROJECT.PROJECTDETAILS${projectId}`); // Navigate to project details page
     };
 
     const sortedData = [...data].sort((a, b) => {
@@ -185,7 +184,9 @@ const Row = ({ row , onClick}) => {
         <div className="row-container" onClick={onClick} style={{ cursor: 'pointer' }}>
             <Cell>
                 <div className="project">
-                    <div className="icon"></div>
+                    <div className="icon">
+                        <img src={row.image} className='icon'></img>
+                    </div>
                     <div>
                         <div className="project-title">{row.projectName}</div>
                     </div>

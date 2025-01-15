@@ -67,7 +67,7 @@ const HomePage = () => {
   const fetchProjects = async (userId) => {
     try {
       const data = await getListProjectData(userId);
-      console.log("data project",data)
+      console.log("data project",data);
       setListProject(data);
     } catch (error) {
       // setError(error.message);
@@ -86,9 +86,9 @@ const HomePage = () => {
     }
   }, [userId]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <div className="dashboard">

@@ -7,27 +7,13 @@ from fastapi import HTTPException
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
-async def get_messages_by_project(
-    project_id: str,
-    db: AsyncSession,
-    limit: int = None,
-    order_by_desc: bool = False
-) -> List[Message]:
-    """
-    Get messages for a project with optional limit and ordering
-    """
-    stmt = select(Message).filter(Message.project_id == project_id)
-    
+async def get_messages_by_project(project_id: str, db: Session, limit: int = 50, order_by_desc: bool = False):
+    query = db.query(Message).filter(Message.project_id == project_id)
     if order_by_desc:
-        stmt = stmt.order_by(Message.sent_time.desc())
-    else:
-        stmt = stmt.order_by(Message.sent_time.asc())
-    
+        query = query.order_by(Message.sent_time.desc())
     if limit:
-        stmt = stmt.limit(limit)
-    
-    result = await db.execute(stmt)
-    return result.scalars().all()
+        query = query.limit(limit)
+    return query.all()
 
 def get_messages_by_user(sender_id: str, db: Session, limit: int = 50, offset: int = 0) -> List[Message]:
     return db.query(Message).filter(Message.sender_id == sender_id)\
