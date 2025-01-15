@@ -13,17 +13,36 @@ import ChatBox from "../boxChatPage/BoxChatPage";
 import getListTaskInProject from "../../../../api/tasks/getTaskInProject";
 import Calendar from "../Calendar/Calendar";
 import ProjectDocuments from "../../projectDocument/projectDocument";
-
+import getProjectData from "../../../../api/projects/getProjectData";
 const ProjectDetails = () => {
   const { project_id } = useParams();
   const location = useLocation();
-  const projectData = location.state?.projectData;
+  const [projectData, setProjectData] = useState(location.state?.projectData || null);
+  
   const [scrolled, setScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState("cong-viec");
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   //const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    const fetchProjectData = async () => {
+      if (!projectData) {
+        setLoading(true);
+        try {
+          const data = await getProjectData(project_id); // Assuming getProjectData accepts project_id
+          setProjectData(data);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchProjectData();
+  }, [projectData, project_id]);
 
   const [tasks, setTasks] = useState([]);
   const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");

@@ -1,5 +1,4 @@
 import { memo, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import './projectBasePage.scss';
 import Sidebar from "../../../../components/SlideBar";
 import TopBar from "../../../../components/Nav/TopBar";
@@ -10,7 +9,7 @@ import { ROUTERS } from "../../../../utils/router";
 import userAPI from "../../../../api/userApi";
 import projectTeamApi from "../../../../api/projects/projectTeamApi";
 import notificationsAPI from "../../../../api/notificationsAPI";
-
+import { useNavigate } from "react-router";
 
 const ProjectBasePage = () => {
     
@@ -105,23 +104,27 @@ const ProjectBasePage = () => {
     };
 
     const saveMemberToDatabase = async (member, project) => {
-        console.log('member', member);
         try {
             const userInfo = await userAPI.getUserInfoEmail(member.email);
-            console.log("data", {
-                user_id: userInfo.user_id, 
-                project_id: project.project_id,
-                role: member.role,
-            });
-
-            const responseNotifi = await notificationsAPI.createNotification({
-                user_id: userInfo.user_id,
-                message: `${userName} đã thêm bạn vào dự án ${project.name}`
-            })
+        
+            if (userId !== userInfo.user_id) {
+                console.log('thông báo',{
+                    user_id: userInfo.user_id,
+                    message: `${userName} đã thêm bạn vào dự án ${project.project_name}`,
+                    is_read: false,
+                    link: `${ROUTERS.USER.PROJECT.PROJECTDETAILS}/${project.project_id}`,
+                });
+                const responseNotifi = await notificationsAPI.createNotification({
+                    user_id: userInfo.user_id,
+                    message: `${userName} đã thêm bạn vào dự án ${project.name}`,
+                    is_read: false,
+                    link: `${ROUTERS.USER.PROJECT.PROJECTDETAILS}/${project.project_id}`,
+                });
+            }
 
             const response = await projectTeamApi.createProjectTeam({
                 user_id: userInfo.user_id, 
-                project_id: projectId,
+                project_id: project.project_id,
                 role: member.role,
             });
 
@@ -136,16 +139,17 @@ const ProjectBasePage = () => {
             description: newProject.description,
             start_date: newProject.startDate,
             end_date: newProject.endDate,
-            // status: "pending", // xóa 
+            status: "Đang tiến hành", // sửa để gán theo thơì gian 
             created_by: userId,
             // target: "default", // xóa
         };
 
         
         try {
-            const response = await projectsApi.createProject(projectData);
+            const responseProject = await projectsApi.createProject(projectData);
+            console.log("project api", responseProject);
             const promises = members.map((member) => 
-                saveMemberToDatabase(member, response.project_id)
+                saveMemberToDatabase(member, responseProject)
             );
             await Promise.all(promises);
     
