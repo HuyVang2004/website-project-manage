@@ -3,6 +3,7 @@ import './TableListTask.scss';
 
 
 const TableListTask = ({tasks}) => {
+  // console.log(tasks);
   const [filters, setFilters] = useState({
     priority: '',
     status: '',
@@ -13,7 +14,7 @@ const TableListTask = ({tasks}) => {
     direction: 'asc',
   });
 
-
+  
   const handleFilterChange = (field, value) => {
     setFilters((prev) => {
       const updatedFilters = { ...prev, [field]: value };
@@ -53,16 +54,68 @@ const TableListTask = ({tasks}) => {
 
   // Filtering data
   const filteredData = sortedData.filter(row => {
-    const matchesProgress = filters.progress ? row.progress.toString().includes(filters.progress) : true;
-    const matchesStatus = filters.status ? row.status === filters.status : true;
-    const rowDateParts = row.dueDate.split(' '); // Tách giờ và ngày
-    const rowDate = new Date(rowDateParts[1].split('/').reverse().join('-') + 'T' + rowDateParts[0]); // Chuyển sang định dạng yyyy-MM-dd
-    const filterDate = filters.dueDate ? new Date(filters.dueDate) : null;
-    const matchesDueDate = filterDate ? 
-    rowDate.setHours(0, 0, 0, 0) === filterDate.setHours(0, 0, 0, 0) : true;
-    console.log(filters.dueDate);
-    console.log(row.dueDate);
-    return matchesProgress && matchesStatus && matchesDueDate;
+    // Kiểm tra định dạng ngày
+    const isISOFormat = dateString => {
+        const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
+        return regex.test(dateString);
+    };
+
+    const isCustomFormat = dateString => {
+        const regex = /^\d{2}:\d{2}:\d{2} \d{2}\/\d{2}\/\d{4}$/;
+        return regex.test(dateString);
+    };
+
+    // Hàm chuyển đổi định dạng ngày sang ISO
+    const formatDateToISO = dateString => {
+        try {
+            const [time, date] = dateString.split(' ');
+            const [day, month, year] = date.split('/');
+            // Đảm bảo padding số 0
+            const paddedMonth = month.padStart(2, '0');
+            const paddedDay = day.padStart(2, '0');
+            return `${year}-${paddedMonth}-${paddedDay}T${time}`;
+        } catch (error) {
+            console.error("Error formatting date", error);
+            return null;
+        }
+    };
+
+    // Chuẩn hóa ngày
+    let normalizedDate = row.dueDate;
+    if (!isISOFormat(row.dueDate)) {
+        if (isCustomFormat(row.dueDate)) {
+            console.log(true);
+            normalizedDate = formatDateToISO(row.dueDate);
+            if (!normalizedDate) return false;
+        } else {
+            console.error(`Invalid date format: ${row.dueDate}`);
+            return false;
+        }
+    }
+
+    // Kiểm tra khớp ưu tiên
+    const matchesPriority = filters.priority ? 
+        row.priority.toString().includes(filters.priority) : true;
+
+    // Kiểm tra khớp trạng thái
+    const matchesStatus = filters.status ? 
+        row.status === filters.status : true;
+
+    // Kiểm tra khớp ngày
+    let matchesDueDate = true;
+    if (filters.dueDate) {
+        try {
+            const rowDate = new Date(normalizedDate);
+            const filterDate = new Date(filters.dueDate);
+            matchesDueDate = rowDate.toISOString().split('T')[0] === 
+                            filterDate.toISOString().split('T')[0];
+        } catch (error) {
+            console.error("Error processing date comparison", error);
+            matchesDueDate = false;
+        }
+    }
+
+    return matchesPriority && matchesStatus && matchesDueDate;
 });
 
   const [currentPage, setCurrentPage] = useState(1);

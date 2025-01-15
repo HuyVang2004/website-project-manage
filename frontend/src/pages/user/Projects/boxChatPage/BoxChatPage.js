@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatBox.scss';
 
-const ChatBox = ({ projectId }) => {
+const ChatBox = ({ projectId, teamMembers }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [wsStatus, setWsStatus] = useState('connecting');
@@ -74,67 +74,75 @@ const ChatBox = ({ projectId }) => {
 
       ws.onmessage = (event) => {
         try {
-          const rawData = event.data;
-          debugLog('Raw WebSocket message', rawData);
-
-          const data = JSON.parse(rawData);
-          debugLog('Parsed WebSocket message', data);
-
-          switch (data.type) {
-            case 'history':
-              setMessages(prevMessages => {
-                // Filter out duplicate messages based on ID
-                const newMessages = [...prevMessages];
-                if (!prevMessages.some(msg => msg.id === data.message.id)) {
-                  newMessages.push(data.message);
-                }
-                return newMessages;
-              });
-              break;
-
-            case 'message':
-              const newMsg = {
-                id: data.message.id || Date.now().toString(),
-                content: data.message.content,
-                sender_id: data.message.sender_id || userId,
-                sent_time: data.message.sent_time || getVietnamTime(), // Use Vietnam time
-                project_id: projectId
-              };
-              
-              setMessages(prevMessages => {
-                // Remove pending message if it exists and add the confirmed message
-                const filteredMessages = prevMessages.filter(msg => 
-                  !(msg.pending && 
-                    msg.content === newMsg.content && 
-                    msg.sender_id === newMsg.sender_id)
-                );
-                return [...filteredMessages, newMsg];
-              });
-              break;
-
-            case 'system':
-              const systemMsg = {
-                id: 'system-' + Date.now(),
-                content: data.message,
-                type: 'system',
-                sent_time: getVietnamTime() // Use Vietnam time
-              };
-              setMessages(prevMessages => [...prevMessages, systemMsg]);
-              break;
-
-            case 'error':
-              debugLog('Error message', data.message);
-              setError(data.message);
-              break;
-
-            default:
-              debugLog('Unknown message type', data);
-          }
+            const rawData = event.data;
+            debugLog('Raw WebSocket message', rawData);
+            
+            const data = JSON.parse(rawData);
+            debugLog('Parsed WebSocket message', data);
+            
+            switch (data.type) {
+                case 'history':
+                    // console.log("history received:", data);
+                    setMessages(prevMessages => {
+                        const newMessages = [...prevMessages];
+                        
+                        data.messages.forEach(historyMsg => {
+                            if (!newMessages.some(msg => msg.message_id === historyMsg.message_id)) {
+                                newMessages.push(historyMsg);
+                            }
+                        });
+                        
+                        // Sort messages by timestamp if needed
+                        return newMessages.sort((a, b) => 
+                            new Date(a.sent_time) - new Date(b.sent_time)
+                        );
+                    });
+                    break;
+                    
+                case 'message':
+                    console.log("new message received");
+                    const newMsg = {
+                        id: data.message.id || Date.now().toString(),
+                        content: data.message.content,
+                        sender_id: data.message.sender_id || userId,
+                        sent_time: data.message.sent_time || getVietnamTime(),
+                        project_id: projectId
+                    };
+                    
+                    setMessages(prevMessages => {
+                        const filteredMessages = prevMessages.filter(msg =>
+                            !(msg.pending &&
+                            msg.content === newMsg.content &&
+                            msg.sender_id === newMsg.sender_id)
+                        );
+                        return [...filteredMessages, newMsg];
+                    });
+                    break;
+                    
+                case 'system':
+                    console.log('system message received');
+                    const systemMsg = {
+                        id: 'system-' + Date.now(),
+                        content: data.message,
+                        type: 'system',
+                        sent_time: getVietnamTime()
+                    };
+                    setMessages(prevMessages => [...prevMessages, systemMsg]);
+                    break;
+                    
+                case 'error':
+                    debugLog('Error message', data.message);
+                    setError(data.message);
+                    break;
+                    
+                default:
+                    debugLog('Unknown message type', data);
+            }
         } catch (error) {
-          console.error('Error processing message:', error);
-          debugLog('Error', { error: error.message, data: event.data });
+            console.error('Error processing message:', error);
+            debugLog('Error', { error: error.message, data: event.data });
         }
-      };
+    };
 
       ws.onerror = (error) => {
         debugLog('WebSocket Error', error);
@@ -220,23 +228,34 @@ const ChatBox = ({ projectId }) => {
       {error && <div className="error-message">{error}</div>}
 
       <div className="messages-container" ref={scrollRef}>
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`message-wrapper ${
-              message.type === 'system'
-                ? 'system-message'
-                : message.sender_id === userId
-                ? 'user-message'
-                : 'other-message'
-            }`}
-          >
-            <div className={`message ${message.pending ? 'pending' : ''}`}>
-              <p>{message.content}</p>
-              <span className="timestamp">{formatTime(message.sent_time)}</span>
+        {messages.map((message) => {
+          // Lấy tên người gửi từ teamMembers
+          const senderName =
+            teamMembers.find((member) => member.userId === message.sender_id)?.username || "Unknown";
+
+          return (
+            <div
+              key={message.id}
+              className={`message-wrapper ${
+                message.type === 'system'
+                  ? 'system-message'
+                  : message.sender_id === userId
+                  ? 'user-message'
+                  : 'other-message'
+              }`}
+            >
+              {/* Hiển thị tên người gửi nếu không phải bạn */}
+              {message.sender_id !== userId && (
+                <div className="sender-name">{senderName}</div>
+              )}
+
+              <div className={`message ${message.pending ? 'pending' : ''}`}>
+                <p>{message.content}</p>
+                <span className="timestamp">{formatTime(message.sent_time)}</span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <form onSubmit={handleSubmit} className="input-form">

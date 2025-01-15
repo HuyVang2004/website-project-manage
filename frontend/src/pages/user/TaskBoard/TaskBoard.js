@@ -1,36 +1,44 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, MessageCircle, Paperclip, Clock } from 'lucide-react';
 import "./TaskBoard.scss";
 import TopBar from '../../../components/Nav/TopBar';
 import Slidebar from '../../../components/SlideBar';
 import TaskDetailModal from './TaskDetailModal';
-import AddTaskModal from './AddTaskModal';
+import AddTaskModal from './AddTaskModal';  // Add this import
+import getListTaskData from '../../../api/tasks/getListTaskData';
 
 const TaskBoard = () => {
   const [selectedTask, setSelectedTask] = useState(null);
-  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
-  const [sortBy, setSortBy] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('');
+  const [showAddTaskModal, setShowAddTaskModal] = useState({ isOpen: false, status: "" });  // Add this state
   const [tasks, setTasks] = useState({
-    todo: [
-      { 
-        id: 1, 
-        title: 'Thiết kế cơ sở dữ liệu', 
-        frame: 'Frame 12',
-        priority: 'High',
-        status: 'Completed',
-        manager: { id: '1', name: 'Vang', avatar: '/avatar1.jpg' },
-        members: [{ id: '2', name: 'Truong', avatar: '/avatar2.jpg' }],
-        deadline: '24-12-2024',
-        days: 12, 
-        comments: 0, 
-        attachments: 0
-      },
-    ],
+    todo: [],
     inProgress: [],
     completed: []
   });
+  const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");
+  const userId = userData?.user_id || "";
 
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const taskList = await getListTaskData(userId);
+        console.log(taskList);
+        // Phân loại các công việc vào các trạng thái khác nhau
+        const todo = taskList.filter((task) => task.status === 'Chưa bắt đầu');
+        const inProgress = taskList.filter((task) => task.status === 'Đang tiến hành');
+        const completed = taskList.filter((task) => task.status === 'Đã hoàn thành');
+        
+        setTasks({ todo, inProgress, completed });
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
+
+    fetchTasks();
+  }, [userId]);
+  console.log(tasks);
   const handleSort = useCallback((e) => {
     try {
       const value = e.target.value;
@@ -52,9 +60,9 @@ const TaskBoard = () => {
                 case 'priority':
                   return (b?.priority || '').localeCompare(a?.priority || '');
                 case 'dueDate':
-                  return new Date(a?.deadline || 0) - new Date(b?.deadline || 0);
+                  return new Date(a?.dueDate || 0) - new Date(b?.dueDate || 0);
                 case 'name':
-                  return (a?.title || '').localeCompare(b?.title || '');
+                  return (a?.taskName || '').localeCompare(b?.taskName || ''); 
                 default:
                   return 0;
               }
@@ -81,7 +89,7 @@ const TaskBoard = () => {
 
     return taskList.filter(task => {
       try {
-        return task?.title?.toLowerCase().includes(searchTerm.toLowerCase());
+        return task?.taskName?.toLowerCase().includes(searchTerm.toLowerCase());
       } catch (error) {
         console.error('Filter error:', error);
         return false;
@@ -89,31 +97,32 @@ const TaskBoard = () => {
     });
   }, [searchTerm]);
 
+
   const TaskCard = React.memo(({ task }) => (
     <div className="task-board__card" onClick={() => setSelectedTask(task)}>
-      <h3 className="task-board__card-title">{task?.title || 'Untitled Task'}</h3>
-      <div className={`task-board__card-priority ${task?.priority?.toLowerCase() || 'medium'}`}>
-        {task?.priority || 'Medium'} priority
+      <h3 className="task-board__card-title">{task?.taskName || 'Untitled Task'}</h3>
+      <div className={`task-board__card-priority ${task?.priority?.toLowerCase() || 'Cao'}`}>
+        {task?.priority || 'Cao'} priority
       </div>
       <div className="task-board__card-footer">
         <div className="metrics">
           <div className="metrics-item">
             <Clock className="icon" />
-            <span>{task?.days || 0} Days</span>
+            <span>{task?.dueDate || 0} Days</span>
           </div>
-          <div className="metrics-item">
+          {/* <div className="metrics-item">
             <Paperclip className="icon" />
             <span>{task?.attachments || 0}</span>
-          </div>
+          </div> */}
           <div className="metrics-item">
             <MessageCircle className="icon" />
             <span>{task?.comments || 0}</span>
           </div>
         </div>
         <div className="assignees">
-          {(task?.members || []).map((member) => (
-            <div key={member?.id} className="assignees-avatar">
-              {member?.name?.[0] || '?'}
+          {(task?.attendees || []).map((member) => (
+            <div key={member?.user_id} className="assignees-avatar">
+              {member?.username?.[0] || '?'}
             </div>
           ))}
         </div>
@@ -126,7 +135,7 @@ const TaskBoard = () => {
       <h2 className="task-board__column-header">{title}</h2>
       <div className="task-board__column-content">
         {getFilteredTasks(tasks).map(task => (
-          <TaskCard key={task?.id} task={task} />
+          <TaskCard key={task?.task_id} task={task} />
         ))}
         {showAddButton && (
           <button 
@@ -175,7 +184,7 @@ const TaskBoard = () => {
                 <option value="name">Name</option>
               </select>
             </div>
-          </div>
+          </div>  
           
           <div className="task-board__container">
             <Column title="VIỆC CẦN LÀM" tasks={tasks.todo} showAddButton={true} />

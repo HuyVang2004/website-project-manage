@@ -7,6 +7,7 @@ class ProjectDocumentCreate(BaseModel):
     file_name: str
     file_path: str
     uploaded_by: str
+    uploaded_time: datetime 
     description: Optional[str] = None
 
 class ProjectDocumentResponse(BaseModel):

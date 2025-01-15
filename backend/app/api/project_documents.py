@@ -8,18 +8,18 @@ from app.services.project_document_service import (
     delete_project_document,
 )
 from app.db.session import get_db
+import mimetypes
 
-from app.services.aws_s3_service import upload_pdf_to_project_document_s3
+from app.services.aws_s3_service import upload_file_to_project_document_s3
 router = APIRouter()
 
-@router.post("/{project_id}", response_model=ProjectDocumentResponse)
-def create_project_document_endpoint(
-    project_id: str, project_document: ProjectDocumentCreate, db: Session = Depends(get_db)
+@router.post("/", response_model=ProjectDocumentResponse)
+def create_project_document_endpoint( project_document: ProjectDocumentCreate, db: Session = Depends(get_db)
 ):
     """
     Create a new project document associated with a project ID.
     """
-    return create_project_document(project_id, project_document, db)
+    return create_project_document(project_document, db)
 
 @router.get("/{project_id}", response_model=list[ProjectDocumentResponse])
 def get_project_documents_by_project_endpoint(project_id: str, db: Session = Depends(get_db)):
@@ -53,21 +53,25 @@ def delete_project_document_endpoint(project_id: str, db: Session = Depends(get_
         raise HTTPException(status_code=404, detail="Project document not found")
     return {"message": f"Project document for project ID {project_id} has been deleted successfully"}
 
-@router.post("/{project_id}/upload-pdf")
-async def upload_pdf_to_project_endpoint(
-    project_id: str, file: UploadFile = File(...), db: Session = Depends(get_db)
+
+@router.post("/upload-file/{project_document_id}")
+async def upload_file_to_project_endpoint(
+    project_document_id: str, file: UploadFile = File(...), db: Session = Depends(get_db)
 ):
     """
-    Upload a PDF file to the 'project_document' folder in the S3 bucket.
+    Upload a file to the 'project_document' folder in the S3 bucket.
     If the folder named after the project_id does not exist, it will be created.
     """
-    # Validate file type
-    if file.content_type != "application/pdf":
-        raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
-
     try:
-        # Upload the PDF to the S3 bucket
-        upload_pdf_to_project_document_s3(project_id, file, db)
-        return {"message": f"PDF file '{file.filename}' uploaded successfully to project '{project_id}'."}
+        # Validate file type and determine content type
+        content_type, _ = mimetypes.guess_type(file.filename)
+        if not content_type:
+            raise HTTPException(status_code=400, detail="Unable to determine file type.")
+        
+        # Upload the file to the S3 bucket
+        upload_file_to_project_document_s3(project_document_id, file, content_type, db)
+        return {"message": f"File '{file.filename}' uploaded successfully to project '{project_document_id}'."}
     except HTTPException as e:
         raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error uploading file: {str(e)}")

@@ -1,5 +1,5 @@
 import { memo, useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router";
+import { useParams, useLocation } from "react-router";
 import "./style.scss";
 import Sidebar from "../../../../components/SlideBar";
 import TopBar from "../../../../components/Nav/TopBar";
@@ -8,14 +8,16 @@ import { IoCalendarNumberSharp } from "react-icons/io5";
 import { HiChartBar } from "react-icons/hi";
 import { IoDocumentTextSharp } from "react-icons/io5";
 import { FaCommentAlt } from "react-icons/fa";
-import TableListProject from "../../../../components/Table/TableListProject";
+import TableListTask from "../../../../components/Table/TableListTask";
 import ChatBox from "../boxChatPage/BoxChatPage";
 import getListTaskInProject from "../../../../api/tasks/getTaskInProject";
 import Calendar from "../Calendar/Calendar";
-
+import ProjectDocuments from "../../projectDocument/projectDocument";
 
 const ProjectDetails = () => {
   const { project_id } = useParams();
+  const location = useLocation();
+  const projectData = location.state?.projectData;
   const [scrolled, setScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState("cong-viec");
   const [events, setEvents] = useState([]);
@@ -43,16 +45,27 @@ const ProjectDetails = () => {
       try {
         setLoading(true);
         setError(null);
-        const tasks = await getListTaskInProject(project_id);
-        setTasks(tasks);
-        // console.log(tasks);
-        if ((await tasks).length > 0) {
-          const mappedEvents = tasks.map((task) => ({
-            id: task.id,
-            title: task.name,
-            date: task.due_date,
-          }));
-
+        const listTask = await getListTaskInProject(project_id);
+        setTasks(listTask);
+        console.log("List task",listTask); 
+        if (listTask.length > 0) {
+          const mappedEvents = listTask.map((task) => {
+            const [startDate, startTime] = task.startDate.split("T");
+            const [endDate, endTime] = task.dueDate.split("T");
+      
+            return {
+              task_id: task.task_id,
+              title: task.taskName,
+              startDate: startDate, // Lấy ngày từ dueDate
+              startTime: startTime, // Lấy giờ từ dueDate
+              endDate: endDate,     // Lấy ngày từ endDate
+              endTime: endTime,     // Lấy giờ từ endDate
+              priority: task.priority,
+              description: task.description,
+              members: task.attendees
+            };
+          });
+      
           setEvents(mappedEvents);
         }
       } catch (err) {
@@ -67,6 +80,7 @@ const ProjectDetails = () => {
       fetchTasks();
     }
   }, [project_id]);
+  // console.log("listevent", events);
 
   // Rendering content based on active tab
   const renderContent = () => {
@@ -74,7 +88,7 @@ const ProjectDetails = () => {
       case "cong-viec":
         return (
           <div className="tab-content">
-            <TableListProject data={tasks} />
+            <TableListTask tasks={tasks} />
           </div>
         );
         case "lich":
@@ -86,13 +100,12 @@ const ProjectDetails = () => {
       case "tai-lieu":
         return (
           <div className="tab-content">
-            <h2>Tài liệu</h2>
-            <p>Hiển thị danh sách tài liệu.</p>
+            <ProjectDocuments projectId={project_id}/>
           </div>
         );
       case "thao-luan":
         return (
-            <ChatBox projectId={project_id}/>
+            <ChatBox projectId={project_id} teamMembers={projectData.teamMembers}/>
         );
       default:
         return <div className="tab-content">Chọn tab hợp lệ để xem nội dung</div>;
@@ -102,8 +115,8 @@ const ProjectDetails = () => {
   return (
     <div className={`dashboard ${scrolled ? "scrolled" : ""}`}>
       <Sidebar />
+      <TopBar />
       <div className="main-content">
-        <TopBar />
         <div className="header_top">
           <div
             className={`menu-item ${activeTab === "cong-viec" ? "active" : ""}`}

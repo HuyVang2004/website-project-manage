@@ -1,0 +1,418 @@
+.project-documents {
+  width: 100%;
+  padding: 1rem;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    .search-container {
+      position: relative;
+      flex: 1;
+      margin-right: 1rem;
+
+      input {
+        width: 100%;
+        padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        
+        &::placeholder {
+          color: #a0aec0;
+        }
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1.25rem;
+        height: 1.25rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a0aec0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'%3E%3C/path%3E%3C/svg%3E");
+      }
+    }
+
+    .add-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background-color: #3b82f6;
+      color: white;
+      border-radius: 0.375rem;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #2563eb;
+      }
+
+      .plus-icon {
+        width: 1rem;
+        height: 1rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 4v16m8-8H4'%3E%3C/path%3E%3C/svg%3E");
+      }
+    }
+  }
+
+  .documents-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .document-card {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s;
+
+    &:hover {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .document-content {
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .document-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .file-icon {
+        width: 2rem;
+        height: 2rem;
+        color: #3b82f6;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%233b82f6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'%3E%3C/path%3E%3C/svg%3E");
+      }
+
+      .document-details {
+        h3 {
+          font-weight: 500;
+          margin-bottom: 0.25rem;
+        }
+
+        p {
+          color: #6b7280;
+          font-size: 0.875rem;
+        }
+
+        .meta-info {
+          display: flex;
+          gap: 1rem;
+          margin-top: 0.5rem;
+          font-size: 0.875rem;
+          color: #6b7280;
+
+          .uploader, .timestamp {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+          }
+        }
+      }
+    }
+
+    .document-actions {
+      display: flex;
+      gap: 0.5rem;
+
+      button {
+        padding: 0.5rem;
+        border: none;
+        background: none;
+        border-radius: 9999px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: #f3f4f6;
+        }
+
+        i {
+          width: 1.25rem;
+          height: 1.25rem;
+          display: block;
+        }
+
+        .eye-icon {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234b5563'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'%3E%3C/path%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'%3E%3C/path%3E%3C/svg%3E");
+        }
+
+        .download-icon {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234b5563'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'%3E%3C/path%3E%3C/svg%3E");
+        }
+      }
+    }
+  }
+
+  // Modal Styles
+  // Modal chung
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  .modal-content {
+    background: white;
+    border-radius: 0.5rem;
+    width: 90%;
+    max-width: 800px; // Tăng max-width cho modal preview
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative; // Để định vị nút close
+  }
+
+  .modal-header {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      width: 100%;
+      text-align: center; // Căn giữa tiêu đề
+    }
+
+    .close-button {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 0.5rem;
+      background: none;
+      border: none;
+      border-radius: 9999px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background-color: #f3f4f6;
+      }
+
+      .close-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234b5563'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12'%3E%3C/path%3E%3C/svg%3E");
+        display: block;
+      }
+    }
+  }
+
+  // Preview Modal Specific Styles
+  &.preview-modal {
+    .preview-content {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .preview-placeholder {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background-color: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+        margin-bottom: 2rem;
+
+        p {
+          color: #6b7280;
+        }
+      }
+
+      .document-details {
+        width: 100%;
+        max-width: 600px; // Giới hạn chiều rộng của phần chi tiết
+        margin: 0 auto;
+        text-align: left;
+
+        h4 {
+          font-weight: 600;
+          margin-bottom: 1rem;
+          font-size: 1.1rem;
+        }
+
+        p {
+          color: #4b5563;
+          line-height: 1.5;
+          margin-bottom: 1rem;
+        }
+
+        .meta-info {
+          margin-top: 1.5rem;
+          padding-top: 1rem;
+          border-top: 1px solid #e5e7eb;
+          
+          p {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+    // Upload Modal Specific Styles
+    &.upload-modal {
+      .upload-content {
+        padding: 1rem;
+
+        .upload-area {
+          border: 2px dashed #e5e7eb;
+          border-radius: 0.5rem;
+          padding: 1.5rem;
+          text-align: center;
+          cursor: pointer;
+          transition: border-color 0.2s;
+
+          &:hover {
+            border-color: #9ca3af;
+          }
+
+          &.has-file {
+            border-color: #10b981;
+            background-color: #ecfdf5;
+
+            .selected-file {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 0.5rem;
+              color: #059669;
+            }
+          }
+
+          .upload-placeholder {
+            color: #6b7280;
+
+            .upload-icon {
+              width: 2rem;
+              height: 2rem;
+              margin: 0 auto 0.5rem;
+              background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12'%3E%3C/path%3E%3C/svg%3E");
+            }
+          }
+        }
+
+        .form-group {
+          margin-top: 1rem;
+
+          label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+          }
+
+          textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            resize: vertical;
+
+            &:focus {
+              outline: none;
+              border-color: #3b82f6;
+              box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+            }
+          }
+        }
+      }
+
+      .modal-footer {
+        padding: 1rem;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+
+        button {
+          padding: 0.5rem 1rem;
+          border-radius: 0.375rem;
+          font-weight: 500;
+          cursor: pointer;
+
+          &.cancel-button {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            color: #6b7280;
+
+            &:hover {
+              background-color: #f3f4f6;
+            }
+          }
+
+          &.upload-button {
+            background-color: #3b82f6;
+            border: none;
+            color: white;
+
+            &:hover {
+              background-color: #2563eb;
+            }
+
+            &:disabled {
+              background-color: #93c5fd;
+              cursor: not-allowed;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Alert Styles
+  .alert {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+
+    &.error {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+
+    &.info {
+      background-color: #e0f2fe;
+      color: #075985;
+    }
+
+    &.success {
+      background-color: #dcfce7;
+      color: #15803d;
+    }
+  }
+}

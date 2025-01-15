@@ -19,7 +19,7 @@ const getListTaskInProject = async (projectId) => {
     const tasks = await taskAPI.getTasksByProjectId(projectId);
 
     const validTasks = Array.isArray(tasks) ? tasks : [];
-    console.log(validTasks);
+    // console.log(validTasks);
 
     const tasksWithDetails = await Promise.all(
       validTasks.map(async (task) => {
@@ -41,10 +41,12 @@ const getListTaskInProject = async (projectId) => {
         );
 
         return {
-          title: task.task_name,
+          task_id: task.task_id,
+          taskName: task.task_name,
           description: task.description,
-          start: task.start_time,
-          end: task.due_date,
+          startDate: task.start_time,
+          dueDate: task.due_date,
+          status: task.status, 
           priority: task.priority,
           attendees: attendees,
         };
