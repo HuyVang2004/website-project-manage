@@ -67,6 +67,7 @@ export default function RegisterPage() {
       const projectData = {
         project_name: "My project",
         description: "",
+        status: "Đang tiến hành",
         start_date: new Date("2025-01-01").toISOString(),
         end_date: new Date("2099-01-01").toISOString(),
         created_by: userId,

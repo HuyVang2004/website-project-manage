@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, cache } from 'react';
 import './projectDocument.scss';
 import projectDocumentAPI from '../../../api/projects/projectDocumentApi';
-const ProjectDocuments = ({projectId}) => {
+const ProjectDocuments = ({project}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDoc, setSelectedDoc] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
@@ -15,6 +15,8 @@ const ProjectDocuments = ({projectId}) => {
   const [documents, setDocuments] = useState([]); // Khởi tạo state là mảng rỗng
   const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");
   const userId = userData?.user_id || "";
+
+  const projectId = project.project_id;
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
@@ -84,7 +86,19 @@ const ProjectDocuments = ({projectId}) => {
       console.log("Doc", newDoc);
       try {
         const responseDocuments = await projectDocumentAPI.createProjectDocument(newDoc);
-        projectDocumentAPI.uploadPDFToProject(responseDocuments.document_id, selectedFile);
+        await projectDocumentAPI.uploadPDFToProject(responseDocuments.document_id, selectedFile);
+
+        for (const member of project.teamMembers) {
+          if (member.userId !== userData.user_id) {
+            await notificationsAPI.createNotification({
+              user_id: member.userId,
+              message: `${userData.username} đã thêm 1 tài liệu vào dự án ${project.projectName}`,
+              is_read: false,
+              link: `${ROUTERS.USER.PROJECT.PROJECTDETAILS}/${project.projectId}`,
+            });
+          }
+        }
+       
       } catch {
         setUploadStatus('error');
       }

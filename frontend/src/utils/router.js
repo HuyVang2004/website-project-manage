@@ -13,6 +13,7 @@ export const ROUTERS = {
             PROJECTDETAILS: "/duan/chitiet",
         },
         MYTASK : "/mytask",
+        HELP: "/help",
         PEOPLELIST : "/nguoidung"
     },
 

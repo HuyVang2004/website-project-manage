@@ -1,0 +1,230 @@
+// Help.scss
+// Variables
+$primary-color: #4a90e2;
+$text-primary: #333;
+$text-secondary: #666;
+$border-color: #ddd;
+$background-primary: #f5f8fa;
+$background-secondary: #f8f9fa;
+$white: #fff;
+$shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+$border-radius: 8px;
+
+// Mixins
+@mixin card {
+  background: $white;
+  border-radius: $border-radius;
+  padding: 20px;
+  box-shadow: $shadow;
+}
+
+@mixin input-base {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  font-size: 14px;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+.help {
+  &-container {
+    padding: 20px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    background-color: $background-primary;
+    text-align: center; // Center align for empty content
+
+    &.empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 300px;
+      font-size: 18px;
+      color: $text-secondary;
+    }
+  }
+
+  &-header {
+    margin-bottom: 30px;
+
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+      color: $text-primary;
+    }
+  }
+
+  &-form-card {
+    @include card;
+    margin-bottom: 30px;
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: $text-primary;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+
+      select {
+        @include input-base;
+      }
+
+      textarea {
+        @include input-base;
+        min-height: 120px;
+        resize: vertical;
+      }
+    }
+
+    .submit-button {
+      background-color: $primary-color;
+      color: $white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+  }
+
+  &-list {
+    h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: $text-primary;
+    }
+
+    &.empty {
+      text-align: center;
+      font-size: 16px;
+      color: $text-secondary;
+    }
+  }
+
+  &-card {
+    @include card;
+    margin-bottom: 15px;
+
+    &-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+
+      .help-type {
+        font-weight: 600;
+        color: $primary-color;
+      }
+
+      .help-date {
+        color: $text-secondary;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+.help-content {
+  color: $text-primary;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.admin-response {
+  border-top: 1px solid $border-color;
+  margin-top: 15px;
+  padding-top: 15px;
+
+  h3 {
+    font-size: 14px;
+    color: $text-secondary;
+    margin-bottom: 10px;
+  }
+
+  p {
+    background-color: $background-secondary;
+    padding: 15px;
+    border-radius: 4px;
+    color: $text-primary;
+    line-height: 1.5;
+  }
+}
+
+// Media Queries
+@media screen and (max-width: 768px) {
+  .help {
+    &-container {
+      padding: 15px;
+    }
+
+    &-form-card,
+    &-card {
+      padding: 15px;
+    }
+  }
+
+  .help {
+    &-header {
+      h1 {
+        font-size: 20px;
+      }
+    }
+
+    &-form-card {
+      h2 {
+        font-size: 16px;
+      }
+    }
+
+    &-list {
+      h2 {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .help {
+    &-container {
+      padding: 10px;
+    }
+
+    &-header {
+      h1 {
+        font-size: 18px;
+      }
+    }
+
+    &-form-card,
+    &-card {
+      padding: 10px;
+
+      h2 {
+        font-size: 14px;
+      }
+    }
+
+    .help-content {
+      font-size: 14px;
+    }
+  }
+}

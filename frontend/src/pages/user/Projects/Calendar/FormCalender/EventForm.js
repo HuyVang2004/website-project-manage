@@ -54,6 +54,7 @@ const EventForm = ({ event, onSave, onClose, projectId }) => {
 
     
     if (role === "Quản lý") {
+      
       if (!formData.task_id) {
         const responseTask = await taskAPI.createTask({
           project_id: projectId,
@@ -74,6 +75,15 @@ const EventForm = ({ event, onSave, onClose, projectId }) => {
             can_read: true,
             can_change: false,
           });
+
+          if (member.user_id !== userId) {
+            const responseNotifi = await notificationsAPI.createNotification({
+              user_id: userInfo.user_id,
+              message: `${userName} đã thêm bạn vào công việc ${responseTask.task_name}`,
+              is_read: false,
+              link: `${ROUTERS.USER.PROJECT.PROJECTDETAILS}/${projectId}`,
+          })
+          }
         }));
   
         const eventData = {

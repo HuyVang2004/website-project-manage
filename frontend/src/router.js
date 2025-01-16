@@ -8,7 +8,7 @@ import LoginPage from "./pages/admin/login";
 import ChangePasswordPage from "./pages/user/ChangePassword/ChangePasswordPage";
 import SettingUserPage from "./pages/user/Personal/SettingUserPage";
 import ProjectBasePage from "./pages/user/Projects/projectBase/projectBasePage";
-
+import HelpPage from "./pages/user/helpPage/HelpPage.js";
 import TaskBoard from "./pages/user/TaskBoard/TaskBoard";
 import PeopleList from "./pages/user/PeopleList/PeopleList";
 
@@ -65,6 +65,7 @@ const renderUserRouter = () => {
         <Route path={ROUTERS.USER.MYTASK} element={<TaskBoard/>}/>
         <Route path={ROUTERS.USER.PEOPLELIST} element={<PeopleList/>}/>
         <Route path={ROUTERS.USER.FORGOTPASSWORD} element={<ForgotPasswordPage/>}/>
+        <Route path={ROUTERS.USER.HELP} element={<HelpPage/>}/>
 
 
 
