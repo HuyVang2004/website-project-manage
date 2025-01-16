@@ -3,7 +3,7 @@ import './AddTaskModal.scss';
 import taskAPI from '../../../api/tasks/tasksApi';
 import taskRoleAPI from '../../../api/tasks/taskRoleApi';
 
-const AddTaskModal = ({status, onClose }) => {
+const AddTaskModal = ({status, onClose, onAddTask }) => {
   const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     task_name: '',
@@ -48,14 +48,36 @@ const AddTaskModal = ({status, onClose }) => {
         project_id: myProjectId, 
         task_name: formData.task_name,
         assigned_to: userId,
-        // status: 'pending',
-        status: status,
+        status:  status === "todo" ? "Chưa bắt đầu" : "Đang thực hiện",
         due_date: formData.due_date,
         priority: formData.priority,
         description: formData.description,
+        start_time: new Date().toISOString(),
+        update_time: new Date().toISOString(),
         // budget : 5,
       }); 
 
+      const newTask = {
+        taskId: responseTask.task_id,
+        taskName: formData.task_name,
+        status: status === "todo" ? "Chưa bắt đầu" : "Đang thực hiện",
+        dueDate: new Date(formData.due_date).toLocaleString("vi-VN", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        priority: formData.priority || "Không xác định",
+        attendees: [{
+          user_id: userData.user_id,
+          username: userData.username,
+          email: userData.email,
+          full_name: userData.full_name,
+          avatar: "",
+        }]
+      }
+      onAddTask(status, newTask);
       await taskRoleAPI.createTaskRole({
         task_id : responseTask.task_id,
         user_id: userId,
@@ -69,7 +91,7 @@ const AddTaskModal = ({status, onClose }) => {
       console.log("data", {
         project_id: myProjectId, 
         task_name: formData.task_name,
-        assigned_to: '',
+        assigned_to: userId,
         due_date: formData.due_date,
         priority: formData.priority,
         description: formData.description,
@@ -156,8 +178,8 @@ const AddTaskModal = ({status, onClose }) => {
                 <input
                   type="radio"
                   name="priority"
-                  value="cao"
-                  checked={formData.priority === 'cao'}
+                  value="Cao"
+                  checked={formData.priority === 'Cao'}
                   onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
                 />
                 <span>Cao</span>
@@ -166,8 +188,8 @@ const AddTaskModal = ({status, onClose }) => {
                 <input
                   type="radio"
                   name="priority"
-                  value="trung-binh"
-                  checked={formData.priority === 'trung-binh'}
+                  value="Trung bình"
+                  checked={formData.priority === 'Trung bình'}
                   onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
                 />
                 <span>Trung bình</span>
@@ -176,8 +198,8 @@ const AddTaskModal = ({status, onClose }) => {
                 <input
                   type="radio"
                   name="priority"
-                  value="thap"
-                  checked={formData.priority === 'thap'}
+                  value="Thấp"
+                  checked={formData.priority === 'Thấp'}
                   onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
                 />
                 <span>Thấp</span>

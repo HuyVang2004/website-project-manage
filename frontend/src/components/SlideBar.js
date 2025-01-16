@@ -73,7 +73,7 @@ const Sidebar = () => {
 
 
       <div className="sidebar__bottom">
-        <div className="sidebar__item">
+        <div className="sidebar__item" onClick={() => navigate(ROUTERS.USER.HELP)}>
           <HelpCircle className="sidebar__icon" />
           <span className="sidebar__label">Trợ giúp</span>
         </div>

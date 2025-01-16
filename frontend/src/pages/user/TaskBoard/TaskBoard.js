@@ -6,6 +6,8 @@ import Slidebar from '../../../components/SlideBar';
 import TaskDetailModal from './TaskDetailModal';
 import AddTaskModal from './AddTaskModal';  // Add this import
 import getListTaskData from '../../../api/tasks/getListTaskData';
+import commentAPI from '../../../api/commentApi';
+import userAPI from '../../../api/userApi';
 
 const TaskBoard = () => {
   const [selectedTask, setSelectedTask] = useState(null);
@@ -38,7 +40,35 @@ const TaskBoard = () => {
 
     fetchTasks();
   }, [userId]);
-  console.log(tasks);
+
+  
+  const handleClick = async (task) => {
+    try {
+      // Gọi API để lấy danh sách comment của task
+      const responseComment = await commentAPI.getCommentsByTask(task.taskId);
+  
+      // Tạo danh sách comments mới có thêm thông tin username
+      const commentsWithUsernames = await Promise.all(
+        responseComment.map(async (comment) => {
+          // Gọi API lấy thông tin user dựa trên created_by
+          const userInfo = await userAPI.getUserInfo(comment.created_by);
+          return {
+            ...comment,
+            username: userInfo.username || "Unknown User", 
+          };
+        })
+      );
+      setSelectedTask({
+        task,
+        comments: commentsWithUsernames,
+      });
+    } catch (error) {
+      console.error("Error fetching comments or user info:", error);
+    }
+  };
+
+
+  // console.log(tasks);
   const handleSort = useCallback((e) => {
     try {
       const value = e.target.value;
@@ -99,7 +129,7 @@ const TaskBoard = () => {
 
 
   const TaskCard = React.memo(({ task }) => (
-    <div className="task-board__card" onClick={() => setSelectedTask(task)}>
+    <div className="task-board__card" onClick={handleClick(task)}>
       <h3 className="task-board__card-title">{task?.taskName || 'Untitled Task'}</h3>
       <div className={`task-board__card-priority ${task?.priority?.toLowerCase() || 'Cao'}`}>
         {task?.priority || 'Cao'} priority
@@ -130,7 +160,7 @@ const TaskBoard = () => {
     </div>
   ));
 
-  const Column = React.memo(({ title, tasks = [], showAddButton }) => (
+  const Column = React.memo(({ title, tasks = [], status, showAddButton }) => (
     <div className="task-board__column">
       <h2 className="task-board__column-header">{title}</h2>
       <div className="task-board__column-content">
@@ -140,7 +170,7 @@ const TaskBoard = () => {
         {showAddButton && (
           <button 
             className="task-board__add-button"
-            onClick={() => setShowAddTaskModal(true)}
+            onClick={() => setShowAddTaskModal({ isOpen: true, status: status })}
           >
             <Plus />
             <span>Thêm công việc</span>
@@ -150,13 +180,20 @@ const TaskBoard = () => {
     </div>
   ));
 
-  const handleAddTask = useCallback((newTask) => {
+  const handleAddTask = useCallback((status, newTask) => {
     try {
-      setTasks(prev => ({
-        ...prev,
-        todo: [...(prev.todo || []), newTask]
-      }));
-      setShowAddTaskModal(false);
+      if (status === "todo") {
+        setTasks(prev => ({
+          ...prev,
+          todo: [...(prev.todo || []), newTask]
+        }));
+      } else if (status === "inProgress") {
+        setTasks(prev => ({
+          ...prev,
+          inProgress: [...(prev.inProgress || []), newTask]
+        }));
+      }
+      setShowAddTaskModal({ isOpen: false, status: "" });
     } catch (error) {
       console.error('Add task error:', error);
     }
@@ -187,9 +224,9 @@ const TaskBoard = () => {
           </div>  
           
           <div className="task-board__container">
-            <Column title="VIỆC CẦN LÀM" tasks={tasks.todo} showAddButton={true} />
-            <Column title="VIỆC ĐANG LÀM" tasks={tasks.inProgress} showAddButton={true} />
-            <Column title="VIỆC ĐÃ HOÀN THÀNH" tasks={tasks.completed} showAddButton={false} />
+            <Column title="VIỆC CẦN LÀM" tasks={tasks.todo} status="todo" showAddButton={true} />
+            <Column title="VIỆC ĐANG LÀM" tasks={tasks.inProgress} status="inProgress" showAddButton={true} />
+            <Column title="VIỆC ĐÃ HOÀN THÀNH" tasks={tasks.completed} status="completed" showAddButton={false} />
           </div>
         </div>
       </div>
@@ -200,9 +237,10 @@ const TaskBoard = () => {
           onClose={() => setSelectedTask(null)} 
         />
       )}
-      {showAddTaskModal && (
+      {showAddTaskModal.isOpen && (
         <AddTaskModal 
-          onClose={() => setShowAddTaskModal(false)}
+          status={showAddTaskModal.status}
+          onClose={() => setShowAddTaskModal({ isOpen: false, status: "" })}
           onAddTask={handleAddTask}
         />
       )}

@@ -9,8 +9,10 @@ import {
 } from "@mui/material";
 import "./Notifications.scss";
 import notificationsAPI from "../../api/notificationsAPI";
-
+import { useNavigate } from "react-router";
 const Notifications = () => {
+  const navigate = useNavigate();
+
   const userData = JSON.parse(localStorage.getItem('user_profile'));
   let userId = ""
   try {
@@ -42,6 +44,7 @@ const Notifications = () => {
               minute: '2-digit',
             }),
             isRead: notification.is_read,
+            link: notification.link,
           }))
         );
         setLoading(false);
@@ -64,6 +67,9 @@ const Notifications = () => {
   if (error) {
     return <Typography color="error">{error}</Typography>;
   }
+  const handleClick = (notification) => {
+    navigate(notification.link);
+  }
 
   return (
     <Box className="notifications-container">
@@ -77,7 +83,9 @@ const Notifications = () => {
         <Box className="notifications-list-container">
           <List>
             {notifications.map((notification) => (
-              <ListItem key={notification.id} className={`notification-item ${notification.isRead ? 'read' : 'unread'}`}>
+              <ListItem key={notification.id} 
+                onClick={() => handleClick(notification)}
+                className={`notification-item ${notification.isRead ? 'read' : 'unread'}`}>
                 <ListItemText
                   primary={
                     <>

@@ -4,6 +4,27 @@ import userAPI from "../../api/userApi";
 import '../../styles/pages/login.scss';
 import { ROUTERS } from "../../utils/router";
 import projectTeamApi from "../../api/projects/projectTeamApi";
+import projectsApi from "../../api/projects/projectsApi";
+
+
+const findProjectByName = async (userId, projectName = "My project") => {
+  try {
+    const projectTeamResponse = await projectTeamApi.getProjectsByUser(userId);
+
+    for (const project of projectTeamResponse) {
+      const responseProject = await projectsApi.getProjectById(project.project_id);
+      if (project && responseProject.project_name === projectName) {
+        console.log("Project found:", project);
+        return responseProject.project_id;
+      }
+    }
+    console.log(`No project with name "${projectName}" found.`);
+    return null;
+  } catch (error) {
+    console.error("Error fetching project:", error);
+    return null;
+  }
+};
 
 
 export default function LoginPage() {
@@ -44,16 +65,19 @@ export default function LoginPage() {
       localStorage.setItem('token_expiry', expiryTime);
       
       const userInfo = await userAPI.getCurrentUserInfo(access_token);
-      localStorage.setItem("user_profile", JSON.stringify(userInfo));
+      const myProjectId = await findProjectByName(userInfo.user_id);
 
-      const myProjectId = findProjectByName(userInfo.user_id);
       if (myProjectId) {
+        alert(`đã có dự án ${myProjectId}`);
         localStorage.setItem("my_project_id", myProjectId);
       } else {
-        const userId = loginResponse.user_id;
+        alert("chưa có dự án");
+        const userId = userInfo.user_id;
+
         const projectData = {
           project_name: "My project",
           description: "",
+          status: "Đang tiến hành",
           start_date: new Date("2025-01-01").toISOString(),
           end_date: new Date("2099-01-01").toISOString(),
           created_by: userId,
@@ -69,7 +93,10 @@ export default function LoginPage() {
         });
         localStorage.setItem("my_project_id", projectId); 
       }
+
+      localStorage.setItem("user_profile", JSON.stringify(userInfo));
       navigate(ROUTERS.USER.HOME);
+      
     } catch (err) {
       console.error('Lỗi đăng nhập:', err);
       setError(err.response?.data?.detail || 'Đăng nhập thất bại, vui lòng thử lại.');
@@ -128,23 +155,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-}
-
-const findProjectByName = async (userId, projectName = "My project") => {
-  try {
-    const projectTeamResponse = await projectTeamApi.getProjectsByUser(userId);
-
-    for (const project of projectTeamResponse) {
-      
-      if (project && project.project_name === projectName) {
-        console.log("Project found:", project);
-        return project.project_id;
-      }
-    }
-    console.log(`No project with name "${projectName}" found.`);
-    return null;
-  } catch (error) {
-    console.error("Error fetching project:", error);
-    throw error;
-  }
 };
