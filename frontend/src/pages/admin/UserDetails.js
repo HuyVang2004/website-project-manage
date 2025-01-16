@@ -1,8 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ROUTERS } from '../../utils/router';
 import Sidebar from '../../components/SlideBar';
-import TopBar from '../../components/Nav/TopBar';;
+import TopBar from '../../components/Nav/TopBar';
 import Footer from '../../components/Footer';
 import './style/UserDetails.scss';
 
@@ -11,13 +10,19 @@ const UserDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = location.state || {};
-  const handleDelete = (userId, e) => {
-    e.stopPropagation();
-    if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
-      setUsers(users.filter(user => user.id !== userId));
-    }
-  };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "Chưa xác định";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
 
   if (!user) {
     return (
@@ -64,12 +69,13 @@ const UserDetail = () => {
                 </button>
               </div>
             </div>
-          {/* User Info */}
-          <div className="info-grid">
+
+            {/* User Info */}
+            <div className="info-grid">
               <div className="info-card">
                 <div>
                   <span className="label">Tên người dùng: </span>
-                  <span>{user.name}</span>
+                  <span>{user.full_name}</span>
                 </div>
                 <div>
                   <span className="label">Giới tính: </span>
@@ -80,20 +86,25 @@ const UserDetail = () => {
                   <span>{user.email}</span>
                 </div>
                 <div>
-                  <span className="label">Số điện thoại: </span>
-                  <span>{user.phone}</span>
+                  <span className="label">Vai trò: </span>
+                  <span>{user.role}</span>
                 </div>
-              
               </div>
 
               <div className="info-card">
-              <div>
+                <div>
+                  <span className="label">Ngày tạo tài khoản: </span>
+                  <span>{formatDate(user.created_at)}</span>
+                </div>
+                <div>
                   <span className="label">Trạng thái: </span>
-                  <span>{user.status}</span>
+                  <span className={`status ${user.status?.toLowerCase()}`}>
+                    {user.status === 'ACTIVE' ? 'Hoạt động' : 'Không hoạt động'}
+                  </span>
                 </div>
                 <div>
                   <span className="label">Các dự án: </span>
-                  <span>{" "+user.project}</span>
+                  <span>{user.projects?.join(', ') || 'Chưa tham gia dự án nào'}</span>
                 </div>
               </div>
             </div>
@@ -102,32 +113,33 @@ const UserDetail = () => {
               <div className="stats-grid">
                 <div>
                   <span className="label">Số dự án tham gia:</span>
-                  <span>{user.project.length}</span>
+                  <span>{user.projects?.length || 0}</span>
                 </div>
                 <div>
-                  <span className="label">Lần truy cập gần nhất:</span>
-                  <span>{user.lastLogin}</span>
-                </div>
-                <div>
-                  <span className="label">Thời gian truy cập trung bình:</span>
-                  <span>10 lần / tuần</span>
+                  <span className="label">Ngày tạo:</span>
+                  <span>{formatDate(user.created_at)}</span>
                 </div>
               </div>
             </div>
 
-            <div className="projects-section">
-              <h3>Các dự án tham gia</h3>
-              <div className="projects-list">
-              {user.project.map((project, index) => (
-                  <div key={index} className="project-item"> 
-                    <span>Dự án {project}</span>
-                    <button onClick={() => navigate(`/${ROUTERS.ADMIN.PROJECT}/${project}`)} className="view-details">
-                      Xem chi tiết
-                    </button>
-                  </div>
-                ))}
+            {user.projects && user.projects.length > 0 && (
+              <div className="projects-section">
+                <h3>Các dự án tham gia</h3>
+                <div className="projects-list">
+                  {user.projects.map((project, index) => (
+                    <div key={index} className="project-item">
+                      <span>Dự án {project}</span>
+                      <button
+                        onClick={() => navigate(`/admin/project/${project}`)}
+                        className="view-details"
+                      >
+                        Xem chi tiết
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
         <Footer />

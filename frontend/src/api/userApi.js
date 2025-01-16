@@ -67,7 +67,10 @@ const userAPI = {
           responseType: 'blob', // Đảm bảo nhận dữ liệu dạng nhị phân (ảnh)
       });
   },
-      
+   getAllUsers: () => {
+    return axiosClient.get('/admin/users');
+} 
+
 };
 
 export default userAPI;
