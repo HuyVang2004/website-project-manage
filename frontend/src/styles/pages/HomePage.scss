@@ -15,6 +15,7 @@
   padding: 1.5rem; /* Thêm padding cho các phần tử bên trong */
   gap: 2.5rem;
 }
+
 .header {
   margin-bottom: 2rem;
   text-align: center; // Căn giữa toàn bộ header
@@ -26,30 +27,30 @@
     text-align: center;
   }
 }
-  .header {
-    margin-bottom: 2rem;
-    text-align: center; // Căn giữa toàn bộ header
-  
-    &__title {
-      font-size: 50px;
-      font-weight: 600;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-  }
-  
 
 .footer {
   margin-top: auto; /* Đưa Footer xuống dưới cùng */
 }
 
-/* Stats Grid */
-.stats-grid {
+/* Main Grid Layout */
+.main-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  width: 100%;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.calendar-card {
+  height: 100%;
+}
+
+/* Stats Grid */
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 4rem;
+  height: fit-content;
 }
 
 .stat-card {
@@ -78,15 +79,6 @@
   }
 }
 
-/* Info Grid */
-.info-grid {
-  display: grid;
-  width: 90%;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
 /* Card Styles */
 .card {
   width: 90%;
@@ -105,7 +97,6 @@
   &__title {
     font-size: 1.25rem;
     font-weight: 600;
-    
   }
 
   &__content {
@@ -128,27 +119,6 @@
   margin-top: 1.5rem;
 }
 
-/* Responsive Styles */
-@media (max-width: 1024px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr); /* Đổi thành 2 cột trên màn hình nhỏ */
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .main-content {
-    padding: 1rem; /* Giảm padding khi trên màn hình nhỏ */
-  }
-}
-
 .header-left {
   background: #2563eb;
   text-align: start;
@@ -157,4 +127,25 @@
 .header-right {
   background: #e0e0e0;
   text-align: end;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-container {
+    grid-template-columns: 1fr;
+  }
+
+  .main-content {
+    padding: 1rem; /* Giảm padding khi trên màn hình nhỏ */
+  }
 }

@@ -25,7 +25,7 @@ const MyCalendar = ({ tasks }) => {
   const getTaskForDate = (date) => taskMap[formatDateKey(date)] || null;
 
   return (
-    <div className="calendar-container">
+    <div className="calendar-container1">
       <div className="calendar-header">
         <span className="selected-date">
           {date.toLocaleDateString("en-US", {
