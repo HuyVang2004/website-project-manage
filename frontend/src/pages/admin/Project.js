@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ROUTERS } from '../../utils/router';
 import projectListApi from '../../api/ApiAdmin/ProjectList';
 import Sidebar from '../../components/SlideBar';
@@ -7,19 +7,42 @@ import TopBar from '../../components/Nav/TopBar';
 import Footer from '../../components/Footer';
 import { CalendarDays, Clock, Users, AlertCircle } from 'lucide-react';
 import './style/Project.scss';
+import projectTeamAPI from '../../api/ApiAdmin/ProjectTeam';
 
 const Project = () => {
+  const { project } = useParams();
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+    const [userProjects, setUserProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+ 
+  const getAllProjectByUser=async ()=>{
+    try {
+      const res=await projectTeamAPI.getProjectTeamInfo(project)
+ 
+      setUserProjects(res)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    if (project) {
+      getAllProjectByUser();
+    }
+    
+    console.log(project)
+    
+  }, [project]);
+
   useEffect(() => {
     fetchProjects();
+    
   }, []);
-
   const fetchProjects = async () => {
     try {
       setLoading(true);
@@ -87,7 +110,7 @@ const Project = () => {
                   <Users />
                   <div>
                     <span>Số lượng thành viên</span>
-                    <p>{project.totalMembers} thành viên</p>
+                    <p>{userProjects.length} thành viên</p>
                   </div>
                 </div>
               </div>
@@ -97,7 +120,7 @@ const Project = () => {
                 <p>{project.description}</p>
               </div>
 
-              <div className="progress-section">
+              {/* <div className="progress-section">
                 <h3>Tiến độ dự án</h3>
                 <div className="progress-bar-container">
                   <div className="progress-info">
@@ -111,7 +134,7 @@ const Project = () => {
                     />
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -164,7 +187,7 @@ const Project = () => {
                 <h3>{project.name}</h3>
                 <div className="member-count">
                   <Users />
-                  <span>{project.totalMembers} thành viên</span>
+                  <span>{userProjects.length} thành viên</span>
                 </div>
               </div>
             ))}

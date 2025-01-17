@@ -114,7 +114,7 @@ const UserManagement = () => {
                       </button>
                       <button 
                         className="delete-btn"
-                        onClick={(e) => handleDeleteUser(user.username, e)}
+                        onClick={(e) => handleDeleteUser(user.username,e)}
                       >
                         Xóa
                       </button>

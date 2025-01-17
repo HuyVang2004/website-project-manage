@@ -59,7 +59,6 @@ const HomePage = () => {
 //       alert(error);
 
       setTasks([]);
-
     } finally {
       setLoading(false);
     }
@@ -89,7 +88,7 @@ const HomePage = () => {
     <div className="dashboard">
       <TopBar />
       <Slidebar />
-
+    
       <div className="main-content">
         <div className="header">
           <h1 className="header__title">Xin chào,</h1>
@@ -107,7 +106,7 @@ const HomePage = () => {
               </div>
             ))}
           </div>
-
+          </div>
           {/* Calendar Card - Now on the right */}
           <div className="card calendar-card">
             <div className="card__header">
@@ -132,8 +131,8 @@ const HomePage = () => {
           </div>
           <TableListTask tasks={tasks} />
         </div>
-      </div>
 
+      </div>  
       <Footer />
     </div>
   );

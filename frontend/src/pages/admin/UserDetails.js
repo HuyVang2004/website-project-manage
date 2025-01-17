@@ -5,6 +5,7 @@ import Sidebar from '../../components/SlideBar';
 import TopBar from '../../components/Nav/TopBar';
 import Footer from '../../components/Footer';
 import userAPI from '../../api/userApi';
+import projectTeamAPI from '../../api/ApiAdmin/ProjectTeam';
 import './style/UserDetails.scss';
 
 const UserDetail = () => {
@@ -12,12 +13,23 @@ const UserDetail = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [projects, setProjects] = useState([]);
+  const [myProjects, setMyrojects] = useState([]);
   const [projectStats, setProjectStats] = useState({
     active: 0,
     completed: 0
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  console.log(myProjects)
+  const getAllProjectByUser=async ()=>{
+    try {
+      const res=await projectTeamAPI.getProjectsByUser(id)
+      setMyrojects(res)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -26,6 +38,7 @@ const UserDetail = () => {
         
         // Fetch user info
         const userResponse = await userAPI.getUserInfo(id);
+        
         const userData = userResponse.data || userResponse;
         setUser(userData);
 
@@ -49,9 +62,12 @@ const UserDetail = () => {
         setLoading(false);
       }
     };
+    if (id) {
+      getAllProjectByUser()
+      fetchUserData();
+    }
 
-    fetchUserData();
-  }, [id]);
+  }, []);
 
   const handleBack = () => {
     navigate('/admin/users');
@@ -150,37 +166,17 @@ const UserDetail = () => {
                   <span>{new Date(user.created_at).toLocaleDateString('vi-VN')}</span>
                 </div>
               </div>
-
-              <div className="stats-card">
-                <div className="stats-grid">
-                  <div>
-                    <span className="label">Dự án đang hoạt động:</span>
-                    <span>{projectStats.active}</span>
-                  </div>
-                  <div>
-                    <span className="label">Dự án đã hoàn thành:</span>
-                    <span>{projectStats.completed}</span>
-                  </div>
-                  <div>
-                    <span className="label">Tổng số dự án:</span>
-                    <span>{projectStats.active + projectStats.completed}</span>
-                  </div>
-                </div>
-              </div>
             </div>
 
             <div className="projects-section">
               <h3>Các dự án tham gia</h3>
               <div className="projects-list">
-                {projects.map((project) => (
-                  <div key={project.id} className="project-item">
-                    <span>{project.name}</span>
+                {myProjects?.map((project) => (
+                  <div key={project?.project_id} className="project-item">
+                    <span>{project?.project_name}</span>
                     <div className="project-actions">
-                      <span className="project-status">
-                        {project.status === 'active' ? 'Đang hoạt động' : 'Đã hoàn thành'}
-                      </span>
                       <button 
-                        onClick={() => navigate(`/${ROUTERS.ADMIN.PROJECT}/${project.id}`)} 
+                        onClick={() => navigate(`/${ROUTERS.ADMIN.PROJECT}/${project?.project_id}`)} 
                         className="view-details"
                       >
                         Xem chi tiết

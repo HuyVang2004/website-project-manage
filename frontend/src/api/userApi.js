@@ -69,7 +69,13 @@ const userAPI = {
   },
    getAllUsers: () => {
     return axiosClient.get('/admin/users');
-} 
+},
+// Xóa user
+deleteUser: (username) => {
+  return axiosClient.delete(`/admin/delete-user`, {
+    data: { username: username },
+  });
+},
 
 };
 

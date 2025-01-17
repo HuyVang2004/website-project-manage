@@ -1,35 +1,35 @@
-
-
 .main-container {
   display: flex;
-  height: 100vh;
-  width: 10%;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.sidebar {
+  width: 80px;
+  min-width: 80px;
+  background-color: white;
+  border-right: 1px solid #e5e7eb;
 }
 
 .content-wrapper {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  background-color: #EAF8FF;
 }
 
 .analytics-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-top: 6rem;
-  background-color: #EAF8FF;
-  padding-bottom: 5rem;
   padding-left: 5rem;
+  padding-top: 7rem;
+  padding-bottom: 4rem;
 }
 
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); // Chia làm 2 cột
-  grid-gap: 2rem; // Khoảng cách giữa các biểu đồ
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 2rem;
   width: 100%;
-  max-width: 1400px; // Giới hạn chiều rộng tối đa
+  max-width: 1400px;
   margin: 0 auto;
+  padding: 1rem;
 }
 
 .chart-wrapper {
@@ -57,42 +57,29 @@
   }
 
   .chart-content {
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 
     .recharts-wrapper {
       margin: 0 auto;
-      width: 100%;
-      height: auto;
     }
   }
 }
 
-// Custom scrollbar
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+// Footer style đơn giản hóa
+.footer {
+  background-color: white;
+  border-top: 1px solid #e5e7eb;
+  padding: 1rem;
+  text-align: center;
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-
-  &:hover {
-    background: #666;
-  }
-}
-
-// Responsive adjustments
+// Responsive styles
 @media (max-width: 1024px) {
   .charts-grid {
-    grid-template-columns: 1fr; // Chỉ hiển thị 1 cột trên màn hình nhỏ
+    grid-template-columns: 1fr;
   }
 }
 
@@ -103,25 +90,5 @@
 
   .chart-wrapper {
     padding: 1rem;
-
-    h2 {
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
-    }
   }
-}
-
-// Print styles
-@media print {
-  .chart-wrapper {
-    break-inside: avoid;
-    page-break-inside: avoid;
-    box-shadow: none;
-    border: 1px solid #e5e7eb;
-  }
-}
-.footer {
-  margin-top: auto;
-  margin-left: -60px; /* Compensate for dashboard margin */
-  width: 105vw; /* Full viewport width */
 }

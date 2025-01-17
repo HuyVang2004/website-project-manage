@@ -29,6 +29,7 @@ export const ROUTERS = {
         PROJECTDETAILS: "admin/projects/:project",
         STATISTICS: "admin/statistics",
         SETTINGS: "admin/settings",
-        HELP: "admin/help"
+        HELP: "admin/help",
+        SUPPORT: "admin/support"
     }
 }
