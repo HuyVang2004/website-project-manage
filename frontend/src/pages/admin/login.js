@@ -68,10 +68,10 @@ export default function LoginPage() {
       const myProjectId = await findProjectByName(userInfo.user_id);
 
       if (myProjectId) {
-        alert(`đã có dự án ${myProjectId}`);
+        // alert(`đã có dự án ${myProjectId}`);
         localStorage.setItem("my_project_id", myProjectId);
       } else {
-        alert("chưa có dự án");
+        // alert("chưa có dự án");
         const userId = userInfo.user_id;
 
         const projectData = {

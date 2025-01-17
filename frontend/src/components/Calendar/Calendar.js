@@ -44,7 +44,7 @@ const MyCalendar = ({ tasks }) => {
         }
         tileContent={({ date }) => {
           const task = getTaskForDate(date);
-          console.log(`Task for ${date}:`, task);
+          // console.log(`Task for ${date}:`, task);
           return task ? (
             <div className="tile-tooltip">
               <span className="tooltip-content">{task}</span>

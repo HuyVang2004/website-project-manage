@@ -11,6 +11,7 @@ import React, { useState, useEffect } from 'react';
 import getListProjectData from "../../api/projects/getListProjectData";
 import projectTeamApi from "../../api/projects/projectTeamApi";
 import taskRoleAPI from "../../api/tasks/taskRoleApi";
+
 const HomePage = () => {
 
   const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");
@@ -55,8 +56,10 @@ const HomePage = () => {
     try {
       const data = await getListTaskData(userId);
       setTasks(data);
+      console.log(data);
     } catch (error) {
       // setError(error.message);
+      alert(error);
       setTasks([]);
     } finally {
       setLoading(false);
@@ -101,7 +104,6 @@ const HomePage = () => {
         <div className="header">
           <h1 className="header__title">Xin chào,</h1>
 
-          {/* Stats Grid */}
           <div className="stats-grid">
             {stats.map((stat, index) => (
               <div key={index} className="stat-card">

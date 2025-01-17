@@ -39,7 +39,7 @@ const TableListProject = ({data}) => {
     };
 
     const handleRowClick = (projectId) => {
-        navigate(`ROUTERS.USER.PROJECT.PROJECTDETAILS${projectId}`); // Navigate to project details page
+        navigate(`${ROUTERS.USER.PROJECT.PROJECTDETAILS}/${projectId}`); // Navigate to project details page
     };
 
     const sortedData = [...data].sort((a, b) => {
@@ -112,7 +112,7 @@ const TableListProject = ({data}) => {
                 </div>
                 <Header onSort={handleSort} sortConfig={sortConfig} />
                 {currentItems.map((row, index) => (
-                    <Row key={index} row={row} onClick={() => handleRowClick(row.id)} />
+                    <Row key={index} row={row} onClick={() => handleRowClick(row.projectId)} />
                 ))}
                 {filteredData.length === 0 && <div className="no-data">No data matches your filters.</div>}
 

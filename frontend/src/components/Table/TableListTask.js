@@ -4,6 +4,7 @@ import './TableListTask.scss';
 
 const TableListTask = ({tasks}) => {
   // console.log(tasks);
+  console.log("task", tasks);
   const [filters, setFilters] = useState({
     priority: '',
     status: '',
@@ -61,7 +62,7 @@ const TableListTask = ({tasks}) => {
     };
 
     const isCustomFormat = dateString => {
-        const regex = /^\d{2}:\d{2}:\d{2} \d{2}\/\d{2}\/\d{4}$/;
+        const regex = /^\d{2}:\d{2} \d{2}\/\d{2}\/\d{4}$/;
         return regex.test(dateString);
     };
 
@@ -75,7 +76,7 @@ const TableListTask = ({tasks}) => {
             const paddedDay = day.padStart(2, '0');
             return `${year}-${paddedMonth}-${paddedDay}T${time}`;
         } catch (error) {
-            console.error("Error formatting date", error);
+            // console.error("Error formatting date", error);
             return null;
         }
     };
@@ -88,7 +89,7 @@ const TableListTask = ({tasks}) => {
             normalizedDate = formatDateToISO(row.dueDate);
             if (!normalizedDate) return false;
         } else {
-            console.error(`Invalid date format: ${row.dueDate}`);
+            // console.error(`Invalid date format: ${row.dueDate}`);
             return false;
         }
     }
@@ -141,9 +142,9 @@ const TableListTask = ({tasks}) => {
             className="filter-select"
           >
             <option value="">Tất cả độ ưu tiên</option>
-            <option value="cao">Cao</option>
-            <option value="trung bình">Trung bình</option>
-            <option value="thấp">Thấp</option>
+            <option value="Cao">Cao</option>
+            <option value="Trung bình">Trung bình</option>
+            <option value="Thấp">Thấp</option>
           </select>
 
           <select
@@ -155,7 +156,7 @@ const TableListTask = ({tasks}) => {
             <option value="Đang thực hiện">Đang thực hiện</option>
             <option value="Không hoàn thành">Không hoàn thành</option>
             <option value="Đã hoàn thành">Đã hoàn thành</option>
-            <option value="chưa bắt đầu">Chưa bắt đầu</option>
+            <option value="Chưa bắt đầu">Chưa bắt đầu</option>
           </select>
 
           <input
@@ -231,7 +232,7 @@ const Row = ({ row }) => {
     statusClass = 'status finished';
   } else if (row.status === 'Không hoàn thành') {
     statusClass = 'status unfinished';
-  } else if (row.status === 'chưa bắt đầu') {
+  } else if (row.status === 'Chưa bắt đầu') {
     statusClass = 'status begin';
   }
 

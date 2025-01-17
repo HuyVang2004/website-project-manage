@@ -9,10 +9,9 @@ import { ROUTERS } from "../../../../utils/router";
 import userAPI from "../../../../api/userApi";
 import projectTeamApi from "../../../../api/projects/projectTeamApi";
 import notificationsAPI from "../../../../api/notificationsAPI";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const ProjectBasePage = () => {
-    
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);

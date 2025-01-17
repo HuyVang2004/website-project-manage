@@ -26,7 +26,7 @@ const TaskBoard = () => {
     const fetchTasks = async () => {
       try {
         const taskList = await getListTaskData(userId);
-        console.log(taskList);
+        // console.log(taskList);
         // Phân loại các công việc vào các trạng thái khác nhau
         const todo = taskList.filter((task) => task.status === 'Chưa bắt đầu');
         const inProgress = taskList.filter((task) => task.status === 'Đang tiến hành');
@@ -34,7 +34,7 @@ const TaskBoard = () => {
         
         setTasks({ todo, inProgress, completed });
       } catch (error) {
-        console.error("Error fetching tasks:", error);
+        // console.error("Error fetching tasks:", error);
       }
     };
 
@@ -63,7 +63,7 @@ const TaskBoard = () => {
         comments: commentsWithUsernames,
       });
     } catch (error) {
-      console.error("Error fetching comments or user info:", error);
+      // console.error("Error fetching comments or user info:", error);
     }
   };
 
@@ -105,7 +105,7 @@ const TaskBoard = () => {
         return newTasks;
       });
     } catch (error) {
-      console.error('Sort error:', error);
+      // console.error('Sort error:', error);
     }
   }, []);
 

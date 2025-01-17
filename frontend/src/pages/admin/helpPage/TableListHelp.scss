@@ -1,0 +1,95 @@
+.wrapper {
+    width: 100%;
+    max-width: 6xl;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+  .filterContainer {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 1rem;
+  
+    select,
+    input {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 0.25rem;
+    }
+  }
+  
+  .tableContainer {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  
+    .headerRow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+      padding: 1rem;
+      font-weight: bold;
+      background-color: #f9fafb;
+    }
+  
+    .dataRow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+      padding: 1rem;
+      border-top: 1px solid #e5e7eb;
+      transition: background-color 0.2s;
+  
+      &:hover {
+        background-color: #f3f4f6;
+      }
+  
+      .status {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+  
+        &.replied {
+          background-color: #d1fae5;
+          color: #065f46;
+        }
+  
+        &.unreplied {
+          background-color: #fef3c7;
+          color: #92400e;
+        }
+      }
+    }
+  
+    .noData {
+      padding: 1rem;
+      text-align: center;
+      color: #6b7280;
+    }
+  }
+  
+  .pagination {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  
+    button {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 0.25rem;
+      transition: background-color 0.2s, color 0.2s;
+  
+      &.active {
+        background-color: #3b82f6;
+        color: white;
+      }
+  
+      &:disabled {
+        opacity: 0.5;
+      }
+    }
+  }
+  

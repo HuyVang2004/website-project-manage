@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import "./Notifications.scss";
 import notificationsAPI from "../../api/notificationsAPI";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 const Notifications = () => {
   const navigate = useNavigate();
 

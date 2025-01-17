@@ -16,8 +16,8 @@ db = mysql.connector.connect(
     # password='Thach2003',
     # database='project_database'
 
-    password='truong',
-    database='web_database'
+    password='11012004',
+    database='project_manager'
 
 )
 
