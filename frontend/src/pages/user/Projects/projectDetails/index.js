@@ -1,5 +1,5 @@
 import { memo, useState, useEffect, useCallback } from "react";
-import { useParams, useLocation } from "react-router";
+import { useParams, useLocation } from "react-router-dom";
 import "./style.scss";
 import Sidebar from "../../../../components/SlideBar";
 import TopBar from "../../../../components/Nav/TopBar";
@@ -14,10 +14,19 @@ import getListTaskInProject from "../../../../api/tasks/getTaskInProject";
 import Calendar from "../Calendar/Calendar";
 import ProjectDocuments from "../../projectDocument/projectDocument";
 import getProjectData from "../../../../api/projects/getProjectData";
+
 const ProjectDetails = () => {
   const { project_id } = useParams();
+  const [projectData, setProjectData] = useState();
   const location = useLocation();
-  const [projectData, setProjectData] = useState(location.state?.projectData || null);
+  
+  useEffect(() => {
+    try {
+      setProjectData(location.state?.projectData || null);
+    } catch {
+      setProjectData(null);
+    }
+  }, [location]); 
   
   const [scrolled, setScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState("cong-viec");
@@ -119,7 +128,7 @@ const ProjectDetails = () => {
       case "tai-lieu":
         return (
           <div className="tab-content">
-            <ProjectDocuments projectId={project_id}/>
+            <ProjectDocuments project={projectData}/>
           </div>
         );
       case "thao-luan":

@@ -25,7 +25,7 @@ const MyCalendar = ({ tasks }) => {
   const getTaskForDate = (date) => taskMap[formatDateKey(date)] || null;
 
   return (
-    <div className="calendar-container">
+    <div className="calendar-container1">
       <div className="calendar-header">
         <span className="selected-date">
           {date.toLocaleDateString("en-US", {
@@ -44,7 +44,7 @@ const MyCalendar = ({ tasks }) => {
         }
         tileContent={({ date }) => {
           const task = getTaskForDate(date);
-          console.log(`Task for ${date}:`, task);
+          // console.log(`Task for ${date}:`, task);
           return task ? (
             <div className="tile-tooltip">
               <span className="tooltip-content">{task}</span>

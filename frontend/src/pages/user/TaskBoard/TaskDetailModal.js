@@ -61,7 +61,7 @@ const TaskDetailModal = ({ task, onClose, onAddTask }) => {
               Thành viên
             </div>
             <div className="member-info">
-              {task.attendees.map(member => (
+              {task.attendees?.map(member => (
                 <div key={member.user_id} className="member-item">
                   <div className="member-avatar">{member.username[0]}</div>
                   <span>{member.username}</span>

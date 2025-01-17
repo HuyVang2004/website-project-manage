@@ -1,8 +1,8 @@
 import { memo } from "react";
-import Sidebar from '../../../components/SlideBar'; 
 import TopBar from '../../../components/Nav/TopBar'; 
 import Footer from '../../../components/Footer'; 
 import Profile from "../../../components/Profile/Profile";
+import SlideBar from "../../../components/SlideBar";
 
 const ProfilePage = () => {
   const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");
@@ -10,7 +10,7 @@ const ProfilePage = () => {
   return (
     <div className="dashboard">
         {/* Sidebar Component */}
-        <Sidebar />
+        <SlideBar />
         <TopBar />
         {/* Main Content */}
         <div className="main-content">

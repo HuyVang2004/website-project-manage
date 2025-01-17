@@ -24,8 +24,7 @@ import UserDetails from "./pages/admin/UserDetails";
 import Project from "./pages/admin/Project";
 import UserAnalytics from "./pages/admin/Statistics.js";
 import SystemSettings from "./pages/admin/SystemSettings.js";
-import ChatBox from "./pages/admin/ChatBox.js";
-import Help from "./pages/admin/Help"
+import HelpPageAdmin from "./pages/admin/helpPage/HelpPageAdmin.js";
 
 const renderUserRouter = () => {
     const userRouter = [
@@ -83,9 +82,7 @@ const renderUserRouter = () => {
         <Route path={ROUTERS.ADMIN.PROJECTDETAILS} element={<Project />} />
         <Route path={ROUTERS.ADMIN.STATISTICS} element={<UserAnalytics />} />
         <Route path={ROUTERS.ADMIN.SETTINGS} element={<SystemSettings />} />
-        <Route path={ROUTERS.ADMIN.CHATBOX} element={<ChatBox/>}/>
-        <Route path={ROUTERS.ADMIN.HELP} element={<Help/>}/>
-
+        <Route path={ROUTERS.ADMIN.HELP} element={<HelpPageAdmin ></HelpPageAdmin>} />
       </Routes>
     );
   };
