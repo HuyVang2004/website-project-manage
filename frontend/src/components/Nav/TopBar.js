@@ -22,7 +22,7 @@ const TopBar = () => {
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);
-  }, []);
+  }, []); 
 
   const thongbao = useCallback(() => {
     setNotification(prev => !prev);
