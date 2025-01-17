@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from app.schemas.help import HelpCreate, HelpResponse, HelpUpdate
-from app.services.help_service import create_help, get_help_by_id, get_help_by_user, update_help, delete_help
+from app.services.help_service import create_help, get_help_by_id, get_help_by_user, update_help, delete_help, get_all_helps
 from app.db.session import get_db
 
 router = APIRouter()
@@ -22,6 +22,13 @@ def get_help_by_user_endpoint(user_id: str, db: Session = Depends(get_db)):
     help_records = get_help_by_user(user_id, db)
     if not help_records:
         raise HTTPException(status_code=404, detail="No help records found for this user")
+    return help_records
+
+@router.get("/", response_model=list[HelpResponse])
+def get_all_helps_endpoint(db: Session = Depends(get_db)):
+    help_records = get_all_helps(db)
+    if not help_records:
+        raise HTTPException(status_code=404, detail="No help records found")
     return help_records
 
 @router.put("/{help_id}", response_model=HelpResponse)
