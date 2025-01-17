@@ -5,7 +5,7 @@ $white: #fff;
 $tooltipBg: rgba(0, 0, 0, 0.8);
 
 // Container styling
-.calendar-container {
+.calendar-container1 {
   width: 350px;
   margin: 0 auto;
   background: $white;
@@ -13,6 +13,8 @@ $tooltipBg: rgba(0, 0, 0, 0.8);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 15px;
   position: relative;
+  // display: flex;
+  // justify-content: center;
 
   .calendar-header { 
     display: flex;

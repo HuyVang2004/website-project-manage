@@ -1,5 +1,5 @@
 from passlib.context import CryptContext
-import jwt  
+import  jwt
 from datetime import datetime, timedelta
 from app.core.config import Settings
 from fastapi import HTTPException
