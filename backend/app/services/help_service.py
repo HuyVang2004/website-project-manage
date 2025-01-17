@@ -4,7 +4,7 @@ from app.schemas.help import HelpCreate, HelpUpdate
 from app.db.session import get_db
 
 def create_help(help: HelpCreate, db: Session = next(get_db())):
-    new_help = Help(**help.dict())
+    new_help = Help(**help.dict(), is_replied=False)
     db.add(new_help)
     db.commit()
     db.refresh(new_help)
@@ -15,6 +15,9 @@ def get_help_by_id(help_id: str, db: Session = next(get_db())):
 
 def get_help_by_user(user_id: str, db: Session = next(get_db())):
     return db.query(Help).filter(Help.user_id == user_id).all()
+
+def get_all_helps(db: Session = next(get_db())):
+    return db.query(Help).all()
 
 def update_help(help_id: str, help_update: HelpUpdate, db: Session = next(get_db())):
     help_record = db.query(Help).filter(Help.help_id == help_id).first()

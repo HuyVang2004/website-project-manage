@@ -16,7 +16,7 @@ const ProjectDocuments = ({project}) => {
   const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");
   const userId = userData?.user_id || "";
 
-  const projectId = project.project_id;
+  const projectId = project.project_id || project.projectId;
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
@@ -77,11 +77,11 @@ const ProjectDocuments = ({project}) => {
     setTimeout(async () => {
       const newDoc = {
         project_id: projectId,
-        file_name: selectedFile.name,
+        file_name: selectedFile.name || "",
         file_path: URL.createObjectURL(selectedFile),
         uploaded_by: userId,
         uploaded_time: new Date().toISOString(),
-        description: description
+        description: description,
       };
       console.log("Doc", newDoc);
       try {
@@ -94,7 +94,7 @@ const ProjectDocuments = ({project}) => {
               user_id: member.userId,
               message: `${userData.username} đã thêm 1 tài liệu vào dự án ${project.projectName}`,
               is_read: false,
-              link: `${ROUTERS.USER.PROJECT.PROJECTDETAILS}/${project.projectId}`,
+              link: `${ROUTERS.USER.PROJECT.PROJECTDETAILS}/${projectId}`,
             });
           }
         }

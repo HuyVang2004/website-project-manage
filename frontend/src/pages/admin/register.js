@@ -63,7 +63,7 @@ export default function RegisterPage() {
       localStorage.setItem("user_profile", JSON.stringify(userInfo));
 
       // Tạo dự án và thêm người vào nhóm
-      const userId = loginResponse.user_id;
+      const userId = userInfo.user_id;
       const projectData = {
         project_name: "My project",
         description: "",

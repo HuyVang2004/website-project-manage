@@ -25,6 +25,10 @@ const helpAPI = {
     deleteHelp: (helpId) => {
         return axiosClient.delete(`/help/${helpId}`);
     },
+
+    getAllUser: () => {
+        return axiosClient.get('/help/');
+    }
 };
 
 export default helpAPI;

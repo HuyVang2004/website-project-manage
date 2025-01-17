@@ -10,7 +10,9 @@ import React, { useState, useEffect } from 'react';
 import getListProjectData from "../../api/projects/getListProjectData";
 import projectTeamApi from "../../api/projects/projectTeamApi";
 import taskRoleAPI from "../../api/tasks/taskRoleApi";
+
 import '../../styles/pages/HomePage.scss';
+
 const HomePage = () => {
   const userData = JSON.parse(localStorage.getItem("user_profile") || "{}");
   const userId = userData?.user_id || "";
@@ -50,7 +52,12 @@ const HomePage = () => {
     try {
       const data = await getListTaskData(userId);
       setTasks(data);
+      console.log(data);
     } catch (error) {
+
+      // setError(error.message);
+//       alert(error);
+
       setTasks([]);
     } finally {
       setLoading(false);
@@ -91,6 +98,7 @@ const HomePage = () => {
         <div className="main-grid">
           {/* Stats Grid - Now on the left */}
           <div className="stats-container">
+          <div className="stats-grid">
             {stats.map((stat, index) => (
               <div key={index} className="stat-card">
                 <p className="stat-card__title">{stat.title}</p>
