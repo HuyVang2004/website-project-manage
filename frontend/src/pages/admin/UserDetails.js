@@ -1,28 +1,81 @@
-import React from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ROUTERS } from '../../utils/router';
 import Sidebar from '../../components/SlideBar';
 import TopBar from '../../components/Nav/TopBar';
 import Footer from '../../components/Footer';
+import userAPI from '../../api/userApi';
 import './style/UserDetails.scss';
 
 const UserDetail = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
   const { id } = useParams();
-  const { user } = location.state || {};
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [projectStats, setProjectStats] = useState({
+    active: 0,
+    completed: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "Chưa xác định";
-    const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch user info
+        const userResponse = await userAPI.getUserInfo(id);
+        const userData = userResponse.data || userResponse;
+        setUser(userData);
+
+        if (userData && userData.projects) {
+          setProjects(userData.projects);
+          
+          // Calculate project statistics
+          const activeProjects = userData.projects.filter(p => p.status === 'active');
+          const completedProjects = userData.projects.filter(p => p.status === 'completed');
+          
+          setProjectStats({
+            active: activeProjects.length,
+            completed: completedProjects.length
+          });
+        }
+
+      } catch (err) {
+        setError('Không thể tải thông tin người dùng');
+        console.error('Error fetching user details:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [id]);
+
+  const handleBack = () => {
+    navigate('/admin/users');
   };
+
+  const handleDelete = async (userId) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+      try {
+        await userAPI.deleteUser(userId);
+        navigate('/admin/users');
+      } catch (err) {
+        setError('Không thể xóa người dùng');
+        console.error('Error deleting user:', err);
+      }
+    }
+  };
+
+  if (loading) {
+    return <div>Đang tải...</div>;
+  }
+
+  if (error) {
+    return <div>Có lỗi xảy ra: {error}</div>;
+  }
 
   if (!user) {
     return (
@@ -39,10 +92,6 @@ const UserDetail = () => {
     );
   }
 
-  const handleBack = () => {
-    navigate('/admin/users');
-  };
-
   return (
     <div className="dashboard">
       <Sidebar />
@@ -50,31 +99,38 @@ const UserDetail = () => {
         <TopBar />
         <div className="user-detail-page">
           <div className="user-detail-container">
-            {/* Back button */}
             <button onClick={handleBack} className="back-btn">
               ← Quay lại
             </button>
 
-            {/* Header */}
             <div className="header">
               <h2>Chi tiết người dùng</h2>
               <div className="actions">
-                <button className="delete-btn">
+                <button 
+                  className="delete-btn"
+                  onClick={() => handleDelete(user.user_id)}
+                >
                   <span>🗑️</span>
                   Xóa tài khoản
                 </button>
-                <button className="mail-btn">
+                <button 
+                  className="mail-btn"
+                  onClick={() => window.location.href = `mailto:${user.email}`}
+                >
                   <span>✉️</span>
                   Gửi mail
                 </button>
               </div>
             </div>
 
-            {/* User Info */}
             <div className="info-grid">
               <div className="info-card">
                 <div>
                   <span className="label">Tên người dùng: </span>
+                  <span>{user.username}</span>
+                </div>
+                <div>
+                  <span className="label">Họ và tên: </span>
                   <span>{user.full_name}</span>
                 </div>
                 <div>
@@ -82,64 +138,58 @@ const UserDetail = () => {
                   <span>{user.gender}</span>
                 </div>
                 <div>
-                  <span className="label">Mail: </span>
+                  <span className="label">Email: </span>
                   <span>{user.email}</span>
                 </div>
                 <div>
-                  <span className="label">Vai trò: </span>
-                  <span>{user.role}</span>
+                  <span className="label">Công việc: </span>
+                  <span>{user.job}</span>
+                </div>
+                <div>
+                  <span className="label">Ngày tạo: </span>
+                  <span>{new Date(user.created_at).toLocaleDateString('vi-VN')}</span>
                 </div>
               </div>
 
-              <div className="info-card">
-                <div>
-                  <span className="label">Ngày tạo tài khoản: </span>
-                  <span>{formatDate(user.created_at)}</span>
-                </div>
-                <div>
-                  <span className="label">Trạng thái: </span>
-                  <span className={`status ${user.status?.toLowerCase()}`}>
-                    {user.status === 'ACTIVE' ? 'Hoạt động' : 'Không hoạt động'}
-                  </span>
-                </div>
-                <div>
-                  <span className="label">Các dự án: </span>
-                  <span>{user.projects?.join(', ') || 'Chưa tham gia dự án nào'}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="stats-card">
-              <div className="stats-grid">
-                <div>
-                  <span className="label">Số dự án tham gia:</span>
-                  <span>{user.projects?.length || 0}</span>
-                </div>
-                <div>
-                  <span className="label">Ngày tạo:</span>
-                  <span>{formatDate(user.created_at)}</span>
+              <div className="stats-card">
+                <div className="stats-grid">
+                  <div>
+                    <span className="label">Dự án đang hoạt động:</span>
+                    <span>{projectStats.active}</span>
+                  </div>
+                  <div>
+                    <span className="label">Dự án đã hoàn thành:</span>
+                    <span>{projectStats.completed}</span>
+                  </div>
+                  <div>
+                    <span className="label">Tổng số dự án:</span>
+                    <span>{projectStats.active + projectStats.completed}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {user.projects && user.projects.length > 0 && (
-              <div className="projects-section">
-                <h3>Các dự án tham gia</h3>
-                <div className="projects-list">
-                  {user.projects.map((project, index) => (
-                    <div key={index} className="project-item">
-                      <span>Dự án {project}</span>
-                      <button
-                        onClick={() => navigate(`/admin/project/${project}`)}
+            <div className="projects-section">
+              <h3>Các dự án tham gia</h3>
+              <div className="projects-list">
+                {projects.map((project) => (
+                  <div key={project.id} className="project-item">
+                    <span>{project.name}</span>
+                    <div className="project-actions">
+                      <span className="project-status">
+                        {project.status === 'active' ? 'Đang hoạt động' : 'Đã hoàn thành'}
+                      </span>
+                      <button 
+                        onClick={() => navigate(`/${ROUTERS.ADMIN.PROJECT}/${project.id}`)} 
                         className="view-details"
                       >
                         Xem chi tiết
                       </button>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            )}
+            </div>
           </div>
         </div>
         <Footer />

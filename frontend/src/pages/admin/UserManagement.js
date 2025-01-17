@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/SlideBar';
 import TopBar from '../../components/Nav/TopBar';
 import Footer from '../../components/Footer';
@@ -6,12 +7,11 @@ import userAPI from '../../api/userApi';
 import './style/UserManagement.scss';
 
 const UserManagement = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [showUserDetail, setShowUserDetail] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -21,6 +21,7 @@ const UserManagement = () => {
     try {
       setLoading(true);
       const response = await userAPI.getAllUsers();
+      console.log('Users data:', response.data || response); // Debug log
       setUsers(response.data || response);
       setLoading(false);
     } catch (err) {
@@ -30,14 +31,19 @@ const UserManagement = () => {
     }
   };
 
-  const handleUserSelect = async (userId) => {
-    try {
-      const userInfo = await userAPI.getUserInfo(userId);
-      setSelectedUser(userInfo);
-      setShowUserDetail(true);
-    } catch (err) {
-      console.error('Error fetching user details:', err);
+  const handleUserClick = (user) => {
+    // Log để debug
+    console.log('Clicked user:', user);
+    
+    // Kiểm tra và sử dụng user_id hoặc id
+    const userId = user.user_id || user.id;
+    
+    if (!userId) {
+      console.error('User ID is undefined:', user);
+      return;
     }
+    
+    navigate(`/admin/users/details/${userId}`);
   };
 
   const handleDeleteUser = async (username, e) => {
@@ -50,11 +56,6 @@ const UserManagement = () => {
         console.error('Error deleting user:', err);
       }
     }
-  };
-
-  const handleCloseDetail = () => {
-    setShowUserDetail(false);
-    setSelectedUser(null);
   };
 
   // Pagination logic
@@ -82,7 +83,7 @@ const UserManagement = () => {
             <table className="user-table">
               <thead>
                 <tr>
-                  <th>ID</th>
+                  <th>STT</th>
                   <th>Tên người dùng</th>
                   <th>Email</th>
                   <th>Ngày đăng kí</th>
@@ -91,7 +92,12 @@ const UserManagement = () => {
               </thead>
               <tbody>
                 {getCurrentUsers().map((user, index) => (
-                  <tr key={user.id} onClick={() => handleUserSelect(user.id)}>
+                  <tr 
+                    key={user.user_id || user.id || index} 
+                    onClick={() => handleUserClick(user)}
+                    style={{ cursor: 'pointer' }}
+                    className="user-row"
+                  >
                     <td>{(currentPage - 1) * usersPerPage + index + 1}</td>
                     <td>{user.full_name}</td>
                     <td>{user.email}</td>
@@ -101,10 +107,10 @@ const UserManagement = () => {
                         className="edit-btn"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleUserSelect(user.id);
+                          handleUserClick(user);
                         }}
                       >
-                        Chỉnh sửa
+                        Chi tiết
                       </button>
                       <button 
                         className="delete-btn"
@@ -143,38 +149,6 @@ const UserManagement = () => {
               Next
             </button>
           </div>
-
-          {/* User Detail Modal */}
-          {showUserDetail && selectedUser && (
-            <div className="user-detail-modal">
-              <div className="modal-content">
-                <h2>Thông tin chi tiết người dùng</h2>
-                <div className="user-info">
-                  <div className="info-row">
-                    <label>ID:</label>
-                    <span>{selectedUser.id}</span>
-                  </div>
-                  <div className="info-row">
-                    <label>Tên:</label>
-                    <span>{selectedUser.full_name}</span>
-                  </div>
-                  <div className="info-row">
-                    <label>Email:</label>
-                    <span>{selectedUser.email}</span>
-                  </div>
-                  <div className="info-row">
-                    <label>Ngày đăng kí:</label>
-                    <span>{new Date(selectedUser.created_at).toLocaleDateString('vi-VN')}</span>
-                  </div>
-                </div>
-                <div className="modal-actions">
-                  <button className="close-btn" onClick={handleCloseDetail}>
-                    Đóng
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
         <Footer />
       </div>

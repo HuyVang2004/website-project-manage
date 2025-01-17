@@ -4,6 +4,7 @@ import { HiBars3 } from "react-icons/hi2";
 import { BsBell } from "react-icons/bs";
 import { FaSearch, FaRegUserCircle } from "react-icons/fa";
 
+
 const TopBar = () => {
   // State để theo dõi cuộn trang
   const [scrolled, setScrolled] = useState(false);
@@ -37,7 +38,7 @@ const TopBar = () => {
             <form>
               <input
                 type="text"
-                placeholder="Tìm kiếm..."
+                placeholder="Tìm kiếm"
                 className="search-input"
                 aria-label="Search"
               />
