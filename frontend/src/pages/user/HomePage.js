@@ -106,7 +106,7 @@ const HomePage = () => {
               </div>
             ))}
           </div>
-
+          </div>
           {/* Calendar Card - Now on the right */}
           <div className="card calendar-card">
             <div className="card__header">
@@ -115,7 +115,7 @@ const HomePage = () => {
             <MyCalendar tasks={tasks} />
           </div>
         </div>
-
+        
         {/* Projects Section */}
         <div className="card projects">
           <div className="card__header">
@@ -132,7 +132,7 @@ const HomePage = () => {
           <TableListTask tasks={tasks} />
         </div>
       </div>
-
+            
       <Footer />
     </div>
   );

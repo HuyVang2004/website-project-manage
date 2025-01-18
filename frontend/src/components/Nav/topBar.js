@@ -110,11 +110,11 @@ const TopBar = () => {
         break;
       case 'task':
         // Có thể thêm routing cho task nếu cần
-        navigate(`/task/${result.taskId}`);
+        navigate(`${ROUTERS.USER.MYTASK}/${result.taskId}`);
         break;
       case 'user':
         // Có thể thêm routing cho user profile nếu cần
-        navigate(`/user/${result.userId}`);
+        navigate(`${ROUTERS.USER.PEOPLELIST}/${result.userId}`);
         break;
       default:
         console.log('Unknown result type:', result.type);
@@ -208,19 +208,24 @@ const TopBar = () => {
         <div className="row">
           {/* Left Section */}
           <div className="col-left header-top-left">
-            <div className="menu-icon" aria-label="Menu" role="button" tabIndex={0}>
+          <div className="menu-icon" aria-label="Menu" role="button" tabIndex={0}>
               <div className={`menu-icon ${isMenuOpen ? 'open' : ''}`} onClick={toggleMenu}>
                 <HiBars3 />
                 {isMenuOpen && (
                   <ul className="menu-list">
-                    {menuItems.map((item, index) => (
-                      <li key={index}>
-                        <div className="icon">{item.icon}</div>
-                        <a href={item.href}>
-                          <div className="text">{item.text}</div>
-                        </a>
-                      </li>
-                    ))}
+                    {menuItems.map((item, index) => {
+                      const IconComponent = item.Icon;
+                      return (
+                        <li key={index}>
+                          <div className="icon">
+                            <IconComponent />
+                          </div>
+                          <a href={item.href}>
+                            <div className="text">{item.text}</div>
+                          </a>
+                        </li>
+                      );
+                    })}
                   </ul>
                 )}
               </div>
@@ -289,7 +294,8 @@ const TopBar = () => {
                     <User />
                   </div>
                 )}
-              </div>
+              
+            </div>
             </div>
           </div>
         </div>
