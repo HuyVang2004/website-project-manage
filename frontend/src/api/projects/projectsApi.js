@@ -1,7 +1,9 @@
-import axiosClient from "../axiosClient";
-
 const projectsApi = {
-  
+  // Fetch all projects 
+  getAllProjects: () => {
+    return axiosClient.get('projects/projects');
+  },
+
   // Fetch a single project by ID
   getProjectById: (projectId) => {
     return axiosClient.get(`projects/projects/${projectId}`);
@@ -12,7 +14,7 @@ const projectsApi = {
     return axiosClient.post(`projects/projects`, projectData);
   },
 
-  // Create a project associated with a specific username
+  // Create a project associated with a specific username  
   createProjectWithUsername: (projectData, username) => {
     return axiosClient.post(`projects/projects/by-username`, {
       ...projectData,
@@ -32,7 +34,7 @@ const projectsApi = {
 
   getProjectImage: (projectId) => {
     return axiosClient.get(`projects/projects/${projectId}/image`, {
-      responseType: 'blob',
+      responseType: 'blob',  
     });
   }
 };

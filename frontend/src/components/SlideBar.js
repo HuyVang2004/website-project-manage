@@ -34,7 +34,7 @@ const Sidebar = () => {
     { id: 3, Icon: Users, label: 'Quản lý người dùng', onClick: () => navigate('/admin/users')},
     { id: 4, Icon: ChartNoAxesCombined, label: 'Thống kê', onClick: () => navigate('/admin/statistics') },
     { id: 5, Icon: MonitorCog, label: 'Cài đặt hệ thống', onClick: () => navigate('/admin/settings') },
-    { id: 6, Icon: MessageCircleMore, label: 'Hỗ trợ', onClick: () => navigate('/admin/support') },
+    { id: 6, Icon: MessageCircleMore, label: 'Hỗ trợ', onClick: () => navigate('/admin/help') },
   ];
 
   const icons = location.pathname.startsWith('/admin') ? adminIcons : defaultIcons;
@@ -42,26 +42,6 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <div className="sidebar__icons">
-
-        {/* <a href="http://localhost:3000/trangchu" className="sidebar__link">
-          <Home className="sidebar__icon" />
-        </a>
-        <a href="http://localhost:3000/duan" className="sidebar__link">
-          <FileText className="sidebar__icon" />
-        </a>
-        <a href="http://localhost:3000/mytask" className="sidebar__link">
-          <Target className="sidebar__icon" />
-        </a>
-        <a href="/stats" className="sidebar__link">
-          <BarChart2 className="sidebar__icon" />
-        </a>
-        <a href="http://localhost:3000/nguoidung" className="sidebar__link">
-          <Users className="sidebar__icon" />
-        </a>
-        <a href="/add" className="sidebar__link">
-          <Plus className="sidebar__icon" />
-        </a> */}
-
         {icons.map(({ id, Icon, label,onClick }) => (
           <div key={id} className="sidebar__item"  onClick={onClick}>
             <Icon className="sidebar__icon" />
@@ -72,12 +52,15 @@ const Sidebar = () => {
       </div>
 
 
-      <div className="sidebar__bottom">
-        <div className="sidebar__item" onClick={() => navigate(ROUTERS.USER.HELP)}>
-          <HelpCircle className="sidebar__icon" />
-          <span className="sidebar__label">Trợ giúp</span>
+         {/* Chỉ hiển thị nút Trợ giúp nếu không phải trang Admin */}
+         {!location.pathname.startsWith('/admin') && (
+        <div className="sidebar__bottom">
+          <div className="sidebar__item">
+            <HelpCircle className="sidebar__icon" />
+            <span className="sidebar__label">Trợ giúp</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

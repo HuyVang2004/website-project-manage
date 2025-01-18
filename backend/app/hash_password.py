@@ -13,11 +13,11 @@ db = mysql.connector.connect(
     host='localhost',
     user='root',
 
-    # password='Thach2003',
-    # database='project_database'
+    password='2694',
+    database='csdl'
 
-    password='11012004',
-    database='project_manager'
+    # password='11012004',
+    # database='project_manager'
 
 )
 

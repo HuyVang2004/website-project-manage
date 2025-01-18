@@ -1,43 +1,94 @@
-.analytics-container {
+.main-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
   min-height: 100vh;
-  background-color: #f1f5f9;
-  padding: 20px;
-  padding-top: 80px;
-  padding-bottom: 80px;
+  width: 100%;
+}
+
+.sidebar {
+  width: 80px;
+  min-width: 80px;
+  background-color: white;
+  border-right: 1px solid #e5e7eb;
+}
+
+.content-wrapper {
+  flex: 1;
+  background-color: #EAF8FF;
+}
+
+.analytics-container {
+  padding-left: 5rem;
+  padding-top: 7rem;
+  padding-bottom: 4rem;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 2rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
 .chart-wrapper {
-  width: 90%;
-  max-width: 1000px;
-  margin: 20px 0;
-  text-align: center;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
 
   h2 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 20px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1rem;
+    text-align: center;
   }
 
   .chart-content {
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    
+
     .recharts-wrapper {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
+      margin: 0 auto;
     }
+  }
+}
+
+// Footer style đơn giản hóa
+.footer {
+  background-color: white;
+  border-top: 1px solid #e5e7eb;
+  padding: 1rem;
+  text-align: center;
+}
+
+// Responsive styles
+@media (max-width: 1024px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .analytics-container {
+    padding: 1rem;
+  }
+
+  .chart-wrapper {
+    padding: 1rem;
   }
 }

@@ -1,94 +1,87 @@
-import React, { useMemo } from 'react';
-import { users } from './data/UserData';
+
+import React, { useState, useEffect, useMemo } from 'react';
 import Sidebar from '../../components/SlideBar';
 import TopBar from '../../components/Nav/TopBar';
 import Footer from '../../components/Footer';
 import { useNavigate } from 'react-router-dom';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import projectListApi from '../../api/ApiAdmin/ProjectList';
+import userAPI from '../../api/userApi';
+import HelpPageAdmin from './helpPage/HelpPageAdmin'
+import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 import './style/AdminPage.scss';
 
 const AdminPage = () => {
   const navigate = useNavigate();
+  const [users, setUsers] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [monthlySignups, setMonthlySignups] = useState([]);
   
-  // Calculate statistics
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const usersResponse = await userAPI.getAllUsers();
+        setUsers(usersResponse || []);
+        const projectsResponse = await projectListApi.getAllProjects();
+        setProjects(projectsResponse || []);
+        
+        // Process monthly signup data
+        const monthlyData = processMonthlyData(usersResponse || [], 'created_at');
+        setMonthlySignups(monthlyData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const processMonthlyData = (users, dateField) => {
+    const monthlyCount = Array(12).fill(0);
+    const months = [
+      'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 
+      'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8',
+      'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+    ];
+    
+    users.forEach(user => {
+      if (user[dateField]) {
+        const date = new Date(user[dateField]);
+        if (!isNaN(date.getTime())) {
+          const month = date.getMonth();
+          monthlyCount[month]++;
+        }
+      }
+    });
+
+    return months.map((month, index) => ({
+      name: month,
+      value: monthlyCount[index]
+    }));
+  };
+
   const stats = useMemo(() => {
-    const activeUsers = users.filter(user => user.status === 'Hoạt động').length;
-    const inactiveUsers = users.filter(user => user.status === 'Bị khóa').length;
-    const totalUsers = users.length;
-    const totalProjects = new Set(users.flatMap(user => user.project)).size;
     return [
       { 
         title: 'Tổng số người dùng', 
-        count: totalUsers,
+        count: users.length,
         onClick: () => navigate('/admin/users')
       },
       { 
-        title: 'Người dùng đang hoạt động', 
-        count: activeUsers,
-        onClick: () => navigate('/admin/users', { state: { filter: 'active' }})
-      },
-      { 
-        title: 'Người dùng bị khóa', 
-        count: inactiveUsers,
-        onClick: () => navigate('/admin/users', { state: { filter: 'inactive' }})
-      },
-      { 
         title: 'Tổng số dự án', 
-        count: totalProjects,
+        count: projects.length,
         onClick: () => navigate('/admin/projects')
       }
     ];
-  }, [navigate]);
-  // Gender distribution data
+  }, [navigate, users.length, projects.length]);
+
   const genderData = useMemo(() => {
-    const maleCount = users.filter(user => user.gender === 'Nam').length;
-    const femaleCount = users.filter(user => user.gender === 'Nữ').length;
+    const maleCount = users.filter(user => user.gender === 'nam').length;
+    const femaleCount = users.filter(user => user.gender === 'nữ').length;
     return [
       { name: 'Nam', value: maleCount },
       { name: 'Nữ', value: femaleCount }
     ];
-  }, []);
-
-  // Age distribution data
-  const ageData = useMemo(() => {
-    const ageRanges = {
-      '20-25': 0,
-      '26-30': 0,
-      '31-35': 0,
-      '36-40': 0,
-      '41-45': 0,
-      '46-50': 0
-    };
-
-    users.forEach(user => {
-      if (user.age <= 25) ageRanges['20-25']++;
-      else if (user.age <= 30) ageRanges['26-30']++;
-      else if (user.age <= 35) ageRanges['31-35']++;
-      else if (user.age <= 40) ageRanges['36-40']++;
-      else if (user.age <= 45) ageRanges['41-45']++;
-      else ageRanges['46-50']++;
-    });
-
-    return Object.entries(ageRanges).map(([range, count]) => ({
-      range,
-      Nam: users.filter(u => 
-        (range === '20-25' && u.age <= 25 && u.gender === 'Nam') ||
-        (range === '26-30' && u.age > 25 && u.age <= 30 && u.gender === 'Nam') ||
-        (range === '31-35' && u.age > 30 && u.age <= 35 && u.gender === 'Nam') ||
-        (range === '36-40' && u.age > 35 && u.age <= 40 && u.gender === 'Nam') ||
-        (range === '41-45' && u.age > 40 && u.age <= 45 && u.gender === 'Nam') ||
-        (range === '46-50' && u.age > 45 && u.gender === 'Nam')
-      ).length,
-      Nữ: users.filter(u => 
-        (range === '20-25' && u.age <= 25 && u.gender === 'Nữ') ||
-        (range === '26-30' && u.age > 25 && u.age <= 30 && u.gender === 'Nữ') ||
-        (range === '31-35' && u.age > 30 && u.age <= 35 && u.gender === 'Nữ') ||
-        (range === '36-40' && u.age > 35 && u.age <= 40 && u.gender === 'Nữ') ||
-        (range === '41-45' && u.age > 40 && u.age <= 45 && u.gender === 'Nữ') ||
-        (range === '46-50' && u.age > 45 && u.gender === 'Nữ')
-      ).length
-    }));
-  }, []);
+  }, [users]);
 
   const COLORS = ['#8884d8', '#82ca9d'];
 
@@ -101,7 +94,6 @@ const AdminPage = () => {
         <div className="admin-content">
           <h1 className="page-title">Trang Quản Trị</h1>
 
-          {/* Stats Grid */}
           <div className="stats-grid">
             {stats.map((stat, index) => (
               <div 
@@ -116,9 +108,7 @@ const AdminPage = () => {
             ))}
           </div>
 
-          {/* Charts Grid */}
           <div className="charts-grid">
-            {/* Gender Distribution */}
             <div className="card">
               <div className="card-header">
                 <h2 className="card-title">Phân bố giới tính</h2>
@@ -145,33 +135,25 @@ const AdminPage = () => {
               </div>
             </div>
 
-            {/* Age Distribution */}
             <div className="card">
               <div className="card-header">
-                <h2 className="card-title">Phân bố độ tuổi theo giới tính</h2>
+                <h2 className="card-title">Số lượng người dùng đăng ký theo tháng</h2>
               </div>
               <div className="card-content chart-container">
-                <BarChart
-                  width={500}
-                  height={300}
-                  data={ageData}
-                  margin={{
-                    top: 20,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                  }}
-                >
-                  <XAxis dataKey="range" />
+                <LineChart width={500} height={300} data={monthlySignups}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="Nam" fill="#8884d8" />
-                  <Bar dataKey="Nữ" fill="#82ca9d" />
-                </BarChart>
+                  <Line type="monotone" dataKey="value" stroke="#818cf8" name="Số lượng đăng ký" />
+                </LineChart>
               </div>
             </div>
           </div>
+        </div>
+        <div className="table-help">
+          <HelpPageAdmin />
         </div>
         <Footer />
       </div>

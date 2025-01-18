@@ -8,5 +8,6 @@ venv/
 .venv
 .backend_env
 *.pyc
+env
 build/
 

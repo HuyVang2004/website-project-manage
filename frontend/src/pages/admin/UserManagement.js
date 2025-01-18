@@ -1,81 +1,91 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/SlideBar';
 import TopBar from '../../components/Nav/TopBar';
 import Footer from '../../components/Footer';
-import { useNavigate, useLocation } from 'react-router-dom';
+import userAPI from '../../api/userApi';
 import './style/UserManagement.scss';
-import { users as initialUsers } from './data/UserData';
 
 const UserManagement = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
-  const [filteredUsers, setFilteredUsers] = useState(initialUsers);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const filter = location.state?.filter;
-    if (filter === 'active') {
-      setFilteredUsers(initialUsers.filter(user => user.status === 'Hoạt động'));
-    } else if (filter === 'inactive') {
-      setFilteredUsers(initialUsers.filter(user => user.status === 'Bị khóa'));
-    } else {
-      setFilteredUsers(initialUsers);
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+        setLoading(true);
+        const response = await userAPI.getAllUsers();
+        console.log('Users data:', response.data || response);
+        // Log chi tiết một user để xem cấu trúc
+        if ((response.data || response).length > 0) {
+            console.log('Sample user structure:', (response.data || response)[0]);
+        }
+        setUsers(response.data || response);
+        setLoading(false);
+    } catch (err) {
+        setError('Không thể tải danh sách người dùng');
+        setLoading(false);
+        console.error('Error fetching users:', err);
     }
-    setCurrentPage(1); // Reset về trang 1 khi thay đổi bộ lọc
-  }, [location.state?.filter]);
+};
 
+  const handleUserClick = (user) => {
+    // Log để debug
+    console.log('Clicked user:', user);
+    
+    // Kiểm tra và sử dụng user_id hoặc id
+    const userId = user.user_id || user.id;
+    
+    if (!userId) {
+      console.error('User ID is undefined:', user);
+      return;
+    }
+    
+    navigate(`/admin/users/details/${userId}`);
+  };
+
+  const handleDelete = async (user, e) => {
+    e.stopPropagation();
+    // Log để debug
+    console.log('Attempting to delete user:', user);
+    console.log('Username:', user.username);
+    
+    if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+        try {
+            // Đảm bảo username tồn tại trước khi gọi API
+            if (!user.username) {
+                throw new Error('Username không tồn tại');
+            }
+            
+            await userAPI.deleteUser(user.username);
+            await fetchUsers();
+            alert('Người dùng đã được xóa thành công.');
+        } catch (error) {
+            console.error('Lỗi khi xóa người dùng:', error);
+            alert('Đã xảy ra lỗi khi xóa người dùng: ' + error.message);
+        }
+    }
+};
+
+
+  // Pagination logic
   const usersPerPage = 10;
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-
+  const totalPages = Math.ceil(users.length / usersPerPage);
+  
   const getCurrentUsers = () => {
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
-    return filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+    return users.slice(indexOfFirstUser, indexOfLastUser);
   };
 
-  const handleUserSelect = (user) => {
-    navigate(`/admin/users/details/${user.id}`, { state: { user } });
-  };
-
-  const handleEdit = (user, e) => {
-    e.stopPropagation();
-    setEditingUser({ ...user });
-    setIsEditModalOpen(true);
-  };
-
-  const handleDelete = (userId, e) => {
-    e.stopPropagation();
-    if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
-      setFilteredUsers(filteredUsers.filter(user => user.id !== userId));
-    }
-  };
-
-  const handleSaveEdit = (e) => {
-    e.preventDefault();
-    setFilteredUsers(filteredUsers.map(user => (user.id === editingUser.id ? editingUser : user)));
-    setIsEditModalOpen(false);
-  };
-
-  const handleEditInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditingUser(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleCloseModal = () => {
-    setIsEditModalOpen(false);
-    setEditingUser(null);
-  };
-
-  // Thêm phần hiển thị tiêu đề theo trạng thái lọc
-  const getFilterTitle = () => {
-    const filter = location.state?.filter;
-    if (filter === 'active') return 'Danh sách người dùng đang hoạt động';
-    if (filter === 'inactive') return 'Danh sách người dùng bị khóa';
-    return 'Danh sách tất cả người dùng';
-  };
+  if (loading) return <div className="loading">Đang tải...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="dashboard">
@@ -83,113 +93,58 @@ const UserManagement = () => {
       <div className="main-content">
         <TopBar />
         <div className="user-management">
-          <h1>{getFilterTitle()}</h1>
+          <h1>Danh sách người dùng</h1>
 
-          {/* User List Table */}
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Tên người dùng</th>
-                <th>Số điện thoại</th>
-                <th>Email</th>
-                <th>Lần truy cập gần nhất</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
-              </tr>
-            </thead>
-            <tbody>
-              {getCurrentUsers().map((user) => (
-                <tr key={user.id} onClick={() => handleUserSelect(user)}>
-                  <td>{user.id}</td>
-                  <td>{user.name}</td>
-                  <td>{user.phone}</td>
-                  <td>{user.email}</td>
-                  <td>{user.lastLogin}</td>
-                  <td>{user.status}</td>
-                  <td>
-                    <button className="edit-btn" onClick={(e) => handleEdit(user, e)}>
-                      Chỉnh sửa
-                    </button>
-                    <button className="delete-btn" onClick={(e) => handleDelete(user.id, e)}>
-                      Xóa
-                    </button>
-                  </td>
+          <div className="user-table-container">
+            <table className="user-table">
+              <thead>
+                <tr>
+                  <th>STT</th>
+                  <th>Tên người dùng</th>
+                  <th>Email</th>
+                  <th>Ngày đăng kí</th>
+                  <th>Hành động</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Edit Modal */}
-          {isEditModalOpen && editingUser && (
-            <div className="modal-overlay">
-              <div className="modal">
-                <h2>Chỉnh sửa thông tin người dùng</h2>
-                <form onSubmit={handleSaveEdit}>
-                  <div className="form-group">
-                    <label>Tên người dùng:</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={editingUser.name}
-                      onChange={handleEditInputChange}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Giới tính:</label>
-                    <select
-                      name="gender"
-                      value={editingUser.gender}
-                      onChange={handleEditInputChange}
-                    >
-                      <option value="Nam">Nam</option>
-                      <option value="Nữ">Nữ</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Số điện thoại:</label>
-                    <input
-                      type="text"
-                      name="phone"
-                      value={editingUser.phone}
-                      onChange={handleEditInputChange}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Email:</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={editingUser.email}
-                      onChange={handleEditInputChange}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Trạng thái:</label>
-                    <select
-                      name="status"
-                      value={editingUser.status}
-                      onChange={handleEditInputChange}
-                    >
-                      <option value="Hoạt động">Hoạt động</option>
-                      <option value="Bị khóa">Bị khóa</option>
-                    </select>
-                  </div>
-                  <div className="modal-buttons">
-                    <button type="button" className="cancel-btn" onClick={handleCloseModal}>
-                      Hủy
-                    </button>
-                    <button type="submit" className="save-btn">Lưu</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
+              </thead>
+              <tbody>
+                {getCurrentUsers().map((user, index) => (
+                  <tr 
+                    key={user.user_id || user.id || index} 
+                    onClick={() => handleUserClick(user)}
+                    style={{ cursor: 'pointer' }}
+                    className="user-row"
+                  >
+                    <td>{(currentPage - 1) * usersPerPage + index + 1}</td>
+                    <td>{user.full_name}</td>
+                    <td>{user.email}</td>
+                    <td>{new Date(user.created_at).toLocaleDateString('vi-VN')}</td>
+                    <td>
+                      <button 
+                        className="edit-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUserClick(user);
+                        }}
+                      >
+                        Chi tiết
+                      </button>
+                      <button 
+                        className="delete-btn"
+                        onClick={(e) => handleDelete(user,e)}
+                      >
+                        Xóa
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {/* Pagination */}
           <div className="pagination">
             <button
-              onClick={() => setCurrentPage(prev => prev - 1)}
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
               Prev
@@ -204,7 +159,7 @@ const UserManagement = () => {
               </button>
             ))}
             <button
-              onClick={() => setCurrentPage(prev => prev + 1)}
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
             >
               Next

@@ -30,5 +30,6 @@ export const ROUTERS = {
         STATISTICS: "admin/statistics",
         SETTINGS: "admin/settings",
         HELP: "admin/help",
+        SUPPORT: "admin/support"
     }
 }

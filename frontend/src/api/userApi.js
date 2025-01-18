@@ -67,7 +67,15 @@ const userAPI = {
           responseType: 'blob', // Đảm bảo nhận dữ liệu dạng nhị phân (ảnh)
       });
   },
-      
+   getAllUsers: () => {
+    return axiosClient.get('/admin/users');
+},
+// Xóa user
+deleteUser: (username) => {
+  return axiosClient.delete(`/admin/delete-user?username=${encodeURIComponent(username)}`);
+},
+
+
 };
 
 export default userAPI;

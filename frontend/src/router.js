@@ -25,6 +25,7 @@ import Project from "./pages/admin/Project";
 import UserAnalytics from "./pages/admin/Statistics.js";
 import SystemSettings from "./pages/admin/SystemSettings.js";
 import HelpPageAdmin from "./pages/admin/helpPage/HelpPageAdmin.js";
+import Help from "./pages/admin/Help.js";
 
 const renderUserRouter = () => {
     const userRouter = [
@@ -67,6 +68,7 @@ const renderUserRouter = () => {
         <Route path={ROUTERS.USER.HELP} element={<HelpPage/>}/>
 
 
+
         {/* <Route path={ROUTERS.USER.FORGOTPASSWORD} element={<ForgotPasswordPage/>}/> */}
 
          {/* Admin Routes */}
@@ -82,6 +84,7 @@ const renderUserRouter = () => {
         <Route path={ROUTERS.ADMIN.STATISTICS} element={<UserAnalytics />} />
         <Route path={ROUTERS.ADMIN.SETTINGS} element={<SystemSettings />} />
         <Route path={ROUTERS.ADMIN.HELP} element={<HelpPageAdmin ></HelpPageAdmin>} />
+        <Route path={ROUTERS.ADMIN.SUPPORT} element={<Help/>} />
       </Routes>
     );
   };
