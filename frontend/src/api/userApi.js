@@ -72,10 +72,9 @@ const userAPI = {
 },
 // Xóa user
 deleteUser: (username) => {
-  return axiosClient.delete(`/admin/delete-user`, {
-    data: { username: username },
-  });
+  return axiosClient.delete(`/admin/delete-user?username=${encodeURIComponent(username)}`);
 },
+
 
 };
 

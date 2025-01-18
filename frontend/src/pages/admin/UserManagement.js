@@ -19,17 +19,21 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      setLoading(true);
-      const response = await userAPI.getAllUsers();
-      console.log('Users data:', response.data || response); // Debug log
-      setUsers(response.data || response);
-      setLoading(false);
+        setLoading(true);
+        const response = await userAPI.getAllUsers();
+        console.log('Users data:', response.data || response);
+        // Log chi tiết một user để xem cấu trúc
+        if ((response.data || response).length > 0) {
+            console.log('Sample user structure:', (response.data || response)[0]);
+        }
+        setUsers(response.data || response);
+        setLoading(false);
     } catch (err) {
-      setError('Không thể tải danh sách người dùng');
-      setLoading(false);
-      console.error('Error fetching users:', err);
+        setError('Không thể tải danh sách người dùng');
+        setLoading(false);
+        console.error('Error fetching users:', err);
     }
-  };
+};
 
   const handleUserClick = (user) => {
     // Log để debug
@@ -46,17 +50,29 @@ const UserManagement = () => {
     navigate(`/admin/users/details/${userId}`);
   };
 
-  const handleDeleteUser = async (username, e) => {
+  const handleDelete = async (user, e) => {
     e.stopPropagation();
+    // Log để debug
+    console.log('Attempting to delete user:', user);
+    console.log('Username:', user.username);
+    
     if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
-      try {
-        await userAPI.deleteUser(username);
-        fetchUsers();
-      } catch (err) {
-        console.error('Error deleting user:', err);
-      }
+        try {
+            // Đảm bảo username tồn tại trước khi gọi API
+            if (!user.username) {
+                throw new Error('Username không tồn tại');
+            }
+            
+            await userAPI.deleteUser(user.username);
+            await fetchUsers();
+            alert('Người dùng đã được xóa thành công.');
+        } catch (error) {
+            console.error('Lỗi khi xóa người dùng:', error);
+            alert('Đã xảy ra lỗi khi xóa người dùng: ' + error.message);
+        }
     }
-  };
+};
+
 
   // Pagination logic
   const usersPerPage = 10;
@@ -114,7 +130,7 @@ const UserManagement = () => {
                       </button>
                       <button 
                         className="delete-btn"
-                        onClick={(e) => handleDeleteUser(user.username,e)}
+                        onClick={(e) => handleDelete(user,e)}
                       >
                         Xóa
                       </button>

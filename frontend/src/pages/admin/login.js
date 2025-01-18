@@ -6,10 +6,14 @@ import { ROUTERS } from "../../utils/router";
 import projectTeamApi from "../../api/projects/projectTeamApi";
 import projectsApi from "../../api/projects/projectsApi";
 
-
 const findProjectByName = async (userId, projectName = "My project") => {
   try {
     const projectTeamResponse = await projectTeamApi.getProjectsByUser(userId);
+    
+    if (!projectTeamResponse || projectTeamResponse.length === 0) {
+      console.log("User has no projects");
+      return null;
+    }
 
     for (const project of projectTeamResponse) {
       const responseProject = await projectsApi.getProjectById(project.project_id);
@@ -21,11 +25,14 @@ const findProjectByName = async (userId, projectName = "My project") => {
     console.log(`No project with name "${projectName}" found.`);
     return null;
   } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.log("User has no projects yet");
+      return null;
+    }
     console.error("Error fetching project:", error);
     return null;
   }
 };
-
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,14 +42,22 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if token exists and is valid
     const savedToken = localStorage.getItem('auth_token');
     const expireTime = localStorage.getItem('token_expiry');
     const currentTime = new Date().getTime();
 
     if (savedToken && expireTime && currentTime < Number(expireTime)) {
-      console.log("Token is valid, navigating to home...");
-      navigate(ROUTERS.USER.HOME);
+      const userProfile = JSON.parse(localStorage.getItem('user_profile') || '{}');
+      console.log("Stored user profile:", userProfile); // Debug log
+      
+      // Kiểm tra role một cách chi tiết hơn
+      if (userProfile && userProfile.role === 'admin') {
+        console.log("Redirecting to admin page"); // Debug log
+        navigate('/admin');
+      } else {
+        console.log("Redirecting to home page"); // Debug log
+        navigate('/trangchu');
+      }
     }
   }, [navigate]);
 
@@ -53,49 +68,63 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-
+  
     try {
       const response = await userAPI.login({ email, password });
-      console.log('Đăng nhập thành công:', response);
-
+      console.log('Login response:', response); // Debug log
+  
       const { access_token, refresh_token } = response;
-      const expiryTime = new Date().getTime() + 2 * 24 * 60 * 60 * 1000; // Token sẽ hết hạn sau 2 ngày
+      const expiryTime = new Date().getTime() + 2 * 24 * 60 * 60 * 1000;
       localStorage.setItem('auth_token', access_token);
       localStorage.setItem('refresh_token', refresh_token);
       localStorage.setItem('token_expiry', expiryTime);
       
       const userInfo = await userAPI.getCurrentUserInfo(access_token);
-      const myProjectId = await findProjectByName(userInfo.user_id);
-
-      if (myProjectId) {
-        // alert(`đã có dự án ${myProjectId}`);
-        localStorage.setItem("my_project_id", myProjectId);
-      } else {
-        // alert("chưa có dự án");
-        const userId = userInfo.user_id;
-
-        const projectData = {
-          project_name: "My project",
-          description: "",
-          status: "Đang tiến hành",
-          start_date: new Date("2025-01-01").toISOString(),
-          end_date: new Date("2099-01-01").toISOString(),
-          created_by: userId,
-        };
-
-        const projectResponse = await projectsApi.createProject(projectData);
-        const projectId = projectResponse.project_id;
-
-        await projectTeamApi.createProjectTeam({
-          user_id: userId,
-          project_id: projectId,
-          role: "Quản lý",
-        });
-        localStorage.setItem("my_project_id", projectId); 
+      console.log('User info from API:', userInfo); // Debug log
+      
+      try {
+        const myProjectId = await findProjectByName(userInfo.user_id);
+  
+        if (myProjectId) {
+          localStorage.setItem("my_project_id", myProjectId);
+        } else {
+          const userId = userInfo.user_id;
+  
+          const projectData = {
+            project_name: "My project",
+            description: "",
+            status: "Đang tiến hành",
+            start_date: new Date("2025-01-01").toISOString(),
+            end_date: new Date("2099-01-01").toISOString(),
+            created_by: userId,
+          };
+  
+          const projectResponse = await projectsApi.createProject(projectData);
+          const projectId = projectResponse.project_id;
+  
+          await projectTeamApi.createProjectTeam({
+            user_id: userId,
+            project_id: projectId,
+            role: "Quản lý",
+          });
+          localStorage.setItem("my_project_id", projectId);
+        }
+      } catch (projectError) {
+        console.error('Lỗi khi xử lý project:', projectError);
       }
-
+  
       localStorage.setItem("user_profile", JSON.stringify(userInfo));
-      navigate(ROUTERS.USER.HOME);
+      
+      // Kiểm tra role một cách chi tiết hơn
+      console.log('Checking role:', userInfo.role); // Debug log
+      
+      if (userInfo && userInfo.role === 'admin') {
+        console.log('Navigating to admin page'); // Debug log
+        navigate('/admin');
+      } else {
+        console.log('Navigating to home page'); // Debug log
+        navigate('/trangchu');
+      }
       
     } catch (err) {
       console.error('Lỗi đăng nhập:', err);
@@ -155,4 +184,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-};
+}

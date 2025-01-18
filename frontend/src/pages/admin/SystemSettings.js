@@ -165,22 +165,7 @@ const timezones = [
             
             <CardContent className="settings-form">
               {/* Dark Mode Toggle */}
-              <div className="settings-section">
-                <div className="section-header">
-                  <div className="mode-text">
-                    <h3>Giao diện</h3>
-                    <p>Thay đổi giao diện sáng/tối của ứng dụng</p>
-                  </div>
-                  <div className="toggle-switch">
-                    <span>{tempSettings.darkMode ? 'Tối' : 'Sáng'}</span>
-                    <Switch 
-                      checked={tempSettings.darkMode}
-                      onCheckedChange={handleTempDarkMode}
-                      className="dark-mode-switch"
-                    />
-                  </div>
-                </div>
-              </div>
+             
               {/* Timezone */}
                   <div className="settings-section">
               <div className="section-header">

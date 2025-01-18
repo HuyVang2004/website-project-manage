@@ -73,17 +73,23 @@ const UserDetail = () => {
     navigate('/admin/users');
   };
 
-  const handleDelete = async (userId) => {
+  const handleDelete = async () => {
     if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
-      try {
-        await userAPI.deleteUser(userId);
-        navigate('/admin/users');
-      } catch (err) {
-        setError('Không thể xóa người dùng');
-        console.error('Error deleting user:', err);
-      }
+        try {
+            // Kiểm tra đảm bảo user và username tồn tại
+            if (!user || !user.username) {
+                throw new Error('Không tìm thấy thông tin username');
+            }
+            
+            await userAPI.deleteUser(user.username);
+            navigate('/admin/users');
+            alert('Xóa người dùng thành công');
+        } catch (err) {
+            console.error('Error deleting user:', err);
+            setError('Không thể xóa người dùng: ' + err.message);
+        }
     }
-  };
+};
 
   if (loading) {
     return <div>Đang tải...</div>;
@@ -124,7 +130,7 @@ const UserDetail = () => {
               <div className="actions">
                 <button 
                   className="delete-btn"
-                  onClick={() => handleDelete(user.user_id)}
+                  onClick={handleDelete}
                 >
                   <span>🗑️</span>
                   Xóa tài khoản
